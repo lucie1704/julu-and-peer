@@ -1,7 +1,7 @@
-import { OrderI, PlaceOrderI } from './../../dto/order';
 //@ts-ignore
 import { ActionTree, Commit, GetterTree, Module, MutationTree } from 'vuex';
 import orderAPI from '../../api/order';
+import { OrderI, PlaceOrderI } from './../../dto/order';
 
 interface State {
   orders?: Array<OrderI>
@@ -13,8 +13,8 @@ interface State {
 const state: State = {
   orders: undefined,
   order: undefined,
-  message: "",
-  orderId: "",
+  message: '',
+  orderId: '',
 };
 
 const getters: GetterTree<State, any> = {
@@ -28,44 +28,49 @@ const getters: GetterTree<State, any> = {
 const actions: ActionTree<State, any> = {
 
   async orderConfirm({ commit }: { commit: Commit }, orderId: string) {
-    const jwt_token = "";
+    const jwt_token = '';
     try {
       const message = await orderAPI.orderConfirm(jwt_token, orderId);
       commit('setMessage', message);
-    } catch (error) {
-      console.error("Confirm  order fails:", error);
+    }
+ catch (error) {
+      console.error('Confirm  order fails:', error);
     }
   },
   async placeOrder({ commit }: { commit: Commit }, orderData: PlaceOrderI) {
-    const jwt_token = "";
+    const jwt_token = '';
     try {
       const response = await orderAPI.placeOrder(jwt_token, orderData);
       if (response) {
         commit('setOrderId', response.orderId);
         commit('setMessage', response.message);
-      } else {
-        console.error("Error placing order: Received null response");
       }
-    } catch (error) {
-      console.error("Error placing order:", error);
+ else {
+        console.error('Error placing order: Received null response');
+      }
+    }
+ catch (error) {
+      console.error('Error placing order:', error);
     }
   },
   async getOrders({ commit }: { commit: Commit }, payload: { jwt_token: string, customerId: string, status: string }) {
-    const jwt_token = "";
+    const jwt_token = '';
     try {
       const orders = await orderAPI.getOrders(jwt_token, payload.customerId, payload.status);
       commit('setOrders', orders);
-    } catch (error) {
+    }
+ catch (error) {
       console.error(`Error getting orders for customer ID ${payload.customerId} with status ${payload.status}:`, error);
     }
   },
 
-  async getOrderDetails({ commit }: { commit: Commit },orderId: string ) {
-    const jwt_token = "";
+  async getOrderDetails({ commit }: { commit: Commit }, orderId: string ) {
+    const jwt_token = '';
     try {
       const order = await orderAPI.getOrderDetails(jwt_token, orderId);
       commit('setOrder', order);
-    } catch (error) {
+    }
+ catch (error) {
       console.error(`Error getting details for order ID ${orderId}:`, error);
     }
   },

@@ -18,8 +18,9 @@ const productAPI: ProductAPI = {
         }
       });
       return res.data;
-    } catch (error) {
-      console.error("Error. Faills to get all products:", error);
+    }
+ catch (error) {
+      console.error('Error. Faills to get all products:', error);
       return null;
     }
   },
@@ -33,8 +34,9 @@ const productAPI: ProductAPI = {
         }
       });
       return res.data;
-    } catch (error) {
-      console.error("Error. Fails to get product :", error);
+    }
+ catch (error) {
+      console.error('Error. Fails to get product :', error);
       return null;
     }
   },

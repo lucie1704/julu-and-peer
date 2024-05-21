@@ -22,7 +22,8 @@ const orderAPI: OrderAPI = {
         headers: createHeaders(jwt_token)
       });
       return res.data;
-    } catch (error) {
+    }
+ catch (error) {
       console.error(`Error confirming order with ID ${orderId}:`, error);
       return null;
     }
@@ -33,7 +34,8 @@ const orderAPI: OrderAPI = {
         headers: createHeaders(jwt_token)
       });
       return res.data;
-    } catch (error) {
+    }
+ catch (error) {
       console.error('Error placing order:', error);
       return null;
     }
@@ -44,7 +46,8 @@ const orderAPI: OrderAPI = {
         headers: createHeaders(jwt_token)
       });
       return res.data;
-    } catch (error) {
+    }
+ catch (error) {
       console.error(`Error getting orders for customer ID ${customerId} with status ${status}:`, error);
       return null;
     }
@@ -55,7 +58,8 @@ const orderAPI: OrderAPI = {
         headers: createHeaders(jwt_token)
       });
       return res.data;
-    } catch (error) {
+    }
+ catch (error) {
       console.error(`Error getting details for order ID ${orderId}:`, error);
       return null;
     }

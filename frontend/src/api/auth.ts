@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ConfirmEmail } from '../dto/confirmEmail';
-import { UserLogin } from "../dto/login";
+import { UserLogin } from '../dto/login';
 import { ResetPassword } from '../dto/ResetPassword';
 import { SignUpResponse } from '../dto/signUpResponse';
 import { UpdatePassword } from '../dto/updatePassword';
@@ -8,7 +8,7 @@ import { UserEmail } from '../dto/UserEmail';
 import { UserSignUp } from './../dto/signup';
 
 const ROOT_URL = 'http://localhost:3000/api/v1/auth';
-const USER_ROOT_URL ='http://localhost:3000/api/v1/users'
+const USER_ROOT_URL = 'http://localhost:3000/api/v1/users';
 
 interface AuthAPI {
   login: (user: UserLogin) => Promise<string>;
@@ -32,8 +32,9 @@ const authAPI: AuthAPI = {
         });
         
         return response.data.token;
-      } catch (error) {
-        console.error("Error from backend API:", error);
+      }
+ catch (error) {
+        console.error('Error from backend API:', error);
         return null;
       }
   },
@@ -46,10 +47,11 @@ const authAPI: AuthAPI = {
         }
       });
 
-      return response.data
+      return response.data;
 
-    } catch (error) {
-      console.error("Error from backend API:", error);
+    }
+ catch (error) {
+      console.error('Error from backend API:', error);
       return null;
     }
   },
@@ -64,8 +66,9 @@ const authAPI: AuthAPI = {
 
       return response.data.token;
 
-    } catch (error) {
-      console.error("Error from backend API:", error);
+    }
+ catch (error) {
+      console.error('Error from backend API:', error);
       return null;
     }
   },
@@ -78,8 +81,9 @@ const authAPI: AuthAPI = {
       });
 
       return res.data.status;
-    } catch (error) {
-      console.error("Logout error :", error);
+    }
+ catch (error) {
+      console.error('Logout error :', error);
       return null;
     }
   },
@@ -93,8 +97,9 @@ const authAPI: AuthAPI = {
       });
 
       return res.data.status;
-    } catch (error) {
-      console.error("Reset password error error :", error);
+    }
+ catch (error) {
+      console.error('Reset password error error :', error);
       return null;
     }
   },
@@ -109,8 +114,9 @@ const authAPI: AuthAPI = {
 
       return response.data.token;
 
-    } catch (error) {
-      console.error("Error from backend API:", error);
+    }
+ catch (error) {
+      console.error('Error from backend API:', error);
       return null;
     }
   },
@@ -125,8 +131,9 @@ const authAPI: AuthAPI = {
       });
 
       return res.data.token;
-    } catch (error) {
-      console.error("Update password error :", error);
+    }
+ catch (error) {
+      console.error('Update password error :', error);
       return null;
     }
   },

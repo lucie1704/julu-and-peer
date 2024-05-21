@@ -1,12 +1,14 @@
+import './style.css';
+import 'vuetify/styles';
 import { createApp } from 'vue';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 import App from './App.vue';
-import './assets/css/tailwind.css';
-import router from './routes/router';
-import store from './store/index';
 
+const vuetify = createVuetify({
+  components,
+  directives,
+});
 
-const app = createApp(App);
-
-app.use(store);
-app.use(router);
-app.mount('#app');
+createApp(App).use(vuetify).mount('#app');

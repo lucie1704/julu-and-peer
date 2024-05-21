@@ -9,7 +9,6 @@ import { UpdatePassword } from '../../dto/updatePassword';
 import { UserEmail } from '../../dto/UserEmail';
 import router from '../../routes/router';
 
-
 interface State {
   jwt_token: string | null;
   status: string| null;
@@ -20,8 +19,8 @@ interface State {
 const state: State = {
   jwt_token: window.localStorage.getItem('jwt_token'),
   status: null,
-  userName: "",
-  message: ""
+  userName: '',
+  message: ''
 };
 
 const getters: GetterTree<State, any> = {
@@ -42,8 +41,9 @@ const actions: ActionTree<State, any> = {
       window.localStorage.setItem('jwt_token', jwt_token);
       
       router.push('/');
-    } else {
-      console.log("Invalide jwt_token")
+    }
+ else {
+      console.log('Invalide jwt_token');
     }
 
   },
@@ -54,12 +54,12 @@ const actions: ActionTree<State, any> = {
     if (data.status) {
       commit('setSignUpStatus', data.status);
       commit('setUserName', data.data.user);
-      commit('setMessage', "A mail was sent to your Email. Click to the link to validate your account.");
-
+      commit('setMessage', 'A mail was sent to your Email. Click to the link to validate your account.');
 
       router.push('/confirmModal');
-    } else {
-      console.log("Invalide signup status")
+    }
+ else {
+      console.log('Invalide signup status');
     }
 
   },
@@ -69,13 +69,14 @@ const actions: ActionTree<State, any> = {
 
     if (jwt_token) {
       commit('setJwtToken', jwt_token);
-      commit('setMessage', "Your account has been successfully created !.");
+      commit('setMessage', 'Your account has been successfully created !.');
 
       window.localStorage.setItem('jwt_token', jwt_token);
       
       router.push('/');
-    } else {
-      console.log("Invalide jwt_token")
+    }
+ else {
+      console.log('Invalide jwt_token');
     }
 
   },
@@ -87,8 +88,9 @@ const actions: ActionTree<State, any> = {
       window.localStorage.removeItem('jwt_token');
 
       router.push('/');
-    } else {
-      console.log("Invalide signup status")
+    }
+ else {
+      console.log('Invalide signup status');
     }
   },
   async forgotPassword({ commit }: { commit: Commit<State> }, email: UserEmail) {
@@ -97,11 +99,12 @@ const actions: ActionTree<State, any> = {
 
     if (status) {
       commit('setStatus', status);
-      commit('setMessage', "A mail was sent to your Email. Click the link to reset your password.");
+      commit('setMessage', 'A mail was sent to your Email. Click the link to reset your password.');
 
       router.push('/confirmModal');
-    } else {
-      console.log("Invalide signup status")
+    }
+ else {
+      console.log('Invalide signup status');
     }
 
   },
@@ -111,13 +114,14 @@ const actions: ActionTree<State, any> = {
 
     if (jwt_token) {
       commit('setJwtToken', jwt_token);
-      commit('setMessage', "Welcome back! Your password has been successfully reset.");
+      commit('setMessage', 'Welcome back! Your password has been successfully reset.');
 
       window.localStorage.setItem('jwt_token', jwt_token);
       
       router.push('/confirmModal');
-    } else {
-      console.log("Invalide jwt_token")
+    }
+ else {
+      console.log('Invalide jwt_token');
     }
 
   },
@@ -125,23 +129,25 @@ const actions: ActionTree<State, any> = {
 
     const currentJwtToken = state.jwt_token;
 
-    if(!currentJwtToken) {
-      commit('setMessage', "Fail: You're not login. Please. Login before update your password !.");
+    if (!currentJwtToken) {
+      commit('setMessage', 'Fail: You\'re not login. Please. Login before update your password !.');
 
       router.push('/confirmModal');
-    } else {
+    }
+ else {
       
       const jwt_token = await authAPI.updateMyPassword(user, currentJwtToken);
       
       if (jwt_token) {
         commit('setJwtToken', jwt_token);
-        commit('setMessage', "Password updated successfully !.");
+        commit('setMessage', 'Password updated successfully !.');
 
         window.localStorage.setItem('jwt_token', jwt_token);
         
         router.push('/confirmModal');
-      } else {
-        console.log("Invalide jwt_token")
+      }
+ else {
+        console.log('Invalide jwt_token');
       }
     }
 
@@ -163,7 +169,6 @@ const mutations: MutationTree<State> = {
   }
   
 };
-
 
 const auth: Module<State, any> = {
   namespaced: true,

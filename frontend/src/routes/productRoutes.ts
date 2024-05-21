@@ -1,6 +1,6 @@
 
-import ProductDetail from "../components/product/ProductDetail.vue";
-import ProductLists from "../components/product/ProductLists.vue";
+import ProductDetail from '../components/product/ProductDetail.vue';
+import ProductLists from '../components/product/ProductLists.vue';
 
 const productRoutes = [
   { 
@@ -9,6 +9,6 @@ const productRoutes = [
   component: ProductDetail,
   },
   { path: '/product/product-listes', component: ProductLists  }
-]
+];
 
 export default productRoutes;

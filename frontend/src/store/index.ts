@@ -1,11 +1,9 @@
 //@ts-ignore
-import { createStore } from 'vuex'
-import auth from './modules/auth'
-import cart from './modules/cart'
-import order from './modules/order'
-import product from './modules/product'
-
-
+import { createStore } from 'vuex';
+import auth from './modules/auth';
+import cart from './modules/cart';
+import order from './modules/order';
+import product from './modules/product';
 
 const store =  createStore({
   modules: {
@@ -14,6 +12,6 @@ const store =  createStore({
     cart,
     order
   },
-})
+});
 
-export default store
+export default store;
