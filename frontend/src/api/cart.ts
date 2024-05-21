@@ -26,8 +26,9 @@ const cartAPI: CartAPI = {
         headers: createHeaders(jwt_token),
       });
       return res.data;
-    } catch (error) {
-      console.error("Error: Failed to get cart.", error);
+    }
+ catch (error) {
+      console.error('Error: Failed to get cart.', error);
       return null;
     }
   },
@@ -42,8 +43,9 @@ const cartAPI: CartAPI = {
         }
       );
       return res.data;
-    } catch (error) {
-      console.error("Error: Failed to create cart.", error);
+    }
+ catch (error) {
+      console.error('Error: Failed to create cart.', error);
       return null;
     }
   },
@@ -54,8 +56,9 @@ const cartAPI: CartAPI = {
         headers: createHeaders(jwt_token),
       });
       return res.data;
-    } catch (error) {
-      console.error("Error: Failed to get cart products.", error);
+    }
+ catch (error) {
+      console.error('Error: Failed to get cart products.', error);
       return null;
     }
   },
@@ -66,20 +69,22 @@ const cartAPI: CartAPI = {
         headers: createHeaders(jwt_token),
       });
       return res.data;
-    } catch (error) {
-      console.error("Error: Failed to add product to cart item.", error);
+    }
+ catch (error) {
+      console.error('Error: Failed to add product to cart item.', error);
       return null;
     }
   },
 
   async cartItemQuantityUpdate(jwt_token: string, id: string, quantity: number) {
     try {
-      const res = await axios.patch(`${ROOT_URL}/cartitem/${id}`, {quantity}, {
+      const res = await axios.patch(`${ROOT_URL}/cartitem/${id}`, { quantity }, {
         headers: createHeaders(jwt_token),
       });
       return res.data;
-    } catch (error) {
-      console.error("Error: Failed to increase cart item quantity.", error);
+    }
+ catch (error) {
+      console.error('Error: Failed to increase cart item quantity.', error);
       return null;
     }
   },
@@ -90,8 +95,9 @@ const cartAPI: CartAPI = {
         headers: createHeaders(jwt_token),
       });
       return res.data;
-    } catch (error) {
-      console.error("Error: Failed to delete cart item.", error);
+    }
+ catch (error) {
+      console.error('Error: Failed to delete cart item.', error);
       return null;
     }
   },
@@ -101,8 +107,9 @@ const cartAPI: CartAPI = {
         headers: createHeaders(jwt_token),
       });
       return res.data;
-    } catch (error) {
-      console.error("Error: Failed to delete cart.", error);
+    }
+ catch (error) {
+      console.error('Error: Failed to delete cart.', error);
       return null;
     }
   },
