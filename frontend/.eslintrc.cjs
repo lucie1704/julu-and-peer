@@ -11,10 +11,12 @@ module.exports = {
       'eslint:recommended',
       'plugin:@typescript-eslint/recommended',
       'plugin:vue/vue3-recommended',
+      '@vue/eslint-config-typescript',
     ],
     ignorePatterns: ['dist', '.eslintrc.cjs'],
     plugins: ['import', 'simple-import-sort'],
     rules: {
+      'vue/no-unused-vars': 'error',
       'brace-style': ['error', 'stroustrup'],
       'comma-spacing': ['error', { 'before': false, 'after': true }],
       'indent': 'off',
@@ -28,6 +30,7 @@ module.exports = {
       'space-before-blocks': ['warn', 'always'],
       'space-infix-ops': ['error', { 'int32Hint': false }],
       'import/first': 'error',
+      'vue/multi-word-component-names': 'off',
       'import/newline-after-import': 'error',
       'import/no-duplicates': 'error',
       'simple-import-sort/imports': ['warn', {
