@@ -49,17 +49,18 @@ services:
 
   frontend:
     image: node
+    user: node
     build: 
       context: ./frontend   
+    working_dir: /home/node
+    command: sh -c "npm install && npm run dev"
     ports:
-      - 8080:8080
-    working_dir: /home/app/
+      - 8000:8000
     environment:
       - NODE_ENV=development 
     volumes:
-      - ./frontend:/home/app
-      - /app/node_modules
-    command: sh -c "npm install && npm run dev"
+      - ./frontend:/home/node
+      - /node/node_modules
     depends_on:
       - backend
 

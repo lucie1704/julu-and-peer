@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <v-app>
-    <router-view />
-  </v-app>
+  <h1 class="text-center">
+    Vente de vinyls
+  </h1>
 </template>
