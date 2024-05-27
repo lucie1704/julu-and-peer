@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasOne(models.Customer, { foreignKey: 'userId' });
     }
     async correctPassword(candidatePassword, userPassword) {
       return await bcrypt.compare(candidatePassword, userPassword);

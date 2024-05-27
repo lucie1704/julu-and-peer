@@ -1,6 +1,7 @@
 const express = require('express');
 const userRouter = require('./routes/private/userRoutes');
 const authRouter = require('./routes/public/authRoutes');
+const customerRouter = require('./routes/public/customerRoutes');
 const AppError = require('./utils/appError');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -89,6 +90,7 @@ app.use('/api/v1/auth', authRouter);
 
 // Private
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/customers', customerRouter);
 
 // Handle requests for routes that are not defined in the application.
 app.all('*', (req, res, next) => {
