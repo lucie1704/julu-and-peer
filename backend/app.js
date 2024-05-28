@@ -4,6 +4,10 @@ const authRouter = require('./routes/public/authRoutes');
 const customerRouter = require('./routes/public/customerRoutes');
 const customerAddressRouter = require('./routes/public/customerAddressRoutes');
 const productRouter = require('./routes/public/productRoutes');
+const productArtistRouter = require('./routes/public/productArtistRoutes');
+const productFormatRouter = require('./routes/public/productFormatRoutes');
+const productGenreRouter = require('./routes/public/productGenreRoutes');
+const productCustomerEvaluationRouter = require('./routes/public/productCustomerEvaluationRoutes');
 const AppError = require('./utils/appError');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -95,6 +99,10 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/customers', customerRouter);
 app.use('/api/v1/customersaddress', customerAddressRouter);
 app.use('/api/v1/products', productRouter);
+app.use('/api/v1/productartists', productArtistRouter);
+app.use('/api/v1/productformats', productFormatRouter);
+app.use('/api/v1/productgenres', productGenreRouter);
+app.use('/api/v1/productcustomerevaluations', productCustomerEvaluationRouter);
 
 
 // Handle requests for routes that are not defined in the application.

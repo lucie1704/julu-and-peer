@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Product.belongsTo(models.ProductGenre, { foreignKey: 'genreId' });
+      Product.belongsTo(models.ProductFormat, { foreignKey: 'formatId' });
+      Product.belongsTo(models.ProductArtist, { foreignKey: 'artistId' });
+      Product.hasMany(models.ProductCustomerEvaluation, { foreignKey: 'productId' });
     }
   }
   Product.init({
@@ -28,6 +32,30 @@ module.exports = (sequelize, DataTypes) => {
     },
     availableStock: {
       type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    genreId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'ProductGenres',
+        key: 'id'
+      },
+      allowNull: false
+    },
+    formatId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'ProductFormats',
+        key: 'id'
+      },
+      allowNull: false
+    },
+    artistId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'ProductArtists',
+        key: 'id'
+      },
       allowNull: false
     }
   }, {
