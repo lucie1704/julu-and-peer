@@ -1,13 +1,16 @@
 const express = require('express');
-const userRouter = require('./routes/private/userRoutes');
 const authRouter = require('./routes/public/authRoutes');
-const customerRouter = require('./routes/public/customerRoutes');
-const customerAddressRouter = require('./routes/public/customerAddressRoutes');
-const productRouter = require('./routes/public/productRoutes');
-const productArtistRouter = require('./routes/public/productArtistRoutes');
-const productFormatRouter = require('./routes/public/productFormatRoutes');
-const productGenreRouter = require('./routes/public/productGenreRoutes');
-const productCustomerEvaluationRouter = require('./routes/public/productCustomerEvaluationRoutes');
+const userRouter = require('./routes/private/userRoutes');
+const customerRouter = require('./routes/private/customerRoutes');
+const customerAddressRouter = require('./routes/private/customerAddressRoutes');
+const productRouter = require('./routes/private/productRoutes');
+const productArtistRouter = require('./routes/private/productArtistRoutes');
+const productFormatRouter = require('./routes/private/productFormatRoutes');
+const productGenreRouter = require('./routes/private/productGenreRoutes');
+const productCustomerEvaluationRouter = require('./routes/private/productCustomerEvaluationRoutes');
+const paymentMethodRouter = require('./routes/private/paymentMethodRoutes');
+const cartRouter = require('./routes/private/cartRoutes');
+const cartItemRouter = require('./routes/private/cartItemRoutes');
 const AppError = require('./utils/appError');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -103,6 +106,9 @@ app.use('/api/v1/productartists', productArtistRouter);
 app.use('/api/v1/productformats', productFormatRouter);
 app.use('/api/v1/productgenres', productGenreRouter);
 app.use('/api/v1/productcustomerevaluations', productCustomerEvaluationRouter);
+app.use('/api/v1/paymentmethods', paymentMethodRouter);
+app.use('/api/v1/carts', cartRouter);
+app.use('/api/v1/cartitems', cartItemRouter);
 
 
 // Handle requests for routes that are not defined in the application.
