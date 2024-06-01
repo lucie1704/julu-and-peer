@@ -1,5 +1,5 @@
 const express = require('express');
-const productGenreController = require('../controllers/productGenreController');
+const productGenreController = require('../../controllers/productGenreController');
 const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
@@ -25,6 +25,6 @@ router
     .delete(productGenreController.deleteProductGenre);
 
 router
-    .delete('/softdelete/:id', productGenreController.softDelete);
+    .delete('/delete/:id', productGenreController.deleteProductGenre);
 
 module.exports = router;

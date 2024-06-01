@@ -1,5 +1,5 @@
 const express = require('express');
-const paymentMethodController = require('../controllers/paymentMethodController');
+const paymentMethodController = require('../../controllers/paymentMethodController');
 const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
@@ -25,6 +25,6 @@ router
     .delete(paymentMethodController.deletePaymentMethod);
 
 router
-    .delete('/softdelete/:id', paymentMethodController.softDelete);
+    .delete('/delete/:id', paymentMethodController.deletePaymentMethod);
 
 module.exports = router;

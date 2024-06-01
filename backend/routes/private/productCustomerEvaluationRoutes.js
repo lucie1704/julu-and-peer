@@ -1,5 +1,5 @@
 const express = require('express');
-const productCustomerEvaluationController = require('../controllers/productCustomerEvaluationController');
+const productCustomerEvaluationController = require('../../controllers/productCustomerEvaluationController');
 const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
@@ -25,6 +25,6 @@ router
     .delete(productCustomerEvaluationController.deleteProductCustomerEvaluation);
 
 router
-    .delete('/softdelete/:id', productCustomerEvaluationController.softDelete);
+    .delete('/delete/:id', productCustomerEvaluationController.deleteProductCustomerEvaluation);
 
 module.exports = router;

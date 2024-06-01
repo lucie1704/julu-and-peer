@@ -15,16 +15,16 @@ router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')
-    .get(customerController.getAllCustomers)
+    .get(customerController.getCustomers)
     .post(customerController.createCustomer);
 
 router
     .route('/:id')
-    .get(customerController.getCustomer)
+    .get(customerController.getCustomerById)
     .patch(customerController.updateCustomer)
     .delete(customerController.deleteCustomer);
 
 router
-    .delete('/softdelete/:id', customerController.softDelete);
+    .delete('/delete/:id', customerController.deleteCustomer);
 
 module.exports = router;
