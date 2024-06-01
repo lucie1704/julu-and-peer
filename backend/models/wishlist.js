@@ -1,7 +1,6 @@
 'use strict';
 const {
-  Model,
-  SMALLINT
+  Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Wishlist extends Model {
@@ -11,29 +10,53 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      Wishlist.belongsTo(models.Customer);
-      Wishlist.belongsToMany(models.Product, { through: 'WishlistsProducts' });
+      Wishlist.belongsTo(models.Customer, { foreignKey: 'customerId', onDelete: 'CASCADE' });
+      Wishlist.belongsTo(models.Product, { foreignKey: 'productId', onDelete: 'CASCADE' });
+
     }
   }
   Wishlist.init({
-    name: DataTypes.STRING,
+    productId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Products',
+        key: 'id'
+      }
+    },
+    customerId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Customers',
+        key: 'id'
+      }
+    },
+    name: {
+      type: String,
+      required : true
+    },
+    price: {
+      type: Number,
+      required : true
+    },
     slug: {
       type: String,
       required : true
     },
+    discount: DataTypes.INTEGER,
     image: {
       type: String,
-      required : false
+      required : true
     },
     rating: {
-      type: SMALLINT,
-      // default : 0,
+      type: Number,
+      default : 0,
       validate: {
         max: 5,
         min: 0
       },
-    },
+  },
   }, {
     sequelize,
     modelName: 'Wishlist',

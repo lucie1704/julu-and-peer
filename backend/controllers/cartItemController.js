@@ -1,60 +1,82 @@
-const CartItem = require('../models/cartitem');
+const {responseReturn} = require('../utils/response');
+const { Product, CartItem} = require('../models');
+const catchAsyncError = require('../utils/catchAsyncError');
+const AppError = require('./../utils/appError');
 
-exports.getAllCartItems = async (req, res) => {
-    try {
-        const items = await CartItem.findAll();
-        res.status(200).json(carts);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.createCartItem = catchAsyncError (async (req, res, next) => {
+    const {productId, cartId, quantity } = req.body;
+     // Check if the product exists and is available
+    const product = await Product.findOne({ where: { id: productId } });
 
-exports.getCartItemById = async (req, res) => {
-    try {
-        const item = await CartItem.findById(req.params.id);
-        if (item) {
-            res.status(200).json(item);
-        } else {
-            res.status(404).json({ message: 'Item not found' });
+    if (!product) return next(new AppError('Product not found', 404));
+
+     // Check if the product is already in the cart
+    const existingCartItem = await CartItem.findOne({
+        where: {
+            productId,
+            cartId,
         }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    });
 
-exports.createCartItem = async (req, res) => {
-    try {
-        const item = await CartItem.create(req.body);
-        res.status(201).json(item);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    if (existingCartItem) return next(new AppError('Product already added to cart', 400));
 
-exports.updateCartItem = async (req, res) => {
-    try {
-        const item = await CartItem.findById(req.params.id);
-        if (item) {
-            await item.update(req.body);
-            res.status(200).json(item);
-        } else {
-            res.status(404).json({ message: 'Item not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+     // Add the product to the cart
+    const cartItem = await CartItem.create({
+        productId,
+        cartId,
+        quantity,
+    });
 
-exports.deleteCartItem = async (req, res) => {
-    try {
-        const item = await CartItem.findById(req.params.id);
-        if (item) {
-            await item.destroy();
-            res.status(204).end();
-        } else {
-            res.status(404).json({ message: 'Item not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    return responseReturn(res, 201, { message: "Added to cart successfully", cartItem });
+
+});
+
+exports.cartItemQuantityInc = catchAsyncError(async (req, res, next) => {
+    const {id } = req.params
+
+    const cartItem = await CartItem.findByPk(id);
+
+    if(!cartItem) return next(new AppError('Cart Item not found', 404));
+
+    const {quantity} = cartItem;
+    //TODO: Check before if product is not outOfStockProduct, send message "Product out of stock"
+    const updatedCartItem = await cartItem.update({quantity: quantity + 1 })
+    
+    if(!updatedCartItem) return next(new AppError('Error while increasing  cart item quantity', 404));
+
+    await updatedCartItem.save();
+
+    responseReturn(res,200,{message: "Quantity Updated", quantity: updatedCartItem.quantity })
+});
+
+exports.cartItemQuantityDec = catchAsyncError(async (req, res, next) => {
+    const {id } = req.params
+
+    const cartItem = await CartItem.findByPk(id);
+
+    if(!cartItem) return next(new AppError('Cart Item not found', 404));
+
+    const {quantity} = cartItem;
+    //TODO: Check before if product is not outOfStockProduct, send message "Product out of stock"
+    const updatedCartItem = await cartItem.update({quantity: quantity - 1 })
+    
+    if(!updatedCartItem) return next(new AppError('Error while decreasing cart item quantity', 404));
+
+    await updatedCartItem.save();
+
+    responseReturn(res,200,{message: "Quantity Updated", quantity: updatedCartItem.quantity })
+});
+
+exports.deleteCartItem = catchAsyncError(async (req, res) => {
+
+    const cartItem = await CartItem.findByPk(req.params.id);
+
+    if(!cartItem) return next(new AppError('Cart Item not found', 404));
+
+    await cartItem.destroy();
+
+    responseReturn(res,200,{message: "Cart-item Remove Successfully" })
+
+});
+
+

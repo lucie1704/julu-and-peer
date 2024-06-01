@@ -1,28 +1,22 @@
 const express = require('express');
 const cartItemController = require('../../controllers/cartItemController');
 const authMiddleware = require('../../middleware/authMiddleware');
-const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
 
 // Protect all routes after this middleware
-router.use(authMiddleware);
-
-// Here do other routes
-
-//Need admin role to get access to these routes
-router.use(autorizationMiddleware('admin'));
-
+// router.use(authMiddleware);
 router
     .route('/')
     .post(cartItemController.createCartItem)
-    .get(cartItemController.getAllCartItems);
 
 router
-    .route('/:id')
-    .get(cartItemController.getCartItemById)
-    .patch(cartItemController.updateCartItem)
-    .delete(cartItemController.deleteCartItem);
+    .route('/quantity-inc/:id')
+    .put(cartItemController.cartItemQuantityInc)
+
+router
+    .route('/quantity-dec/:id')
+    .put(cartItemController.cartItemQuantityDec)
 
 router
     .delete('/delete/:id', cartItemController.deleteCartItem);

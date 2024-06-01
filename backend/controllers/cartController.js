@@ -1,4 +1,58 @@
-const Cart = require('../models/cart');
+const { Cart, CartItem, Product, ProductGenre, ProductFormat,ProductArtist} = require('../models');
+const AppError = require('./../utils/appError');
+const catchAsyncError = require('../utils/catchAsyncError');
+const {responseReturn} = require('../utils/response');
+
+exports.getCartsProducts = catchAsyncError(async (req, res, next) => {
+    const { customerId } = req.params;
+
+    const cart = await Cart.findOne({
+        where: { customerId },
+        include: {
+            model: CartItem,
+            include: {
+                model: Product,
+                attributes: ['id', 'name', 'description', 'price', 'availableStock', 'discount'],
+                include: [
+                    { model: ProductGenre },
+                    { model: ProductFormat },
+                    { model: ProductArtist }
+                ]
+            }
+        }
+    });
+
+    if (!cart) return next(new AppError('Cart not found', 404));
+
+    let totalPrice = 0;
+    let totalDiscount = 0;
+    const outOfStockProducts = [];
+
+    const buyProductCartItem = cart.CartItems.filter(cartItem => {
+        const product = cartItem.Product;
+        if (product.availableStock >= cartItem.quantity) {
+          totalPrice += product.price * cartItem.quantity;
+          totalDiscount += product.discount * cartItem.quantity;
+          return true;
+        } else {
+          outOfStockProductIds.push(product.id);
+          return false;
+        }
+    });
+
+    const cartTotalProductCount = cart.CartItems.length;
+    const shippingFee = 50;
+
+    responseReturn(res, 200, {
+        cart,
+        totalPrice,
+        totalDiscount,
+        cartTotalProductCount,
+        shippingFee,
+        outOfStockProducts,
+        buyProductCartItem
+    });
+});
 
 exports.getAllCarts = async (req, res) => {
     try {
@@ -22,7 +76,7 @@ exports.getCartById = async (req, res) => {
     }
 };
 
-exports.createCart = async (req, res) => {
+exports.createCart = async (req, res, next) => {
     try {
         const cart = await Cart.create(req.body);
         res.status(201).json(cart);

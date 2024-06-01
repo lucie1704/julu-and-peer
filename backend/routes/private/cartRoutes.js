@@ -6,12 +6,12 @@ const router = express.Router();
 
 
 // Protect all routes after this middleware
-router.use(authMiddleware);
+// router.use(authMiddleware);
 
 // Here do other routes
 
 //Need admin role to get access to these routes
-router.use(autorizationMiddleware('admin'));
+// router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')
@@ -23,6 +23,8 @@ router
     .get(cartController.getCartById)
     .patch(cartController.updateCart)
     .delete(cartController.deleteCart);
+
+router.get('/getcartsproducts/:customerId',cartController.getCartsProducts)
 
 router
     .delete('/delete/:id', cartController.deleteCart);
