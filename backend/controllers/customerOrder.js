@@ -1,0 +1,137 @@
+const {responseReturn} = require('../utils/response');
+const { CustomerOrder, Cart, CartItem, Product} = require('../models');
+const catchAsyncError = require('../utils/catchAsyncError');
+const AppError = require('./../utils/appError');
+
+exports.createPayment = catchAsyncError(async (req, res, next) => {
+  // const { price } = req.body
+
+  //TODO: Use stripe
+  // const payment = await stripe.paymentIntents.create({
+  //   amount: price * 100,
+  //   currency: 'usd',
+  //   automatic_payment_methods: {
+  //       enabled: true
+  //   }
+  // })
+  // if(!payment) return next(new AppError('Payment faills, try agian !', 404));
+
+  // responseReturn(res, 200, { clientSecret: payment.client_secret })
+
+});
+
+exports.paymentCheck = catchAsyncError (async (id) => {
+
+  const customerOrder = await CustomerOrder.findByPk(id)
+
+  if(!customerOrder) return next(new AppError('Customer order not found', 404));
+
+  let updatedOrder = null;
+  if (customerOrder.paymentStatus === 'unpaid') {
+    updatedOrder = await customerOrder.update({deliveryStatus: 'cancelled'})
+  }
+
+  if(!updatedOrder) return next(new AppError('Error while updating  customer order', 404));
+
+  return true
+});
+
+exports.orderConfirm = catchAsyncError(async (req, res, next) => {
+  const {orderId} = req.params
+
+  const customerOrder = await CustomerOrder.findByPk(orderId)
+
+  if(!customerOrder) return next(new AppError('Customer order Item not found', 404));
+
+  const updatedOrder = await customerOrder.update({ paymentStatus: 'paid', deliveryStatus : 'pending'})
+  if(!updatedOrder) return next(new AppError('Error while updating  customer order', 404));
+
+  responseReturn(res,200, {
+    message: 'Success'
+  })
+});
+
+exports.placeOrder = catchAsyncError(async (req, res, next) => {
+  const { shippingFee, products, shippingInfo, customerId } = req.body;
+
+  if (!products || products.length === 0) {
+    return next(new AppError('No products provided', 400));
+  }
+  const customerOrderProducts = [];
+  products.forEach(group => {
+    group.products.forEach(item => {
+      const productInfo = {
+        productId: item.productInfo.id,
+        name: item.productInfo.name,
+        description: item.productInfo.description,
+        price: item.productInfo.price * item.quantity,
+        quantity: item.quantity
+      };
+      customerOrderProducts.push(productInfo);
+    });
+  });
+
+  const orderTotalPrice = customerOrderProducts.reduce((acc, item) => acc + (item.price * item.quantity), 0) + shippingFee;
+
+  const order = await CustomerOrder.create({
+    customerId,
+    shippingInfo,
+    products: customerOrderProducts,
+    price: orderTotalPrice,
+    paymentStatus: 'unpaid',
+    deliveryStatus: 'pending',
+    date: new Date()
+  });
+
+  if (!order) {
+    return next(new AppError('Error while creating order', 404));
+  }
+
+  setTimeout(() => {
+    exports.paymentCheck(order.id, next);
+  }, 15000);
+
+  responseReturn(res, 200, { message: "Order Placed Successfully", orderId: order.id });
+});
+
+exports.getOrders = catchAsyncError(async (req, res, next) => {
+  const { customerId, status } = req.params;
+
+  let orders;
+
+  if (status !== 'all') {
+      orders = await CustomerOrder.findAll({
+          where: {
+              customerId,
+              deliveryStatus: status
+          }
+      });
+  } else {
+      orders = await CustomerOrder.findAll({
+          where: {
+              customerId
+          }
+      });
+  }
+
+  if (!orders.length) {
+      return next(new AppError('No orders found', 404));
+  }
+
+  responseReturn(res, 200, {
+      orders
+  });
+});
+
+exports.getOrderDetails = catchAsyncError(async (req, res, next) => {
+  const {orderId} = req.params
+
+  const order = await CustomerOrder.findByPk(orderId)
+
+  if(!order) return next(new AppError('Customer order not found', 404));
+
+  responseReturn(res,200, {
+    order
+  })
+});
+

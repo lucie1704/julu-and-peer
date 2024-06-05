@@ -12,6 +12,7 @@ const paymentMethodRouter = require('./routes/private/paymentMethodRoutes');
 const cartRouter = require('./routes/private/cartRoutes');
 const cartItemRouter = require('./routes/private/cartItemRoutes');
 const wishlistRouter = require('./routes/private/wishlistRoutes');
+const orderRouter = require('./routes/private/orderRoutes');
 const AppError = require('./utils/appError');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -111,6 +112,7 @@ app.use('/api/v1/paymentmethods', paymentMethodRouter);
 app.use('/api/v1/carts', cartRouter);
 app.use('/api/v1/cartitem', cartItemRouter);
 app.use('/api/v1/wishlist', wishlistRouter);
+app.use('/api/v1/customerorder', orderRouter);
 
 // Handle requests for routes that are not defined in the application.
 app.all('*', (req, res, next) => {
