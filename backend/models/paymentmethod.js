@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       PaymentMethod.belongsTo(models.CustomerAddress, { foreignKey: 'billingAddressId', onDelete: 'CASCADE' });
+      PaymentMethod.hasMany(models.OrderBilling);
     }
   }
   PaymentMethod.init({
