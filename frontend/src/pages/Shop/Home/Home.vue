@@ -12,5 +12,8 @@ import TheWelcome from '~/components/TheWelcome.vue';
 <template>
   <div>
     <TheWelcome />
+    <v-btn prepend-icon="fa fa-file">
+      Test button with very cool icon from fontawesome
+    </v-btn>
   </div>
 </template>
