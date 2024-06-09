@@ -32,10 +32,6 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
-    addingDate: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false

@@ -21,6 +21,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DECIMAL
       },
+      discount: {
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+        defaultValue: 0
+      },
       availableStock: {
         allowNull: false,
         type: Sequelize.INTEGER
