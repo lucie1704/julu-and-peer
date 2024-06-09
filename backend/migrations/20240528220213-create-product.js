@@ -25,6 +25,30 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      genreId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ProductGenres',
+          key: 'id'
+        }
+      },
+      formatId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ProductFormats',
+          key: 'id'
+        }
+      },
+      artistId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ProductArtists',
+          key: 'id'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

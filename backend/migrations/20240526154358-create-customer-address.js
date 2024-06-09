@@ -10,7 +10,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       customerId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Customers',
+          key: 'id'
+        },
+        allowNull: false
       },
       addressType: {
         type: Sequelize.STRING
