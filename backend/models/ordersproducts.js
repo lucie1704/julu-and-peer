@@ -17,7 +17,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   OrdersProducts.init({
-    // test: DataTypes.STRING
+    priceWhenOrdering: {
+      type: DataTypes.DECIMAL,
+      allowNull: false
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'OrdersProducts',

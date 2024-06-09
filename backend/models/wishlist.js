@@ -16,7 +16,23 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Wishlist.init({
-    title: DataTypes.STRING
+    name: DataTypes.STRING,
+    slug: {
+      type: String,
+      required : true
+    },
+    image: {
+      type: String,
+      required : true
+    },
+    rating: {
+      type: Number,
+      default : 0,
+      validate: {
+        max: 5,
+        min: 0
+      },
+    },
   }, {
     sequelize,
     modelName: 'Wishlist',

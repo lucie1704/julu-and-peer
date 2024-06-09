@@ -15,18 +15,12 @@ module.exports = (sequelize, DataTypes) => {
       Order.belongsToMany(models.Product);
       Order.belongsTo(models.OrderBilling, { through: models.OrdersProducts });
       Order.belongsTo(models.Shipping);
+      Order.belongsTo(models.Customer);
     }
   }
   Order.init({
-    // orderId: {
-    //   type: DataTypes.INTEGER,
-    //   references: {
-    //     model: 'Orders',
-    //     key: 'id'
-    //   },
-    //   allowNull: false,
-    // },
-    status: DataTypes.STRING
+    paymentStatus: DataTypes.STRING,
+    date: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Order',
