@@ -1,6 +1,7 @@
 'use strict';
 const {
-  Model
+  Model,
+  SMALLINT
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Wishlist extends Model {
@@ -12,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Wishlist.belongsTo(models.Customer);
-      Wishlist.belongsToMany(models.Product);
+      Wishlist.belongsToMany(models.Product, { through: 'WishlistsProducts' });
     }
   }
   Wishlist.init({
@@ -23,11 +24,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     image: {
       type: String,
-      required : true
+      required : false
     },
     rating: {
-      type: Number,
-      default : 0,
+      type: SMALLINT,
+      // default : 0,
       validate: {
         max: 5,
         min: 0
