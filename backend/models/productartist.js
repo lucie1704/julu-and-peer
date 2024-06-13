@@ -25,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ProductArtist',
+    defaultScope: {
+      attributes: { exclude:
+        [
+        'createdAt',
+        'updatedAt',
+      ]
+      },
+    },
   });
   return ProductArtist;
 };

@@ -57,21 +57,32 @@ exports.placeOrder = catchAsyncError(async (req, res, next) => {
   if (!products || products.length === 0) {
     return next(new AppError('No products provided', 400));
   }
-  const customerOrderProducts = [];
-  products.forEach(group => {
-    group.products.forEach(item => {
-      const productInfo = {
-        productId: item.productInfo.id,
-        name: item.productInfo.name,
-        description: item.productInfo.description,
-        price: item.productInfo.price * item.quantity,
-        quantity: item.quantity
-      };
-      customerOrderProducts.push(productInfo);
-    });
+
+  const customerOrderProducts = products.map(item => ({
+    productId: item.id,
+    name: item.name,
+    description: item.description,
+    price: item.price * item.quantity,
+    quantity: item.quantity
+  }));
+
+  const orderTotalPrice = customerOrderProducts.reduce((acc, item) => acc + item.price, 0) + shippingFee;
+ 
+  const existingOrder = await CustomerOrder.findOne({
+    where: {
+      customerId,
+      deliveryStatus: 'pending',
+      paymentStatus: 'unpaid'
+    }
   });
 
-  const orderTotalPrice = customerOrderProducts.reduce((acc, item) => acc + (item.price * item.quantity), 0) + shippingFee;
+  if (existingOrder) {
+    const allProductsFound = customerOrderProducts.every(product => {
+      return existingOrder.products.some(orderProduct => orderProduct.id === product.id);
+      });
+
+    if (allProductsFound) return next(new AppError('Order already exists with the same products:', 404));
+  }
 
   const order = await CustomerOrder.create({
     customerId,

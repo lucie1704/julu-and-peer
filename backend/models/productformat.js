@@ -25,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ProductFormat',
+    defaultScope: {
+      attributes: { exclude:
+        [
+        'createdAt',
+        'updatedAt',
+      ]
+      },
+    },
   });
   return ProductFormat;
 };

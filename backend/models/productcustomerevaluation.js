@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     comment: {
       type: DataTypes.STRING
     },
-    note: {
+    rating: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {

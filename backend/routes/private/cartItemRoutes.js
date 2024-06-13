@@ -8,17 +8,11 @@ const router = express.Router();
 // router.use(authMiddleware);
 router
     .route('/')
-    .post(cartItemController.createCartItem)
+    .post(cartItemController.addToCartItem)
 
 router
-    .route('/quantity-inc/:id')
-    .put(cartItemController.cartItemQuantityInc)
-
-router
-    .route('/quantity-dec/:id')
-    .put(cartItemController.cartItemQuantityDec)
-
-router
-    .delete('/delete/:id', cartItemController.deleteCartItem);
+    .route('/:id')
+    .patch(cartItemController.cartItemQuantityUpdate)
+    .delete(cartItemController.deleteCartItem);
 
 module.exports = router;

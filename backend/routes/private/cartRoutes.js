@@ -24,6 +24,8 @@ router
     .patch(cartController.updateCart)
     .delete(cartController.deleteCart);
 
+router.get('/getcustomercart/:customerId',cartController.getCartByCustomerId)
+
 router.get('/getcartsproducts/:customerId',cartController.getCartsProducts)
 
 router

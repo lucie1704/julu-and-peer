@@ -39,6 +39,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    imageSrc: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    imageAlt: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    reviewCount: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     genreId: {
       type: DataTypes.INTEGER,
       references: {
@@ -66,6 +78,17 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Product',
+    defaultScope: {
+      attributes: { exclude:
+        [
+        'genreId',
+        'formatId',
+        'artistId',
+        'createdAt',
+        'updatedAt',
+      ]
+      },
+    },
   });
   return Product;
 };
