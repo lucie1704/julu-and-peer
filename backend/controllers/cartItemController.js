@@ -51,9 +51,7 @@ exports.deleteCartItem = catchAsyncError(async (req, res) => {
     if(!cartItem) return next(new AppError('Cart Item not found', 404));
 
     await cartItem.destroy();
-
-    responseReturn(res,200,{message: "Cart-item Remove Successfully" })
-
+    responseReturn(res,204,{message: "Cart-item Remove Successfully" })
 });
 
 

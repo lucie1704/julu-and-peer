@@ -212,6 +212,7 @@ const submitForm = async () => {
 
   try {
     await store.dispatch('order/placeOrder', orderData)
+    //TODO: DELETE CART
   } catch (error) {
     console.error("Error to confirm order : ", error)
   }
