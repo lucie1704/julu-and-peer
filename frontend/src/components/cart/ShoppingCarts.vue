@@ -74,7 +74,7 @@
                     </div>
                   </div>
 
-                  <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
+                  <div v-if="cartsProducts" class="border-t border-gray-200 px-4 py-6 sm:px-6">
                     <div class="flex justify-between text-base font-medium text-gray-900">
                       <p>Subtotal</p>
                       <p>{{ cartsProducts?.totalPrice }}</p>

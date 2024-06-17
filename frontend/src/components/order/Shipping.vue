@@ -89,7 +89,7 @@
           </li>
         </ul>
 
-        <div class="mt-6 border-t border-gray-200 pt-4">
+        <div v-if="cartsProducts" class="mt-6 border-t border-gray-200 pt-4">
           <div class="flex justify-between text-base font-medium text-gray-900">
             <p>Subtotal</p>
             <p>{{ cartsProducts?.totalPrice }}</p>
@@ -129,6 +129,8 @@ import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex'
 import { CartProductI } from '../../dto/cart';
 import { OrderProductI, PlaceOrderI } from '../../dto/order';
+import router from '../../routes/router';
+
 
 const store = useStore()
 
@@ -213,6 +215,11 @@ const submitForm = async () => {
   try {
     await store.dispatch('order/placeOrder', orderData)
     //TODO: DELETE CART
+    await store.dispatch('cart/deleteCart', cartsProducts.value?.cart.id)
+
+    router.push('/');
+      // @ts-ignore
+      cartsProducts.value = {}
   } catch (error) {
     console.error("Error to confirm order : ", error)
   }
