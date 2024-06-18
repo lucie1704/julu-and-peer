@@ -1,0 +1,17 @@
+extends baseEmail
+
+block content
+  p Bonjour #{firstName},
+  p Bienvenue chez julu-and-peer, nous sommes ravis de vous avoir parmi nous 🎉🙏
+  p Nous proposons différents produits de vinyle, des collections rares !
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`, target='_blank') Cliquer sur ce lien pour valider votre accompte
+  p Si vous avez besoin d'aide, n'hésitez pas à nous contacter !
+  p - julu-and-peer Shopping Paris-France
