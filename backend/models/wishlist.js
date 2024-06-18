@@ -11,8 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Wishlist.belongsTo(models.Customer, { foreignKey: 'customerId', onDelete: 'CASCADE' });
-      Wishlist.belongsTo(models.Product, { foreignKey: 'productId', onDelete: 'CASCADE' });
-
+      Wishlist.belongsToMany(models.Product, { foreignKey: 'productId', onDelete: 'CASCADE', through:"WishlistsProducts" });
     }
   }
   Wishlist.init({

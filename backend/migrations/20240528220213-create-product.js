@@ -30,6 +30,30 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      genreId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ProductGenres',
+          key: 'id'
+        }
+      },
+      formatId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ProductFormats',
+          key: 'id'
+        }
+      },
+      artistId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ProductArtists',
+          key: 'id'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -37,6 +61,18 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      imageSrc: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
+      imageAlt: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
+      reviewCount: {
+        allowNull: true,
+        type: Sequelize.INTEGER
       }
     });
   },

@@ -20,7 +20,7 @@ module.exports = {
       comment: {
         type: Sequelize.STRING
       },
-      note: {
+      rating: {
         type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
