@@ -7,6 +7,8 @@ const {createMongoUser, updateMongoUser} = require("../dtos/denormalization/user
 const {
   Model
 } = require('sequelize');
+const logger = require('../utils/logger');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -30,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         .digest('hex');
       this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
       
-      console.log("Le lien pour renouveller le mot-de-passe", `http://localhost:8080/resetPassword/${resetToken}`)
+      logger.info("Le lien pour renouveller le mot-de-passe", `http://localhost:8080/resetPassword/${resetToken}`)
 
       await this.save();
 
@@ -54,7 +56,8 @@ module.exports = (sequelize, DataTypes) => {
       this.emailConfirmExpires = Date.now() + 24 * 60 * 60 * 1000;
       this.emailConfirmed = false;
 
-      console.log("Le lien pour confirmer l'email:", `http://localhost:8080/confirmEmail/${confirmToken}`)
+      logger.info("Le lien pour confirmer l'email:", `http://localhost:8080/confirmEmail/${confirmToken}`)
+
 
       return confirmToken;
     }
@@ -80,7 +83,6 @@ module.exports = (sequelize, DataTypes) => {
       }
   
       if (this.failAccess >= 3 && !this.maxFailedLoginAt) {
-        console.log("set maxfailedLoginAt")
         this.maxFailedLoginAt = new Date();
         await this.save();
       }
@@ -202,11 +204,9 @@ module.exports = (sequelize, DataTypes) => {
         const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
         user.password = hash;
         user.passwordConfirm = undefined;
-        console.log('beforeSave has been called on User Model');
       },
       beforeUpdate: async (user,  { fields }) => {
         if (fields.includes("password")) {
-          console.log('beforeUpdate has been called on User Model');
           const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
           user.passwordConfirm = undefined;
           user.password = hash;
@@ -214,11 +214,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       afterCreate: async (user) => {
         await createMongoUser(user)
-        console.log("User created in mongoDB")
       },
       afterUpdate: async (user, ) => {
         await updateMongoUser(user)
-        console.log("afterUpdate ")
       },
       
     },
