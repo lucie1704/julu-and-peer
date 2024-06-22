@@ -9,6 +9,15 @@ import router from '~/router/router';
 import App from './App.vue';
 
 const vuetify = createVuetify({
+  defaults: {
+    global: {
+      ripple: false,
+    },
+    VTextField: {
+      density: 'comfortable',
+      variant: 'outlined',
+    },
+  },
   components,
   directives,
 });

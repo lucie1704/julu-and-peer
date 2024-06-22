@@ -7,4 +7,17 @@ const router = createRouter({
   routes: setupLayouts(generatedRoutes),
 });
 
+router.beforeEach(async (to) => {
+  if (to.meta.requiresAuth) {
+    if (!authStore.isAuthenticated) {
+      return {
+        path: '/login',
+        query: {
+          redirect: to.fullPath,
+        },
+      };
+    }
+  }
+});
+
 export default router;

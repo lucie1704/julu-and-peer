@@ -2,10 +2,10 @@ import axios from 'axios';
 import { ConfirmEmail } from '../dto/confirmEmail';
 import { UserLogin } from '../dto/login';
 import { ResetPassword } from '../dto/ResetPassword';
+import { UserSignUp } from '../dto/signUp';
 import { SignUpResponse } from '../dto/signUpResponse';
 import { UpdatePassword } from '../dto/updatePassword';
 import { UserEmail } from '../dto/UserEmail';
-import { UserSignUp } from './../dto/signup';
 
 const ROOT_URL = 'http://localhost:3000/api/v1/auth';
 const USER_ROOT_URL = 'http://localhost:3000/api/v1/users';

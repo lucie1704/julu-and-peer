@@ -2,7 +2,7 @@
 import { ActionTree, Commit, GetterTree, Module, MutationTree } from 'vuex';
 import cartAPI from '../../api/cart';
 import { CartI, CartItemI, CartProductI, createCartI } from '../../dto/cart';
-import router from '../../routes/router';
+// import router from '../../routes/router';
 
 interface State {
   cart?: CartI;
@@ -61,17 +61,17 @@ const actions: ActionTree<State, any> = {
       console.error('Failed to add CartItem:', error);
     }
   },
-  async getCartsProducts({ commit }: { commit: Commit }, customerId: string) {
-    // Retrieve JWT token from auth module (placeholder)
-    const jwt_token = ''; 
-    try {
-      const cartProducts = await cartAPI.getCartsProducts(jwt_token, customerId);
-      commit('setCartProduct', cartProducts);
-    }
- catch (error) {
-      console.error('Failed to fetch cart Products:', error);
-    }
-  },
+//   async getCartsProducts({ commit }: { commit: Commit }, customerId: string) {
+//     // Retrieve JWT token from auth module (placeholder)
+//     const jwt_token = ''; 
+//     try {
+//       const cartProducts = await cartAPI.getCartsProducts(jwt_token, customerId);
+//       commit('setCartProduct', cartProducts);
+//     }
+//  catch (error) {
+//       console.error('Failed to fetch cart Products:', error);
+//     }
+//   },
   
   async cartItemQuantityUpdate({ commit }: { commit: Commit }, payload : {cartItemId: string, newQuantity: number}) {
     // Retrieve JWT token from auth module (placeholder)

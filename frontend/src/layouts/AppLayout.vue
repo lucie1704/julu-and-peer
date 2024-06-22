@@ -11,11 +11,10 @@
     <router-view />
   </v-main>
   <v-footer
-    app
-    color="green"
+    color="blue"
     class="d-flex flex-column"
   >
-    <div class="text-center w-100">
+    <div class="text-center w-full">
       {{ new Date().getFullYear() }} — <strong>ESGI</strong>
     </div>
   </v-footer>
