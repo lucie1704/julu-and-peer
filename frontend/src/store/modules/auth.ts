@@ -4,10 +4,10 @@ import authAPI from '../../api/auth';
 import { ConfirmEmail } from '../../dto/confirmEmail';
 import { UserLogin } from '../../dto/login';
 import { ResetPassword } from '../../dto/ResetPassword';
-import { UserSignUp } from '../../dto/signup';
+import { UserSignUp } from '../../dto/signUp';
 import { UpdatePassword } from '../../dto/updatePassword';
 import { UserEmail } from '../../dto/UserEmail';
-import router from '../../routes/router';
+// import router from '../../routes/router';
 
 interface State {
   jwt_token: string | null;
