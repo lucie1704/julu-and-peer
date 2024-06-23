@@ -8,9 +8,12 @@
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod';
 import { useField, useForm } from 'vee-validate';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import * as z from 'zod';
-import { UserLogin } from '~/dto/login';
+import { UserLogin } from '~/dto';
+import { useAuthStore } from '~/stores/auth';
+
+const authStore = useAuthStore();
 
 const showErrors = ref(false);
 const isPasswordVisible = ref(false);
@@ -22,17 +25,17 @@ const validationSchema = toTypedSchema(
   })
 );
 
-const { validate, errors, values } = useForm({ validationSchema });
+const { validate, errors, values } = useForm<UserLogin>({ validationSchema });
 
-const { value: email } = useField('email');
-const { value: password } = useField('password');
+const { value: email } = useField<string>('email');
+const { value: password } = useField<string>('password');
 
 const onSubmit = async() => {
   showErrors.value = true;
   const validateForm = await validate();
 
   if (validateForm.valid) {
-    console.log('Form is valid!', values);
+    authStore.login(values);
   }
 };
 

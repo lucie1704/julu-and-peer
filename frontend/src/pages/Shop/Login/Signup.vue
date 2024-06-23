@@ -9,9 +9,11 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import { useField, useForm } from 'vee-validate';
 import { ref } from 'vue';
-import { useStore } from 'vuex';
 import * as z from 'zod';
-import { UserSignUp } from '~/dto/signUp';
+import { SignUp } from '~/dto';
+import { useAuthStore } from '~/stores/auth';
+
+const authStore  = useAuthStore();
 
 const isPasswordVisible = ref(false);
 const isPasswordConfirmationVisible = ref(false);
@@ -37,7 +39,7 @@ const validationSchema = toTypedSchema(
   })
 );
 
-const { validate, errors } = useForm({ validationSchema });
+const { validate, errors, values } = useForm<SignUp>({ validationSchema });
 
 const { value: firstname }              = useField<string>('firstname');
 const { value: lastname }               = useField<string>('lastname');
@@ -49,12 +51,9 @@ const submitForm = async() => {
   showErrors.value = true;
   const formValidation = await validate();
 
-  if (!formValidation.valid) {
-    console.log('fail');
-    return;
+  if (formValidation.valid) {
+    authStore.signup(values);
   }
-  
-  console.log('success');
 };
 </script>
   
