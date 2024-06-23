@@ -56,9 +56,8 @@ module.exports = (sequelize, DataTypes) => {
       this.emailConfirmExpires = Date.now() + 24 * 60 * 60 * 1000;
       this.emailConfirmed = false;
 
-      logger.info("Le lien pour confirmer l'email:", `http://localhost:8080/confirmEmail/${confirmToken}`)
-
-
+      logger.info("Le lien pour confirmer l'email:", `http://localhost:8080/confirm-email/${confirmToken}`)
+      
       return confirmToken;
     }
   
@@ -111,12 +110,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User.init({
-    name: {
+    firstname: {
       type: DataTypes.STRING(45),
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: 'Please tell us your name!'
+          msg: 'Please tell us your firstname!'
+        }
+      }
+    },
+    lastname: {
+      type: DataTypes.STRING(45),
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Please tell us your lastname!'
         }
       }
     },

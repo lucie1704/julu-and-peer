@@ -11,13 +11,14 @@ import { useField, useForm } from 'vee-validate';
 import { ref } from 'vue';
 import * as z from 'zod';
 import { SignUp } from '~/dto';
-import { useAuthStore } from '~/stores/auth';
+import { useAuthStore } from '~/stores';
 
 const authStore  = useAuthStore();
 
 const isPasswordVisible = ref(false);
 const isPasswordConfirmationVisible = ref(false);
 const showErrors = ref(false);
+const displayConfirmModal = ref(false);
 
 const validationSchema = toTypedSchema(
   z.object({
@@ -53,6 +54,7 @@ const submitForm = async() => {
 
   if (formValidation.valid) {
     authStore.signup(values);
+    displayConfirmModal.value = true;
   }
 };
 </script>
@@ -156,6 +158,29 @@ const submitForm = async() => {
         Me connecter
       </router-link>
     </p>
+
+    <v-dialog
+      v-model="displayConfirmModal"
+      max-width="500"
+      persistent
+    >
+      <v-card
+        :title="`hey ${firstname}`"
+        text="Nous t'avons envoyé un email pour valider ton compte."
+      >
+        <template #actions>
+          <v-spacer />
+          <v-btn
+            color="blue"
+            variant="flat"
+            to="/"
+            @click="displayConfirmModal = false"
+          >
+            OK
+          </v-btn>
+        </template>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
   
