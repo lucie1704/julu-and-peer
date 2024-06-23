@@ -425,16 +425,15 @@ import {
   TransitionRoot,
 } from '@headlessui/vue';
 import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/vue/24/outline';
-import { computed, onMounted, ref  } from 'vue';
-//@ts-ignore
-import { useStore } from 'vuex';
+import { computed, ref  } from 'vue';
+import { useAuthStore } from '~/stores/auth'; 
 
-const store = useStore();
+const authStore = useAuthStore();
 const open = ref(false);
 const cartTotalProductCount = ref<number>(0);
 
-const isLoggedIn = computed(() => store.getters['auth/isLoggedIn']);
-const logout = () => store.dispatch('auth/logout');
+const isLoggedIn = computed(() => authStore.isLoggedIn);
+const logout = () => authStore.logout();
 
 // onMounted(async () => {
 //   await store.dispatch('cart/getCartsProducts', 27);

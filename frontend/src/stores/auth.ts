@@ -33,7 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
         if (data.status) {
           status.value = data.status;
           username.value = data.data.user;
-          message.value = 'A mail was sent to your Email. Click to the link to validate your account.';
+          message.value = 'Nous t\'avons envoyé un email pour valider ton compte.';
           router.push('/confirmModal');
         }
         else {
@@ -55,8 +55,8 @@ export const useAuthStore = defineStore('auth', () => {
     };
     
     const logout = async() => {
-        const status = await authAPI.logout();
-        if (status) {
+        const newStatus = await authAPI.logout();
+        if (newStatus) {
           jwtToken.value = null;
           window.localStorage.removeItem('jwt_token');
           router.push('/');

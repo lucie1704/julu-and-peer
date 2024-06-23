@@ -171,7 +171,7 @@ const submitForm = () => {
 
 const store = useStore();
 
-const signup = (user: UserSignUp) => store.dispatch('auth/signup', user);
+const signup = (user: SignUp) => store.dispatch('auth/signup', user);
 
 </script>
 
