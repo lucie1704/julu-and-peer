@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     const confirmEmail = async(payload: {user: ConfirmEmail, emailToken : string}) => {
-        const token = await authAPI.confirmEmail(payload.user, payload.emailToken);
+        const token = await authAPI.confirmEmail(payload.user, payload.emailToken);        
         if (token) {
           jwtToken.value = token;
           message.value = 'Your account has been successfully created !.';

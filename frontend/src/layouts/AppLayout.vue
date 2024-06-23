@@ -1,17 +1,9 @@
 <script lang="ts" setup>
-import Navbar from '~/components/Navbar.vue';
+import { Navbar } from '~/components';
 </script>
 
 <template>
   <navbar />
-  <!-- <v-app-bar title="Julu & Peer">
-    <router-link to="/about">
-      About
-    </router-link>    
-    <router-link to="/">
-      Home
-    </router-link>
-  </v-app-bar> -->
   <v-main>
     <router-view />
   </v-main>

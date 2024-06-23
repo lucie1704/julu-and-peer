@@ -33,11 +33,12 @@ const createSendToken = (user, statusCode, req, res) => {
   });
 };
 
-exports.signup = catchAsyncError(async (req, res, next) => {
-  const { name, email, password, passwordConfirm, role } = req.body;
+exports.signup = catchAsyncError(async (req, res) => {
+  const { firstname, lastname, email, password, passwordConfirm, role } = req.body;
 
   const newUser = User.build({
-    name,
+    firstname,
+    lastname,
     email,
     password,
     passwordConfirm,
@@ -48,21 +49,16 @@ exports.signup = catchAsyncError(async (req, res, next) => {
   const emailConfirmToken = newUser.createEmailConfirmToken();
 
   // Construct confirmation email URL
-  const confirmEmailUrl = `http://localhost:8080/confirmEmail/${emailConfirmToken}`;
+  const confirmEmailUrl = `http://localhost:8080/confirm-email/${emailConfirmToken}`;
 
   // Send email confirmation
   await new Email(newUser, confirmEmailUrl).sendWelcome();
 
-   // Save the new user to the database
-   await newUser.save();
+  // Save the new user to the database
+  await newUser.save();
 
   // Respond with success
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user: newUser.name
-    }
-  });
+  res.status(200).json(newUser);
 });
 
 exports.emailConfirm = catchAsyncError(async (req, res, next) => {

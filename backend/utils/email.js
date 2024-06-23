@@ -5,7 +5,7 @@ const {convert} = require('html-to-text');
 module.exports = class Email {
   constructor(user, url) {
     this.to = user.email;
-    this.firstName = user.name.split(' ')[0];
+    this.firstName = user.firstname;
     this.url = url;
     this.from = `${process.env.USERNAME} <${process.env.EMAIL_FROM}>`;
   }
@@ -51,7 +51,7 @@ module.exports = class Email {
   async sendWelcome() {
     await this.send(
     'welcome',
-    'Welcome to the julu-and-peer!'
+    'Bienvenue chez Julu&Peer !'
     );
   }
 

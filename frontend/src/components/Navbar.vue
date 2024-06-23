@@ -426,7 +426,7 @@ import {
 } from '@headlessui/vue';
 import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { computed, ref  } from 'vue';
-import { useAuthStore } from '~/stores/auth'; 
+import { useAuthStore } from '~/stores'; 
 
 const authStore = useAuthStore();
 const open = ref(false);

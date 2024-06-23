@@ -1,4 +1,4 @@
 export interface ConfirmEmail {
   password: string;
-  passwordConfirm: string
+  passwordConfirmation: string
 }
