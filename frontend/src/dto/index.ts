@@ -1,5 +1,6 @@
 export * from './cart';
 export * from './confirmEmail';
+export * from './enum';
 export * from './login';
 export * from './order';
 export * from './product';

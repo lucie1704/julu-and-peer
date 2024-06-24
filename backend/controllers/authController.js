@@ -109,7 +109,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   });
   
 
-  if(!user) return next(new AppError('This email does not existe !', 400))
+  if(!user) return next(new AppError('This email does not exist !', 400))
 
   if(!user.emailConfirmed) return next(new AppError('Your account is not confirmed. Please confirm your email address !', 400))
 
