@@ -6,18 +6,15 @@
 </route>
 
 <script setup lang="ts">
-import TheWelcome from '~/components/TheWelcome.vue';
-
-async () => {
-  //my call api
-};
 </script>
 
 <template>
   <div>
-    <TheWelcome />
-    <v-btn prepend-icon="fa fa-file">
-      Test button with very cool icon from fontawesome
+    <v-btn
+      color="blue"
+      prepend-icon="fa fa-file"
+    >
+      Ce bouton ne fait rien mais il a une icone fontawesome
     </v-btn>
   </div>
 </template>

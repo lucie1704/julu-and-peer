@@ -2,9 +2,13 @@ const mongoose = require('mongoose');
 const logger = require('../../utils/logger');
 
 const userSchema = new mongoose.Schema({
-  name: {
+  firstname: {
     type: String,
-    required: [true, 'Please tell us your name!']
+    required: [true, 'Please tell us your firstname!']
+  },
+  lastname: {
+    type: String,
+    required: [true, 'Please tell us your lastname!']
   },
   email: {
     type: String,

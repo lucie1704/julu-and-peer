@@ -1,20 +1,23 @@
 <route lang="yaml">
-    path: /signup
-    name: signup
-    meta:
-      layout: AppLayout
+  path: /reset-password/:token
+  name: reset-password
+  meta:
+    layout: AppLayout
 </route>
 
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod';
 import { useField, useForm } from 'vee-validate';
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 import * as z from 'zod';
-import { SignUp } from '~/dto';
+import { ResetPassword } from '~/dto';
 import { useAuth } from '~/stores';
 
 const authStore = useAuth();
+const route = useRoute();
 
+const emailToken = ref<string>(route.params.token as string);
 const isPasswordVisible = ref(false);
 const isPasswordConfirmationVisible = ref(false);
 const showErrors = ref(false);
@@ -22,12 +25,6 @@ const displayConfirmModal = ref(false);
 
 const validationSchema = toTypedSchema(
   z.object({
-    firstname: z.string(),
-    lastname: z.string(),
-    email: z.string()
-      .email({ message: 'Email invalide' })
-      .min(5, { message: 'Email trop courte' })
-      .max(30, { message: 'Email trop longue' }),
     password: z.string()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{12,}$/, {
         message: '12 caractères minimum avec au moins 1 majuscule, 1 minucule, 1 chiffre et 1 caractère spécial'
@@ -40,11 +37,8 @@ const validationSchema = toTypedSchema(
   })
 );
 
-const { validate, errors, values } = useForm<SignUp>({ validationSchema });
+const { validate, errors, values } = useForm<ResetPassword>({ validationSchema });
 
-const { value: firstname }              = useField<string>('firstname');
-const { value: lastname }               = useField<string>('lastname');
-const { value: email }                  = useField<string>('email');
 const { value: password }               = useField<string>('password');
 const { value: passwordConfirmation }   = useField<string>('passwordConfirmation');
 
@@ -53,56 +47,22 @@ const submitForm = async() => {
   const formValidation = await validate();
 
   if (formValidation.valid) {
-    authStore.signup(values);
+    authStore.resetPassword({
+      user: values, 
+      emailToken: emailToken.value
+    });
     displayConfirmModal.value = true;
   }
 };
 </script>
-  
+
 <template>
   <div class="max-w-xl mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6">
     <h3 class="text-3xl font-bold my-6">
-      Nous rejoindre
+      Modifier mon mot de passe
     </h3>
     <v-form @submit.prevent="submitForm">
       <v-container>
-        <v-row>
-          <v-col cols="6">
-            <v-text-field
-              v-model="firstname"
-              name="firstname"
-              label="Prénom"
-              required
-              :error-messages="errors.firstname"
-              :hide-details="!errors.firstname"
-            />
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="lastname"
-              name="lastname"
-              label="Nom"
-              required
-              :error-messages="errors.lastname"
-              :hide-details="!errors.lastname"
-            />
-          </v-col>
-        </v-row>
-        
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="email"
-              type="email"
-              name="email"
-              label="Email"
-              required
-              :hide-details="!showErrors || !errors.email"
-              :error-messages="showErrors ? errors.email : undefined"
-            />
-          </v-col>
-        </v-row>
-
         <v-row>
           <v-col>
             <v-text-field
@@ -142,22 +102,12 @@ const submitForm = async() => {
               color="blue"
               class="my-4"
             >
-              Créer mon compte
+              Modifier mon mot de passe
             </v-btn>
           </v-col>
         </v-row>
       </v-container>
     </v-form>
-
-    <p class="text-gray-500 text-sm text-center">
-      Déjà un compte ?
-      <router-link
-        to="/login"
-        class="text-blue-500 text-sm mt-1"
-      >
-        Me connecter
-      </router-link>
-    </p>
 
     <v-dialog
       v-model="displayConfirmModal"
@@ -165,22 +115,21 @@ const submitForm = async() => {
       persistent
     >
       <v-card
-        :title="`hey ${firstname}`"
-        text="Nous t'avons envoyé un email pour valider ton compte."
+        title="Mise à jour du mot de passe !"
+        text="Ton mot de passe a bien été modifié, connecte toi !"
       >
         <template #actions>
           <v-spacer />
           <v-btn
             color="blue"
             variant="flat"
-            to="/"
+            to="/login"
             @click="displayConfirmModal = false"
           >
-            OK
+            Se connecter
           </v-btn>
         </template>
       </v-card>
     </v-dialog>
   </div>
 </template>
-  
