@@ -33,7 +33,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      passwordConfirm: {
+      passwordConfirmation: {
         type: Sequelize.STRING,
         allowNull: true
       },

@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
       this.emailConfirmed = false;
 
       logger.info("Le lien pour confirmer l'email:", `http://localhost:8080/confirm-email/${confirmToken}`)
-      
+
       return confirmToken;
     }
   
@@ -159,7 +159,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       }
     },
-    passwordConfirm: {
+    passwordConfirmation: {
       type: DataTypes.STRING(50),
       validate: {
         isPasswordMatch(value) {
@@ -190,7 +190,7 @@ module.exports = (sequelize, DataTypes) => {
     defaultScope: {
       attributes: { exclude:
         [
-        'passwordConfirm',
+        'passwordConfirmation',
         'password',
         'passwordResetToken',
         'passwordResetExpires',
@@ -211,12 +211,13 @@ module.exports = (sequelize, DataTypes) => {
       beforeCreate: async (user) => {
         const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
         user.password = hash;
-        user.passwordConfirm = undefined;
+        user.passwordConfirmation = undefined;
+        console.log('beforeSave has been called on User Model');
       },
       beforeUpdate: async (user,  { fields }) => {
         if (fields.includes("password")) {
           const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
-          user.passwordConfirm = undefined;
+          user.passwordConfirmation = undefined;
           user.password = hash;
         }
       },

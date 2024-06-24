@@ -34,16 +34,18 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signup = catchAsyncError(async (req, res) => {
-  const { firstname, lastname, email, password, passwordConfirm, role } = req.body;
-
+  const { firstname, lastname, email, password, passwordConfirmation, role } = req.body;
+  
   const newUser = User.build({
     firstname,
     lastname,
     email,
     password,
-    passwordConfirm,
+    passwordConfirmation,
     role
   });
+
+  console.log(newUser);
 
   // Generate email confirmation token
   const emailConfirmToken = newUser.createEmailConfirmToken();
@@ -227,7 +229,7 @@ exports.updateMyPassword = catchAsyncError(async (req, res, next) => {
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) return next(new AppError('Your current password is wrong.', 401));
 
   user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordConfirmation = req.body.passwordConfirmation;
   await user.save();
 
   await new Email(user, "").sendPasswordUpdated();
