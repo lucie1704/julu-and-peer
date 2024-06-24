@@ -1,5 +1,6 @@
 import { setupLayouts } from 'virtual:generated-layouts';
 import { createRouter, createWebHistory } from 'vue-router';
+import { UserRole } from '~/dto';
 import { useAuth } from '~/stores';
 import generatedRoutes from '~pages';
 
@@ -12,6 +13,9 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuth();
 
   if (to.name !== 'Login' && to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next({ name: 'login' });
+  }
+  else if (to.meta.requiresAdmin && !(authStore.isAuthenticated && authStore.hasRole(UserRole.Admin))) {
     next({ name: 'login' });
   }
   else {

@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import authAPI from '~/api/auth';
-import { ConfirmEmail, ResetPassword, SignUp, UpdatePassword, UserEmail, UserLogin } from '~/dto';
+import { ConfirmEmail, ResetPassword, SignUp, UpdatePassword, UserEmail, UserLogin, UserRole } from '~/dto';
 import router from '~/router/router';
 
 export const useAuth = defineStore('auth', () => {
     const jwtToken            = ref<string | null>(window.localStorage.getItem('jwt_token'));
+    const roles               = ref<string | null>(window.localStorage.getItem('roles'));
     const status              = ref<string | null>();
     const username            = ref<string | null>();
     const message             = ref<string | null>();
@@ -110,6 +111,8 @@ export const useAuth = defineStore('auth', () => {
             }
         }
     };
+
+    const hasRole = (userRole: UserRole) => roles.value && roles.value.includes(userRole);
     
     return { 
         getJwtToken, 
@@ -123,6 +126,7 @@ export const useAuth = defineStore('auth', () => {
         confirmEmail,
         forgotPassword,
         resetPassword,
-        updateMyPassword
+        updateMyPassword,
+        hasRole
      };
 });

@@ -1,1 +1,0 @@
-export { default as MyAboutList } from './MyAboutList.vue';

@@ -2,8 +2,8 @@
     path: /customer-profile
     name: customer-profile
     meta:
-      layout: AppLayout
       requiresAuth: true
+      layout: AppLayout
 </route>
 
 <script></script>

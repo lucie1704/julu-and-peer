@@ -6,15 +6,10 @@
 </route>
 
 <script lang="ts" setup>
-import { MyAboutList } from './components';
 </script>
 
 <template>
   <div class="about">
-    <my-about-list
-      :list="['hello', 'Pedro']"
-      title="toto"
-    />
     <h1 class="text-center">
       This is an about page
     </h1>
