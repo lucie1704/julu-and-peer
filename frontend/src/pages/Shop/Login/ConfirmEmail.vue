@@ -12,10 +12,10 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import * as z from 'zod';
 import { ConfirmEmail } from '~/dto';
-import { useAuthStore } from '~/stores';
+import { useAuth } from '~/stores';
 
 const route = useRoute();
-const authStore = useAuthStore();
+const authStore = useAuth();
 
 const emailToken = route.params.token as string;
 const isPasswordVisible = ref(false);

@@ -350,7 +350,7 @@
             <div class="ml-auto flex items-center">
               <div class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
                 <router-link
-                  v-if="!isLoggedIn"
+                  v-if="!isAuthenticated"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
                   to="/login"
                 >
@@ -361,14 +361,14 @@
                   aria-hidden="true"
                 />
                 <router-link
-                  v-if="!isLoggedIn"
+                  v-if="!isAuthenticated"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
                   to="/signup"
                 >
                   Signup
                 </router-link>
                 <router-link
-                  v-if="isLoggedIn"
+                  v-if="isAuthenticated"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
                   to="/signup"
                   @click="logout"
@@ -426,13 +426,13 @@ import {
 } from '@headlessui/vue';
 import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { computed, ref  } from 'vue';
-import { useAuthStore } from '~/stores'; 
+import { useAuth } from '~/stores'; 
 
-const authStore = useAuthStore();
+const authStore = useAuth();
 const open = ref(false);
 const cartTotalProductCount = ref<number>(0);
 
-const isLoggedIn = computed(() => authStore.isLoggedIn);
+const isAuthenticated = computed(() => authStore.isAuthenticated);
 const logout = () => authStore.logout();
 
 // onMounted(async () => {
