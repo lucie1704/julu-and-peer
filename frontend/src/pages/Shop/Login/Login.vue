@@ -11,9 +11,9 @@ import { useField, useForm } from 'vee-validate';
 import { ref } from 'vue';
 import * as z from 'zod';
 import { UserLogin } from '~/dto';
-import { useAuthStore } from '~/stores';
+import { useAuth } from '~/stores';
 
-const authStore = useAuthStore();
+const authStore = useAuth();
 
 const showErrors = ref(false);
 const isPasswordVisible = ref(false);

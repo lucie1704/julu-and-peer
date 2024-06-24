@@ -3,7 +3,7 @@
     name: customer-profile
     meta:
       layout: AppLayout
-      RequiresAuth: true
+      requiresAuth: true
 </route>
 
 <script></script>

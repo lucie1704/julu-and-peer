@@ -4,17 +4,17 @@ import authAPI from '~/api/auth';
 import { ConfirmEmail, ResetPassword, SignUp, UpdatePassword, UserEmail, UserLogin } from '~/dto';
 import router from '~/router/router';
 
-export const useAuthStore = defineStore('auth', () => {
-    const jwtToken      = ref<string | null>(window.localStorage.getItem('jwt_token'));
-    const status        = ref<string | null>();
-    const username      = ref<string | null>();
-    const message       = ref<string | null>();
+export const useAuth = defineStore('auth', () => {
+    const jwtToken            = ref<string | null>(window.localStorage.getItem('jwt_token'));
+    const status              = ref<string | null>();
+    const username            = ref<string | null>();
+    const message             = ref<string | null>();
   
-    const isLoggedIn    = computed(() => !!jwtToken.value);
-    const isStatus      = computed(() => !!status.value);
-    const getUsername   = computed(() => username.value);
-    const getMessage    = computed(() => message.value);
-    const getJwtToken   = computed(() => jwtToken.value);
+    const isAuthenticated     = computed(() => !!jwtToken.value);
+    const isStatus            = computed(() => !!status.value);
+    const getUsername         = computed(() => username.value);
+    const getMessage          = computed(() => message.value);
+    const getJwtToken         = computed(() => jwtToken.value);
     
     const login = async(user: UserLogin) => {
         const token = await authAPI.login(user);
@@ -115,7 +115,7 @@ export const useAuthStore = defineStore('auth', () => {
         getJwtToken, 
         getUsername, 
         getMessage, 
-        isLoggedIn, 
+        isAuthenticated, 
         isStatus,
         login,
         logout,
