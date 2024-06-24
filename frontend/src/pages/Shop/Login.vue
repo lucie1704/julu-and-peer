@@ -77,7 +77,7 @@ const onSubmit = async() => {
       <v-row>
         <v-col>
           <router-link
-            to="/forgotPassword"
+            to="/forgot-password"
             class="text-blue-500 text-center text-sm"
           >
             Mot de passe oublié ?
