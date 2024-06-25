@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const logger = require('../../utils/logger');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -20,7 +21,7 @@ const userSchema = new mongoose.Schema({
 );
 
 userSchema.pre('save', async function(next) {
-  console.log("MongoDB User PreSave")
+  logger.info("MongoDB User PreSave")
 });
 
 const User = mongoose.model('User', userSchema);

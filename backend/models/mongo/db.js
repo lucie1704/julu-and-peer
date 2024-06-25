@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const logger = require('../../utils/logger');
 
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => console.log('MongoDB connection successful!'));
+  .then(() => logger.info('MongoDB connection successful!'));
 
 module.exports = mongoose;

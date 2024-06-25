@@ -24,7 +24,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const globalErrorHandler = require('./controllers/errorController');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
-const cors = require('cors'); 
+const cors = require('cors');
+const logger = require('./utils/logger');
 
 require("./models/mongo/db");
 
@@ -91,7 +92,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // ROUTE TEST
 app.use('/helloworld', async (req, res, next) => {
-  console.log('Hello World');
+  logger.info('Hello world');
 });
 
 // API Routes
