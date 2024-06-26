@@ -3,8 +3,8 @@ const AppError = require('../../utils/appError');
 const filterObject = require('../../utils/filterObject');
 
 exports.createMongoUser = async (user) => {
-  const {id, name, email} = user;
-  const newUser = await User.create({id, name, email});
+  const {id, firstname, lastname, email} = user;
+  const newUser = await User.create({id, firstname, lastname, email});
 
   if (!newUser) return next(new AppError('Error failled to create user', 404));
 
