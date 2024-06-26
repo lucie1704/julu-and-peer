@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ShippingTrackerNotification',
+    timestamps: true,
   });
   return ShippingTrackerNotification;
 };

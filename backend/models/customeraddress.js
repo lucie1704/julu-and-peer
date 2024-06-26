@@ -47,6 +47,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'CustomerAddress',
+    timestamps: true,
   });
   return CustomerAddress;
 };
