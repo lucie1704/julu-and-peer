@@ -6,24 +6,22 @@ import generatedRoutes from '~pages';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: setupLayouts(generatedRoutes),
+  routes: setupLayouts(generatedRoutes)
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const authStore = useAuth();
 
-  if (to.name !== 'Login' && to.meta.requiresAuth && !authStore.isAuthenticated) {
+  if ( to.name !== 'Login' && to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login' });
-  }
-  else if (to.meta.requiresAdmin && !(authStore.isAuthenticated && authStore.hasRole(UserRole.Admin))) {
+  } else if ( to.meta.requiresAdmin && !(authStore.isAuthenticated && authStore.hasRole(UserRole.Admin))) {
     next({ name: 'login' });
-  }
-  else {
+  } else {
     next();
-  } 
+  }
 });
 
-router.afterEach((to, from, next) => {
+router.afterEach((to, from) => {
   console.log(`from "${from.name?.toString()}" to "${to.name?.toString()}"`);
 });
 

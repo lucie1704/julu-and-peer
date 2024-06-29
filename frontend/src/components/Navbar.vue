@@ -1,4 +1,3 @@
-
 <template>
   <div class="bg-white">
     <TransitionRoot
@@ -31,7 +30,9 @@
             leave-from="translate-x-0"
             leave-to="-translate-x-full"
           >
-            <DialogPanel class="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl">
+            <DialogPanel
+              class="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl"
+            >
               <div class="flex px-4 pb-2 pt-5">
                 <button
                   type="button"
@@ -59,7 +60,14 @@
                       v-slot="{ selected }"
                       as="template"
                     >
-                      <button :class="[selected ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-900', 'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium']">
+                      <button
+                        :class="[
+                          selected
+                            ? 'border-indigo-600 text-indigo-600'
+                            : 'border-transparent text-gray-900',
+                          'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium'
+                        ]"
+                      >
                         {{ category.name }}
                       </button>
                     </Tab>
@@ -77,7 +85,9 @@
                         :key="item.name"
                         class="group relative text-sm"
                       >
-                        <div class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                        <div
+                          class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75"
+                        >
                           <img
                             :src="item.imageSrc"
                             :alt="item.imageAlt"
@@ -145,7 +155,7 @@
                   >{{ page.name }}</a>
                 </div>
               </div>
-              
+
               <div class="space-y-6 border-t border-gray-200 px-4 py-6">
                 <div class="flow-root">
                   <a
@@ -204,7 +214,7 @@
             <div class="ml-4 flex lg:ml-0">
               <a href="#">
                 <span class="sr-only">Your Company</span>
-                <router-link to="/product/product-listes">
+                <router-link to="/products">
                   <img
                     class="h-8 w-auto"
                     src="../../public/logo-julu-and-peer.png"
@@ -225,7 +235,14 @@
                   class="flex"
                 >
                   <div class="relative flex">
-                    <PopoverButton :class="[open ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-700 hover:text-gray-800', 'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out']">
+                    <PopoverButton
+                      :class="[
+                        open
+                          ? 'border-indigo-600 text-indigo-600'
+                          : 'border-transparent text-gray-700 hover:text-gray-800',
+                        'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out'
+                      ]"
+                    >
                       {{ category.name }}
                     </PopoverButton>
                   </div>
@@ -238,7 +255,9 @@
                     leave-from-class="opacity-100"
                     leave-to-class="opacity-0"
                   >
-                    <PopoverPanel class="absolute inset-x-0 top-full text-sm text-gray-500">
+                    <PopoverPanel
+                      class="absolute inset-x-0 top-full text-sm text-gray-500"
+                    >
                       <div
                         class="absolute inset-0 top-1/2 bg-white shadow"
                         aria-hidden="true"
@@ -253,7 +272,9 @@
                                 :key="item.name"
                                 class="group relative text-base sm:text-sm"
                               >
-                                <div class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                                <div
+                                  class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75"
+                                >
                                   <img
                                     :src="item.imageSrc"
                                     :alt="item.imageAlt"
@@ -278,7 +299,9 @@
                                 </p>
                               </div>
                             </div>
-                            <div class="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
+                            <div
+                              class="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm"
+                            >
                               <div
                                 v-for="section in category.sections"
                                 :key="section.name"
@@ -332,7 +355,9 @@
                   placeholder="Search"
                   type="search"
                 >
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
@@ -351,7 +376,9 @@
             </div>
 
             <div class="ml-auto flex items-center">
-              <div class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+              <div
+                class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6"
+              >
                 <router-link
                   v-if="!isAuthenticated"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
@@ -392,13 +419,15 @@
               <div class="ml-4 flow-root lg:ml-6">
                 <router-link
                   class="group -m-2 flex items-center p-2"
-                  to="/customer/shopping-carts"
+                  to="/customer/shopping-cart"
                 >
                   <ShoppingBagIcon
                     class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                     aria-hidden="true"
                   />
-                  <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">{{ cartTotalProductCount }}</span>
+                  <span
+                    class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800"
+                  >{{ cartTotalProductCount }}</span>
                   <span class="sr-only">items in cart, view bag</span>
                 </router-link>
               </div>
@@ -425,11 +454,15 @@ import {
   TabPanel,
   TabPanels,
   TransitionChild,
-  TransitionRoot,
+  TransitionRoot
 } from '@headlessui/vue';
-import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/vue/24/outline';
-import { computed, ref  } from 'vue';
-import { useAuth } from '~/stores'; 
+import {
+  Bars3Icon,
+  ShoppingBagIcon,
+  XMarkIcon
+} from '@heroicons/vue/24/outline';
+import { computed, ref } from 'vue';
+import { useAuth } from '~/stores';
 
 const authStore = useAuth();
 const open = ref(false);
@@ -456,17 +489,21 @@ const navigation = {
         {
           name: 'New Arrivals',
           href: '#',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg',
-          imageAlt: 'Models sitting back to back, wearing Basic Tee in black and bone.',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg',
+          imageAlt:
+            'Models sitting back to back, wearing Basic Tee in black and bone.'
         },
         {
           name: 'Basic Tees',
           href: '#',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg',
-          imageAlt: 'Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.',
-        },
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg',
+          imageAlt:
+            'Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.'
+        }
       ],
-      sections: [],
+      sections: []
     },
     {
       id: 'genres',
@@ -475,16 +512,19 @@ const navigation = {
         {
           name: 'New Arrivals',
           href: '#',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
-          imageAlt: 'Drawstring top with elastic loop closure and textured interior padding.',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
+          imageAlt:
+            'Drawstring top with elastic loop closure and textured interior padding.'
         },
         {
           name: 'Artwork Tees',
           href: '#',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
           imageAlt:
-            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.',
-        },
+            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.'
+        }
       ],
       sections: [
         { id: 'pop-americain', name: 'Pop Américain', items: [] },
@@ -500,8 +540,8 @@ const navigation = {
         { id: 'jazz', name: 'Jazz', items: [] },
         { id: 'classique', name: 'Classique', items: [] },
         { id: 'rumba', name: 'Rumba', items: [] },
-        { id: 'electrique', name: 'Électrique', items: [] },
-      ],
+        { id: 'electrique', name: 'Électrique', items: [] }
+      ]
     },
     {
       id: 'formats',
@@ -510,16 +550,19 @@ const navigation = {
         {
           name: 'New Arrivals',
           href: '#',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
-          imageAlt: 'Drawstring top with elastic loop closure and textured interior padding.',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
+          imageAlt:
+            'Drawstring top with elastic loop closure and textured interior padding.'
         },
         {
           name: 'Artwork Tees',
           href: '#',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
           imageAlt:
-            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.',
-        },
+            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.'
+        }
       ],
       sections: [
         { id: 'picture', name: 'Picture', items: [] },
@@ -533,14 +576,12 @@ const navigation = {
             { id: 'classiques', name: 'Classiques', href: '#' },
             { id: '90s', name: '90\'S', href: '#' },
             { id: 'bons-affaires', name: 'Bons affaires', href: '#' },
-            { id: 'vinyles-rares', name: 'Vinyles-rares', href: '#' },
-          ],
-        },
-      ],
-    },
+            { id: 'vinyles-rares', name: 'Vinyles-rares', href: '#' }
+          ]
+        }
+      ]
+    }
   ],
-  pages: [
-  ],
+  pages: []
 };
-
 </script>

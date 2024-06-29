@@ -12,15 +12,15 @@ import App from './App.vue';
 const vuetify = createVuetify({
   defaults: {
     global: {
-      ripple: false,
+      ripple: false
     },
     VTextField: {
       density: 'comfortable',
-      variant: 'outlined',
-    },
+      variant: 'outlined'
+    }
   },
   components,
-  directives,
+  directives
 });
 
 const app = createApp(App);

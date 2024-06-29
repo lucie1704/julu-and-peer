@@ -5,7 +5,7 @@
   >
     <router-link to="/admin/users">
       Utilisateurs
-    </router-link>    
+    </router-link>
     <router-link to="/admin/products">
       Produits
     </router-link>

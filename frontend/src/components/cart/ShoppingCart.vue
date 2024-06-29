@@ -1,3 +1,26 @@
+<script lang="ts" setup>
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  TransitionChild,
+  TransitionRoot
+} from '@headlessui/vue';
+import { ref } from 'vue';
+import { CartProductI } from '~/dto';
+
+defineProps<{
+  cartItems: CartProductI;
+}>;
+
+const emit = defineEmits<{
+  (e: 'update-quantity', payload: { cartItemId: string, cartItemQuantity: number }): void,
+  (e: 'remove-item', payload: { cartItemId: string }): void
+}>();
+
+const open = ref(true);
+</script>
+
 <template>
   <TransitionRoot
     as="template"
@@ -16,12 +39,16 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        <div
+          class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        />
       </TransitionChild>
 
       <div class="fixed inset-0 overflow-hidden">
         <div class="absolute inset-0 overflow-hidden">
-          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+          <div
+            class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10"
+          >
             <TransitionChild
               as="template"
               enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -32,7 +59,9 @@
               leave-to="translate-x-full"
             >
               <DialogPanel class="pointer-events-auto w-screen max-w-md">
-                <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+                <div
+                  class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl"
+                >
                   <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                     <div class="flex items-start justify-between">
                       <DialogTitle class="text-lg font-medium text-gray-900">
@@ -46,10 +75,7 @@
                         >
                           <span class="absolute -inset-0.5" />
                           <span class="sr-only">Close panel</span>
-                          <XMarkIcon
-                            class="h-6 w-6"
-                            aria-hidden="true"
-                          />
+                          <v-icon icon="fa-solid fa-xmark" />
                         </button>
                       </div>
                     </div>
@@ -60,15 +86,20 @@
                           class="-my-6 divide-y divide-gray-200"
                         >
                           <li
-                            v-for="cartItem in cartsProducts?.cart?.CartItems"
+                            v-for="cartItem in cartItems"
                             :key="cartItem.id"
                             class="flex py-6"
                           >
                             <router-link
                               class="btn"
-                              :to="{ name: 'product-detail', params: { id: cartItem?.Product?.id }}"
+                              :to="{
+                                name: 'product-info',
+                                params: { id: cartItem?.Product?.id }
+                              }"
                             >
-                              <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                              <div
+                                class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
+                              >
                                 <img
                                   :src="cartItem?.Product?.imageSrc"
                                   :alt="cartItem?.Product?.imageAlt"
@@ -79,7 +110,9 @@
 
                             <div class="ml-4 flex flex-1 flex-col">
                               <div>
-                                <div class="flex justify-between text-base font-medium text-gray-900">
+                                <div
+                                  class="flex justify-between text-base font-medium text-gray-900"
+                                >
                                   <h3>
                                     <a>{{ cartItem?.Product?.name }}</a>
                                   </h3>
@@ -91,11 +124,13 @@
                                   {{ cartItem?.Product?.ProductFormat?.name }}
                                 </p>
                               </div>
-                              <div class="flex flex-1 items-end justify-between text-sm">
+                              <div
+                                class="flex flex-1 items-end justify-between text-sm"
+                              >
                                 <select
                                   v-model="cartItem.quantity"
                                   class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  @change="updateQuantity(cartItem.id, cartItem.quantity)"
+                                  @change="emit('update-quantity', { cartItemId: cartItem.id, cartItemQuantity: cartItem.quantity })"
                                 >
                                   <option
                                     v-for="n in 10"
@@ -109,7 +144,7 @@
                                   <button
                                     type="button"
                                     class="font-medium text-indigo-600 hover:text-indigo-500"
-                                    @click="removeItem(cartItem.id)"
+                                    @click="emit('remove-item', { cartItemId: cartItem.id })"
                                   >
                                     Remove
                                   </button>
@@ -126,15 +161,21 @@
                     v-if="cartsProducts"
                     class="border-t border-gray-200 px-4 py-6 sm:px-6"
                   >
-                    <div class="flex justify-between text-base font-medium text-gray-900">
+                    <div
+                      class="flex justify-between text-base font-medium text-gray-900"
+                    >
                       <p>Subtotal</p>
                       <p>{{ cartsProducts?.totalPrice }}</p>
                     </div>
-                    <div class="flex justify-between text-base font-medium text-gray-900">
+                    <div
+                      class="flex justify-between text-base font-medium text-gray-900"
+                    >
                       <p>Total Discount</p>
                       <p>{{ cartsProducts?.totalDiscount }}</p>
                     </div>
-                    <div class="flex justify-between text-base font-medium text-gray-900">
+                    <div
+                      class="flex justify-between text-base font-medium text-gray-900"
+                    >
                       <p>Total Products</p>
                       <p>{{ cartsProducts?.cartTotalProductCount }}</p>
                     </div>
@@ -149,7 +190,9 @@
                         Checkout
                       </router-link>
                     </div>
-                    <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
+                    <div
+                      class="mt-6 flex justify-center text-center text-sm text-gray-500"
+                    >
                       <p>
                         or
                         <button
@@ -172,72 +215,3 @@
     </Dialog>
   </TransitionRoot>
 </template>
-
-<script setup lang="ts">
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { XMarkIcon } from '@heroicons/vue/24/outline';
-import { onMounted, ref } from 'vue';
-// @ts-ignore
-import { useStore } from 'vuex';
-import { CartProductI } from '../../dto/cart';
-
-const open = ref(true);
-const cartsProducts = ref<CartProductI | null>(null);
-const store = useStore();
-
-const fetchCartProducts = async (customerId: number) => {
-  try {
-    await store.dispatch('cart/getCartsProducts', customerId);
-    const customerCartsProducts = store.getters['cart/cartProducts'];
-    if (customerCartsProducts) {
-      cartsProducts.value = customerCartsProducts;
-    }
-  }
- catch (error) {
-    console.error('Error getting customer cart item product:', error);
-  }
-};
-
-const removeItem = async (cartItemId: number) => {
-  try {
-    await store.dispatch('cart/deleteCartItem', cartItemId);
-    const customerId = 27;
-    await fetchCartProducts(customerId);
-  }
- catch (error) {
-    console.error('Error removing cart item:', error);
-  }
-};
-
-const updateQuantity = async (cartItemId: number, newQuantity: number) => {
-  try {
-    await store.dispatch('cart/cartItemQuantityUpdate', { cartItemId, newQuantity });
-    const customerId = 27;
-    await fetchCartProducts(customerId);
-  }
- catch (error) {
-    console.error('Error updating cart item quantity:', error);
-  }
-};
-
-const deleteCartAfterTimeout = async() => {
-  setTimeout(async () => {
-    try {
-      await store.dispatch('cart/deleteCart', cartsProducts.value?.cart.id);
-      // @ts-ignore
-      cartsProducts.value = {};
-      console.log('Cart deleted after 1 minute');
-    }
- catch (error) {
-      console.error('Error deleting cart after timeout:', error);
-    }
-  }, 60000);
-};
-
-onMounted(async() => {
-  const customerId = 27;
-  await fetchCartProducts(customerId);
-
-  if (cartsProducts.value?.cart) await deleteCartAfterTimeout();
-});
-</script>

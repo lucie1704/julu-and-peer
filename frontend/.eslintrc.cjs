@@ -25,7 +25,6 @@ module.exports = {
       'no-undef': 'off',
       'object-curly-spacing': ['error', 'always'],
       'operator-linebreak': ['error', 'before'],
-      'quotes': ['warn', 'single'],
       'semi': ['warn', 'always'],
       'space-before-blocks': ['warn', 'always'],
       'space-infix-ops': ['error', { 'int32Hint': false }],
@@ -39,5 +38,8 @@ module.exports = {
           ['^\\u0000', '^@?\\w', '^', '^\\.']
         ]
       }],
+      'brace-style': ['error', '1tbs', { allowSingleLine: true }],
+      'no-lonely-if': 'error',
+      'quotes': ['warn', 'single'],
     },
   }
