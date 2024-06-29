@@ -32,9 +32,8 @@ fs
   });
 
 Object.keys(db).forEach(modelName => {
-  console.log('COUCOU JE SUIS UN CONSOLE LOG', modelName);
-  if (db[modelName].addHooks) db[modelName].addHooks(db);
   if (db[modelName].associate) db[modelName].associate(db);
+  if (db[modelName].addHooks) db[modelName].addHooks(db);
 });
 
 db.sequelize = sequelize;

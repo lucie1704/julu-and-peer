@@ -18,6 +18,35 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       User.hasOne(models.Customer, { foreignKey: 'userId' });
     }
+    static addHooks(models) {
+      User.addHook('beforeCreate', async (user) => {
+        const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
+        user.password = hash;
+        user.passwordConfirm = undefined;
+        console.log('beforeSave has been called on User Model');
+      });
+
+      User.addHook('beforeUpdate', async (user, { fields }) => {
+        if (fields.includes("password")) {
+          console.log('beforeUpdate has been called on User Model');
+          const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
+          user.passwordConfirm = undefined;
+          user.password = hash;
+        }
+      });
+      
+      // Maybe delete thoses parts because user not supposed to be in Mongo ?
+      User.addHook('afterCreate', async (user) => {
+        await createMongoUser(user);
+        console.log("User created in mongoDB");
+      });
+
+      User.addHook('afterUpdate', async (user) => {
+        await updateMongoUser(user);
+        console.log("afterUpdate");
+      });
+    }
+    
     async correctPassword(candidatePassword, userPassword) {
       return await bcrypt.compare(candidatePassword, userPassword);
     }
@@ -196,31 +225,6 @@ module.exports = (sequelize, DataTypes) => {
       where: {
         active: true,
       },
-    },
-    hooks: {
-      beforeCreate: async (user) => {
-        const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
-        user.password = hash;
-        user.passwordConfirm = undefined;
-        console.log('beforeSave has been called on User Model');
-      },
-      beforeUpdate: async (user,  { fields }) => {
-        if (fields.includes("password")) {
-          console.log('beforeUpdate has been called on User Model');
-          const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
-          user.passwordConfirm = undefined;
-          user.password = hash;
-        }
-      },
-      afterCreate: async (user) => {
-        await createMongoUser(user)
-        console.log("User created in mongoDB")
-      },
-      afterUpdate: async (user, ) => {
-        await updateMongoUser(user)
-        console.log("afterUpdate ")
-      },
-      
     },
     timestamps: true,
   });
