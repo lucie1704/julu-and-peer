@@ -7,13 +7,14 @@ meta:
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { CartProductI, PlaceOrderI } from '~/dto';
+import { PlaceOrderI } from '~/dto';
 import router from '~/router/router.ts';
-import { useOrder } from '~/stores';
+import { useCart, useOrder } from '~/stores';
 
+const cartStore = useCart();
 const orderStore = useOrder();
 
-const cartsProducts = ref<CartProductI | null>(null);
+const customerId = ref('27');
 const email = ref('');
 const shippingInfo = ref({
   firstName: '',
@@ -28,41 +29,26 @@ const shippingInfo = ref({
   phone: ''
 });
 
-const fetchCartProducts = async (customerId: number) => {
-  try {
-    await orderStore.dispatch('cart/getCartsProducts', customerId);
-    const customerCartsProducts = orderStore.getters['cart/cartProducts'];
-    if (customerCartsProducts) {
-      cartsProducts.value = customerCartsProducts;
-    }
-  } catch (error) {
-    console.error('Error getting customer cart item product:', error);
-  }
-};
-
-onMounted(() => {
-  const customerId = 27;
-  fetchCartProducts(customerId);
+onMounted(async() => {
+  await cartStore.fetchCartProducts(customerId.value);
 });
 
-const removeItem = async (cartItemId: number) => {
+const removeItem = async (cartItemId: string) => {
   try {
-    await orderStore.dispatch('cart/deleteCartItem', cartItemId);
-    const customerId = 27;
-    await fetchCartProducts(customerId);
+    await cartStore.deleteCartItem(cartItemId);
+    await cartStore.fetchCartProducts(customerId.value);
   } catch (error) {
     console.error('Error removing cart item:', error);
   }
 };
 
-const updateQuantity = async (cartItemId: number, newQuantity: number) => {
+const updateQuantity = async (cartItemId: string, newQuantity: number) => {
   try {
-    await orderStore.dispatch('cart/cartItemQuantityUpdate', {
+    await cartStore.cartItemQuantityUpdate({
       cartItemId,
       newQuantity
     });
-    const customerId = 27;
-    await fetchCartProducts(customerId);
+    await cartStore.fetchCartProducts(customerId.value);
   } catch (error) {
     console.error('Error updating cart item quantity:', error);
   }
@@ -80,12 +66,12 @@ const calculateTotal = (
 
 const submitForm = async () => {
   // @TODO: Implémenter le paiement
-  if (!email.value || !shippingInfo.value || !cartsProducts.value)
+  if (!email.value || !shippingInfo.value || !cartStore.cartProducts)
     return console.error('Form validation failed!');
 
   const orderData: PlaceOrderI = {
     shippingFee: 20.0,
-    products: cartsProducts.value.buyProductCartItem.map((cartItem) => ({
+    products: cartStore.cartProducts.buyProductCartItem.map((cartItem) => ({
       id: cartItem.Product?.id,
       name: cartItem.Product?.name,
       description: cartItem.Product?.description,
@@ -98,12 +84,13 @@ const submitForm = async () => {
   };
 
   try {
-    await orderStore.dispatch('order/placeOrder', orderData);
+    await orderStore.placeOrder(orderData);
     // @TODO: DELETE CART
-    await orderStore.dispatch('cart/deleteCart', cartsProducts.value?.cart.id);
+    const cartId = cartStore.cartProducts.cart.id;
+    if (cartId) await cartStore.deleteCart(cartId);
 
     router.push('/');
-    cartsProducts.value = {};
+    cartStore.cartProducts = undefined;
   } catch (error) {
     console.error('Error to confirm order : ', error);
   }
@@ -284,7 +271,7 @@ const submitForm = async () => {
             class="-my-6 divide-y divide-gray-200"
           >
             <li
-              v-for="cartItem in cartsProducts?.cart?.CartItems"
+              v-for="cartItem in cartStore.cartProducts?.cart.CartItems"
               :key="cartItem.id"
               class="flex py-6"
             >
