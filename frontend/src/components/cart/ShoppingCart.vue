@@ -93,7 +93,7 @@ const open = ref(true);
                             <router-link
                               class="btn"
                               :to="{
-                                name: 'product-info',
+                                name: 'product',
                                 params: { id: cartItem?.Product?.id }
                               }"
                             >
