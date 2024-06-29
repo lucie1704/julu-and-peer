@@ -1,8 +1,8 @@
 <route lang="yaml">
-    path: /confirm-email/:token
-    name: confirm-email
-    meta:
-      layout: AppLayout
+path: /confirm-email/:token
+name: confirm-email
+meta:
+  layout: AppLayout
 </route>
 
 <script lang="ts" setup>
@@ -22,22 +22,27 @@ const isPasswordVisible = ref(false);
 const isPasswordConfirmationVisible = ref(false);
 
 const validationSchema = toTypedSchema(
-  z.object({
-    password: z.string(),
-    passwordConfirmation: z.string(),
-  })
-  .refine((data) => data.password === data.passwordConfirmation, {
-    message: 'Passwords don\'t match',
-    path: ['passwordConfirmation'],
-  })
+  z
+    .object({
+      password: z.string(),
+      passwordConfirmation: z.string()
+    })
+    .refine((data) => data.password === data.passwordConfirmation, {
+      message: 'Passwords don\'t match',
+      path: ['passwordConfirmation']
+    })
 );
 
-const { validate, errors, values } = useForm<ConfirmEmail>({ validationSchema });
+const { validate, errors, values } = useForm<ConfirmEmail>({
+  validationSchema
+});
 
-const { value: password }              = useField<string>('password');
-const { value: passwordConfirmation }  = useField<string>('passwordConfirmation');
+const { value: password } = useField<string>('password');
+const { value: passwordConfirmation } = useField<string>(
+  'passwordConfirmation'
+);
 
-const submitForm = async() => {
+const submitForm = async () => {
   const formValidation = await validate();
 
   if (formValidation.valid) {
@@ -46,9 +51,11 @@ const submitForm = async() => {
   }
 };
 </script>
-  
+
 <template>
-  <div class="max-w-md mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6">
+  <div
+    class="max-w-md mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6"
+  >
     <h3 class="text-3xl font-bold my-6">
       Confirme ton compte
     </h3>
@@ -58,7 +65,9 @@ const submitForm = async() => {
           <v-col>
             <v-text-field
               v-model="password"
-              :append-inner-icon="isPasswordVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'"
+              :append-inner-icon="
+                isPasswordVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'
+              "
               :type="isPasswordVisible ? 'text' : 'password'"
               name="password"
               label="Mot de passe"
@@ -73,19 +82,25 @@ const submitForm = async() => {
           <v-col>
             <v-text-field
               v-model="passwordConfirmation"
-              :append-inner-icon="isPasswordConfirmationVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'"
+              :append-inner-icon="
+                isPasswordConfirmationVisible
+                  ? 'fa-solid fa-eye'
+                  : 'fa-solid fa-eye-slash'
+              "
               :type="isPasswordConfirmationVisible ? 'text' : 'password'"
               name="passwordConfirmation"
               label="Confirmer le mot de passe"
               :error-messages="errors.passwordConfirmation"
               :hide-details="!errors.passwordConfirmation"
               required
-              @click:append-inner="isPasswordConfirmationVisible = !isPasswordConfirmationVisible"
+              @click:append-inner="
+                isPasswordConfirmationVisible = !isPasswordConfirmationVisible
+              "
             />
           </v-col>
         </v-row>
       </v-container>
-      
+
       <v-btn
         color="blue"
         type="submit"

@@ -1,3 +1,115 @@
+<route lang="yaml">
+path: /customer/payment/shipping
+name: customer-payment-shipping
+meta:
+  layout: AppLayout
+</route>
+
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import { CartProductI, PlaceOrderI } from '~/dto';
+import router from '~/router/router.ts';
+import { useOrder } from '~/stores';
+
+const orderStore = useOrder();
+
+const cartsProducts = ref<CartProductI | null>(null);
+const email = ref('');
+const shippingInfo = ref({
+  firstName: '',
+  lastName: '',
+  company: '',
+  address: '',
+  apartment: '',
+  city: '',
+  country: 'France',
+  state: '',
+  postalCode: '',
+  phone: ''
+});
+
+const fetchCartProducts = async (customerId: number) => {
+  try {
+    await orderStore.dispatch('cart/getCartsProducts', customerId);
+    const customerCartsProducts = orderStore.getters['cart/cartProducts'];
+    if (customerCartsProducts) {
+      cartsProducts.value = customerCartsProducts;
+    }
+  } catch (error) {
+    console.error('Error getting customer cart item product:', error);
+  }
+};
+
+onMounted(() => {
+  const customerId = 27;
+  fetchCartProducts(customerId);
+});
+
+const removeItem = async (cartItemId: number) => {
+  try {
+    await orderStore.dispatch('cart/deleteCartItem', cartItemId);
+    const customerId = 27;
+    await fetchCartProducts(customerId);
+  } catch (error) {
+    console.error('Error removing cart item:', error);
+  }
+};
+
+const updateQuantity = async (cartItemId: number, newQuantity: number) => {
+  try {
+    await orderStore.dispatch('cart/cartItemQuantityUpdate', {
+      cartItemId,
+      newQuantity
+    });
+    const customerId = 27;
+    await fetchCartProducts(customerId);
+  } catch (error) {
+    console.error('Error updating cart item quantity:', error);
+  }
+};
+
+const calculateTotal = (
+  totalPrice: number,
+  totalDiscount: number,
+  shippingFee: number
+) => {
+  return computed(() => {
+    return totalPrice + shippingFee - totalDiscount;
+  });
+};
+
+const submitForm = async () => {
+  // @TODO: Implémenter le paiement
+  if (!email.value || !shippingInfo.value || !cartsProducts.value)
+    return console.error('Form validation failed!');
+
+  const orderData: PlaceOrderI = {
+    shippingFee: 20.0,
+    products: cartsProducts.value.buyProductCartItem.map((cartItem) => ({
+      id: cartItem.Product?.id,
+      name: cartItem.Product?.name,
+      description: cartItem.Product?.description,
+      price: parseFloat(cartItem.Product?.price).toFixed(1),
+      quantity: 2
+    })),
+    shippingInfo: shippingInfo.value,
+    email: 'justin@gmail.com',
+    customerId: 27
+  };
+
+  try {
+    await orderStore.dispatch('order/placeOrder', orderData);
+    // @TODO: DELETE CART
+    await orderStore.dispatch('cart/deleteCart', cartsProducts.value?.cart.id);
+
+    router.push('/');
+    cartsProducts.value = {};
+  } catch (error) {
+    console.error('Error to confirm order : ', error);
+  }
+};
+</script>
+
 <template>
   <div class="min-h-screen bg-gray-100 py-12">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -285,110 +397,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { useStore } from 'vuex';
-import { CartProductI, PlaceOrderI } from '~/dto';
-import router from '../../routes/router';
-
-const store = useStore();
-
-const cartsProducts = ref<CartProductI | null>(null);
-const email = ref('');
-const shippingInfo = ref({
-  firstName: '',
-  lastName: '',
-  company: '',
-  address: '',
-  apartment: '',
-  city: '',
-  country: 'France',
-  state: '',
-  postalCode: '',
-  phone: ''
-});
-
-const fetchCartProducts = async (customerId: number) => {
-  try {
-    await store.dispatch('cart/getCartsProducts', customerId);
-    const customerCartsProducts = store.getters['cart/cartProducts'];
-    if (customerCartsProducts) {
-      cartsProducts.value = customerCartsProducts;
-    }
-  } catch (error) {
-    console.error('Error getting customer cart item product:', error);
-  }
-};
-
-onMounted(() => {
-  const customerId = 27;
-  fetchCartProducts(customerId);
-});
-
-const removeItem = async (cartItemId: number) => {
-  try {
-    await store.dispatch('cart/deleteCartItem', cartItemId);
-    const customerId = 27;
-    await fetchCartProducts(customerId);
-  } catch (error) {
-    console.error('Error removing cart item:', error);
-  }
-};
-
-const updateQuantity = async (cartItemId: number, newQuantity: number) => {
-  try {
-    await store.dispatch('cart/cartItemQuantityUpdate', {
-      cartItemId,
-      newQuantity
-    });
-    const customerId = 27;
-    await fetchCartProducts(customerId);
-  } catch (error) {
-    console.error('Error updating cart item quantity:', error);
-  }
-};
-
-const calculateTotal = (
-  totalPrice: number,
-  totalDiscount: number,
-  shippingFee: number
-) => {
-  return computed(() => {
-    return totalPrice + shippingFee - totalDiscount;
-  });
-};
-
-const submitForm = async () => {
-  //TODO: Implémenter le paiement
-  if (!email.value || !shippingInfo.value || !cartsProducts.value)
-    return console.error('Form validation failed!');
-
-  const orderData: PlaceOrderI = {
-    shippingFee: 20.0,
-    products: cartsProducts.value.buyProductCartItem.map((cartItem) => ({
-      id: cartItem.Product?.id,
-      name: cartItem.Product?.name,
-      description: cartItem.Product?.description,
-      price: parseFloat(cartItem.Product?.price).toFixed(1),
-      quantity: 2
-    })),
-    shippingInfo: shippingInfo.value,
-    email: 'justin@gmail.com',
-    customerId: 27
-  };
-
-  try {
-    await store.dispatch('order/placeOrder', orderData);
-    //TODO: DELETE CART
-    await store.dispatch('cart/deleteCart', cartsProducts.value?.cart.id);
-
-    router.push('/');
-    cartsProducts.value = {};
-  } catch (error) {
-    console.error('Error to confirm order : ', error);
-  }
-};
-</script>
-
-<style scoped></style>

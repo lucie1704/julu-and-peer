@@ -8,23 +8,26 @@ import layouts from 'vite-plugin-vue-layouts';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(), 
+    vue(),
     pages({
-      dirs: [{
-        dir: './src/pages', baseRoute: ''
-      }],
+      dirs: [
+        {
+          dir: './src/pages',
+          baseRoute: ''
+        }
+      ],
       exclude: ['**/components/*.*']
-    }), 
+    }),
     layouts({
       layoutsDirs: 'src/layouts',
       pagesDirs: 'src/pages',
       defaultLayout: 'AppLayout'
-    }),
+    })
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '~/': `${path.resolve(__dirname, 'src')}/`,
+      '~/': `${path.resolve(__dirname, 'src')}/`
     }
   },
   server: {

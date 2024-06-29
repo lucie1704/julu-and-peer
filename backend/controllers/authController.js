@@ -45,8 +45,6 @@ exports.signup = catchAsyncError(async (req, res) => {
     role
   });
 
-  console.log(newUser);
-
   // Generate email confirmation token
   const emailConfirmToken = newUser.createEmailConfirmToken();
 

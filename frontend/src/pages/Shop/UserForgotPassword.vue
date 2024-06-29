@@ -1,8 +1,8 @@
 <route lang="yaml">
-  path: /forgot-password
-  name: forgot-password
-  meta:
-    layout: AppLayout
+path: /forgot-password
+name: forgot-password
+meta:
+  layout: AppLayout
 </route>
 
 <script setup lang="ts">
@@ -19,7 +19,7 @@ const displayConfirmModal = ref(false);
 
 const validationSchema = toTypedSchema(
   z.object({
-    email: z.string().email(),
+    email: z.string().email()
   })
 );
 
@@ -27,7 +27,7 @@ const { validate, errors, values } = useForm<UserEmail>({ validationSchema });
 
 const { value: email } = useField<string>('email');
 
-const submitForm = async() => {
+const submitForm = async () => {
   showErrors.value = true;
   const formValidation = await validate();
 
@@ -39,7 +39,9 @@ const submitForm = async() => {
 </script>
 
 <template>
-  <div class="max-w-md mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6">
+  <div
+    class="max-w-md mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6"
+  >
     <h3 class="text-3xl font-bold my-6">
       Reset Password
     </h3>
@@ -70,7 +72,7 @@ const submitForm = async() => {
             </v-btn>
           </v-col>
         </v-row>
-        
+
         <p class="text-gray-500 text-sm text-center">
           Pas encore de compte ?
           <router-link

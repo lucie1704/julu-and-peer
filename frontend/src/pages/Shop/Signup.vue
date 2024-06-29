@@ -1,8 +1,8 @@
 <route lang="yaml">
-    path: /signup
-    name: signup
-    meta:
-      layout: AppLayout
+path: /signup
+name: signup
+meta:
+  layout: AppLayout
 </route>
 
 <script setup lang="ts">
@@ -21,34 +21,40 @@ const showErrors = ref(false);
 const displayConfirmModal = ref(false);
 
 const validationSchema = toTypedSchema(
-  z.object({
-    firstname: z.string(),
-    lastname: z.string(),
-    email: z.string()
-      .email({ message: 'Email invalide' })
-      .min(5, { message: 'Email trop courte' })
-      .max(30, { message: 'Email trop longue' }),
-    password: z.string()
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{12,}$/, {
-        message: '12 caractères minimum avec au moins 1 majuscule, 1 minucule, 1 chiffre et 1 caractère spécial'
-      }),
-    passwordConfirmation: z.string(),
-  })
-  .refine((data) => data.password === data.passwordConfirmation, {
-    message: 'Passwords don\'t match',
-    path: ['passwordConfirmation'],
-  })
+  z
+    .object({
+      firstname: z.string(),
+      lastname: z.string(),
+      email: z
+        .string()
+        .email({ message: 'Email invalide' })
+        .min(5, { message: 'Email trop courte' })
+        .max(30, { message: 'Email trop longue' }),
+      password: z
+        .string()
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{12,}$/, {
+          message:
+            '12 caractères minimum avec au moins 1 majuscule, 1 minucule, 1 chiffre et 1 caractère spécial'
+        }),
+      passwordConfirmation: z.string()
+    })
+    .refine((data) => data.password === data.passwordConfirmation, {
+      message: 'Passwords don\'t match',
+      path: ['passwordConfirmation']
+    })
 );
 
 const { validate, errors, values } = useForm<SignUp>({ validationSchema });
 
-const { value: firstname }              = useField<string>('firstname');
-const { value: lastname }               = useField<string>('lastname');
-const { value: email }                  = useField<string>('email');
-const { value: password }               = useField<string>('password');
-const { value: passwordConfirmation }   = useField<string>('passwordConfirmation');
+const { value: firstname } = useField<string>('firstname');
+const { value: lastname } = useField<string>('lastname');
+const { value: email } = useField<string>('email');
+const { value: password } = useField<string>('password');
+const { value: passwordConfirmation } = useField<string>(
+  'passwordConfirmation'
+);
 
-const submitForm = async() => {
+const submitForm = async () => {
   showErrors.value = true;
   const formValidation = await validate();
 
@@ -58,9 +64,11 @@ const submitForm = async() => {
   }
 };
 </script>
-  
+
 <template>
-  <div class="max-w-xl mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6">
+  <div
+    class="max-w-xl mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6"
+  >
     <h3 class="text-3xl font-bold my-6">
       Nous rejoindre
     </h3>
@@ -88,7 +96,7 @@ const submitForm = async() => {
             />
           </v-col>
         </v-row>
-        
+
         <v-row>
           <v-col>
             <v-text-field
@@ -107,7 +115,9 @@ const submitForm = async() => {
           <v-col>
             <v-text-field
               v-model="password"
-              :append-inner-icon="isPasswordVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'"
+              :append-inner-icon="
+                isPasswordVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'
+              "
               :type="isPasswordVisible ? 'text' : 'password'"
               name="password"
               hint="12 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial"
@@ -124,13 +134,19 @@ const submitForm = async() => {
           <v-col>
             <v-text-field
               v-model="passwordConfirmation"
-              :append-inner-icon="isPasswordConfirmationVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'"
+              :append-inner-icon="
+                isPasswordConfirmationVisible
+                  ? 'fa-solid fa-eye'
+                  : 'fa-solid fa-eye-slash'
+              "
               :type="isPasswordConfirmationVisible ? 'text' : 'password'"
               name="passwordConfirmation"
               label="Confirmer le mot de passe"
               :error-messages="errors.passwordConfirmation"
               required
-              @click:append-inner="isPasswordConfirmationVisible = !isPasswordConfirmationVisible"
+              @click:append-inner="
+                isPasswordConfirmationVisible = !isPasswordConfirmationVisible
+              "
             />
           </v-col>
         </v-row>
@@ -183,4 +199,3 @@ const submitForm = async() => {
     </v-dialog>
   </div>
 </template>
-  

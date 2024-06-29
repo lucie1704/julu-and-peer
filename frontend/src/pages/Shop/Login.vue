@@ -1,8 +1,8 @@
 <route lang="yaml">
-    path: /login
-    name: login
-    meta:
-      layout: AppLayout
+path: /login
+name: login
+meta:
+  layout: AppLayout
 </route>
 
 <script setup lang="ts">
@@ -21,7 +21,7 @@ const isPasswordVisible = ref(false);
 const validationSchema = toTypedSchema(
   z.object({
     email: z.string().email({ message: 'Email invalide' }),
-    password: z.string(),
+    password: z.string()
   })
 );
 
@@ -30,7 +30,7 @@ const { validate, errors, values } = useForm<UserLogin>({ validationSchema });
 const { value: email } = useField<string>('email');
 const { value: password } = useField<string>('password');
 
-const onSubmit = async() => {
+const onSubmit = async () => {
   showErrors.value = true;
   const validateForm = await validate();
 
@@ -38,11 +38,12 @@ const onSubmit = async() => {
     authStore.login(values);
   }
 };
-
 </script>
-  
+
 <template>
-  <div class="max-w-sm mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6">
+  <div
+    class="max-w-sm mx-auto bg-white text-center rounded-lg shadow-lg p-6 my-6"
+  >
     <h3 class="text-3xl font-bold my-6">
       Bienvenue !
     </h3>
@@ -63,7 +64,9 @@ const onSubmit = async() => {
         <v-col>
           <v-text-field
             v-model="password"
-            :append-inner-icon="isPasswordVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'"
+            :append-inner-icon="
+              isPasswordVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'
+            "
             :type="isPasswordVisible ? 'text' : 'password'"
             name="password"
             label="Mot de passe"
@@ -73,7 +76,7 @@ const onSubmit = async() => {
           />
         </v-col>
       </v-row>
-     
+
       <v-row>
         <v-col>
           <router-link

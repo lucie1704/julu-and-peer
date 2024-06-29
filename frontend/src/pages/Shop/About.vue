@@ -1,12 +1,11 @@
 <route lang="yaml">
-  path: /about
-  name: about
-  meta:
-    layout: AppLayout
+path: /about
+name: about
+meta:
+  layout: AppLayout
 </route>
 
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 
 <template>
   <div class="about">

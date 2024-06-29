@@ -1,6 +1,6 @@
 export interface SignUpResponse {
-  data : {
-    user: string;
-  },
-  status: string
+  data: {
+    user: string
+  };
+  status: string;
 }

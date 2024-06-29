@@ -1,11 +1,15 @@
 <template>
   <div class="bg-white">
-    <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+    <div
+      class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8"
+    >
       <h2 class="text-2xl font-bold tracking-tight text-gray-900">
         Product Lists
       </h2>
 
-      <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+      <div
+        class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"
+      >
         <div
           v-for="product in products"
           :key="product.id"
@@ -13,9 +17,11 @@
         >
           <router-link
             class="btn"
-            :to="{ name: 'product-detail', params: { id: product.id }}"
+            :to="{ name: 'product-info', params: { id: product.id } }"
           >
-            <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
+            <div
+              class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80"
+            >
               <img
                 :src="product.imageSrc"
                 :alt="product.imageAlt"
@@ -34,7 +40,9 @@
                   </a>
                 </h3>
                 <p class="mt-1 text-sm text-gray-500">
-                  {{ product.ProductArtist.name }} - {{ product.ProductFormat.name }} - {{ product.ProductGenre.name }}
+                  {{ product.ProductArtist.name }} -
+                  {{ product.ProductFormat.name }} -
+                  {{ product.ProductGenre.name }}
                 </p>
                 <div class="flex items-center">
                   <svg
@@ -44,7 +52,9 @@
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
-                    <path d="M9.049 2.927C9.198 2.579 9.524 2.334 9.9 2.334s.701.245.851.593l1.054 2.131 2.364.344c.378.055.701.33.817.707.116.376.015.798-.25 1.082l-1.711 1.667.404 2.357c.068.397-.09.797-.395 1.036a1.046 1.046 0 01-1.086.104l-2.12-1.113-2.12 1.113a1.046 1.046 0 01-1.086-.104c-.305-.239-.463-.639-.395-1.036l.404-2.357-1.711-1.667c-.265-.284-.366-.706-.25-1.082.116-.377.439-.652.817-.707l2.364-.344 1.054-2.131z" />
+                    <path
+                      d="M9.049 2.927C9.198 2.579 9.524 2.334 9.9 2.334s.701.245.851.593l1.054 2.131 2.364.344c.378.055.701.33.817.707.116.376.015.798-.25 1.082l-1.711 1.667.404 2.357c.068.397-.09.797-.395 1.036a1.046 1.046 0 01-1.086.104l-2.12-1.113-2.12 1.113a1.046 1.046 0 01-1.086-.104c-.305-.239-.463-.639-.395-1.036l.404-2.357-1.711-1.667c-.265-.284-.366-.706-.25-1.082.116-.377.439-.652.817-.707l2.364-.344 1.054-2.131z"
+                    />
                   </svg>
                 </div>
                 <p class="mt-1 text-sm text-gray-500">
@@ -57,13 +67,17 @@
                     v-if="product.discount > 0"
                     class="line-through text-gray-500 mr-2"
                   >{{ product.price }}</span>
-                  <span>{{ discountedPrice(product.price, product.discount) }}</span>
+                  <span>{{
+                    discountedPrice(product.price, product.discount)
+                  }}</span>
                 </p>
               </div>
             </div>
           </router-link>
           <div class="mt-2 flex justify-center">
-            <button class="mt-2 w-full flex items-center justify-center rounded-md border border-transparent bg-gray-200 px-4 py-2 text-base font-medium text-black hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <button
+              class="mt-2 w-full flex items-center justify-center rounded-md border border-transparent bg-gray-200 px-4 py-2 text-base font-medium text-black hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
               Ajouter au panier
             </button>
           </div>
@@ -74,11 +88,9 @@
 </template>
 
 <script setup lang="ts">
-
 import { computed, onMounted } from 'vue';
-//@ts-ignore
 import { useStore } from 'vuex';
-import { ProductI } from '../../dto/product';
+import { ProductI } from '~/dto';
 
 const store = useStore();
 
@@ -86,10 +98,12 @@ onMounted(() => {
   store.dispatch('product/getAllProducts');
 });
 
-const products = computed<Array<ProductI>>(() => store.getters['product/products']);
+const products = computed<Array<ProductI>>(
+  () => store.getters['product/products']
+);
 
-const discountedPrice = (price: number, discount:number) => {
-  return (price - (price * (discount / 100))).toFixed(2);
+const discountedPrice = (price: number, discount: number) => {
+  return (price - price * (discount / 100)).toFixed(2);
 };
 
 const truncateDescription = (description: string) => {
@@ -99,5 +113,4 @@ const truncateDescription = (description: string) => {
       : description;
   });
 };
-
 </script>
