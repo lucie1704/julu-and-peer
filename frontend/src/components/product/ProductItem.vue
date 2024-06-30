@@ -1,9 +1,10 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
 import { ProductI } from '~/dto';
 
 defineProps<{
-  product: ProductI;
-}>;
+  product: ProductI
+}>();
 
 const discountedPrice = (price: number, discount: number) => {
   return (price - price * (discount / 100)).toFixed(2);
@@ -15,7 +16,8 @@ const truncateDescription = (description: string) => {
       ? description.slice(0, 50) + '...'
       : description;
   });
-};</script>
+};
+</script>
 
 <template>
   <router-link
