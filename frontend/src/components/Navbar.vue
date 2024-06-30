@@ -1,3 +1,142 @@
+
+<script setup lang="ts">
+import {
+  Dialog,
+  DialogPanel,
+  Popover,
+  PopoverButton,
+  PopoverGroup,
+  PopoverPanel,
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels,
+  TransitionChild,
+  TransitionRoot
+} from '@headlessui/vue';
+import {
+  Bars3Icon,
+  ShoppingBagIcon,
+  XMarkIcon
+} from '@heroicons/vue/24/outline';
+import { computed, ref } from 'vue';
+import { useAuth } from '~/stores';
+
+const authStore = useAuth();
+
+const open = ref(false);
+const cartTotalProductCount = ref<number>(0);
+
+const isAuthenticated = computed(() => authStore.isAuthenticated);
+const logout = () => authStore.logout();
+
+const navigation = {
+  categories: [
+    {
+      id: 'promotions',
+      name: 'Promotions',
+      featured: [
+        {
+          name: 'New Arrivals',
+          href: '#',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg',
+          imageAlt:
+            'Models sitting back to back, wearing Basic Tee in black and bone.'
+        },
+        {
+          name: 'Basic Tees',
+          href: '#',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg',
+          imageAlt:
+            'Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.'
+        }
+      ],
+      sections: []
+    },
+    {
+      id: 'genres',
+      name: 'Genres',
+      featured: [
+        {
+          name: 'New Arrivals',
+          href: '#',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
+          imageAlt:
+            'Drawstring top with elastic loop closure and textured interior padding.'
+        },
+        {
+          name: 'Artwork Tees',
+          href: '#',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
+          imageAlt:
+            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.'
+        }
+      ],
+      sections: [
+        { id: 'pop-americain', name: 'Pop Américain', items: [] },
+        { id: 'urban', name: 'Urban', items: [] },
+        { id: 'pop-francaise', name: 'Pop Française', items: [] },
+        { id: 'variete-francaise', name: 'Variété française', items: [] },
+        { id: 'rock', name: 'Rock', items: [] },
+        { id: 'metal', name: 'Métal', items: [] },
+        { id: 'soul', name: 'Soul', items: [] },
+        { id: 'rnb', name: 'RNB', items: [] },
+        { id: 'bandes-originales', name: 'Bandes Originales', items: [] },
+        { id: 'reggae', name: 'Reggae', items: [] },
+        { id: 'jazz', name: 'Jazz', items: [] },
+        { id: 'classique', name: 'Classique', items: [] },
+        { id: 'rumba', name: 'Rumba', items: [] },
+        { id: 'electrique', name: 'Électrique', items: [] }
+      ]
+    },
+    {
+      id: 'formats',
+      name: 'Formats',
+      featured: [
+        {
+          name: 'New Arrivals',
+          href: '#',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
+          imageAlt:
+            'Drawstring top with elastic loop closure and textured interior padding.'
+        },
+        {
+          name: 'Artwork Tees',
+          href: '#',
+          imageSrc:
+            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
+          imageAlt:
+            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.'
+        }
+      ],
+      sections: [
+        { id: 'picture', name: 'Picture', items: [] },
+        { id: 'couleurs', name: 'Couleurs', items: [] },
+        { id: 'collector', name: 'Collector', items: [] },
+        {
+          id: 'collections',
+          name: 'Collections',
+          items: [
+            { id: 'festivals', name: 'Festivals', href: '#' },
+            { id: 'classiques', name: 'Classiques', href: '#' },
+            { id: '90s', name: '90\'S', href: '#' },
+            { id: 'bons-affaires', name: 'Bons affaires', href: '#' },
+            { id: 'vinyles-rares', name: 'Vinyles-rares', href: '#' }
+          ]
+        }
+      ]
+    }
+  ],
+  pages: []
+};
+</script>
+
 <template>
   <div class="bg-white">
     <TransitionRoot
@@ -231,13 +370,13 @@
                 <Popover
                   v-for="category in navigation.categories"
                   :key="category.name"
-                  v-slot="{ open }"
+                  v-slot="{ openPop }"
                   class="flex"
                 >
                   <div class="relative flex">
                     <PopoverButton
                       :class="[
-                        open
+                        openPop
                           ? 'border-indigo-600 text-indigo-600'
                           : 'border-transparent text-gray-700 hover:text-gray-800',
                         'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out'
@@ -439,149 +578,3 @@
   </div>
   <div class="bg-gray-800 text-white p-2" />
 </template>
-
-<script setup lang="ts">
-import {
-  Dialog,
-  DialogPanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue';
-import {
-  Bars3Icon,
-  ShoppingBagIcon,
-  XMarkIcon
-} from '@heroicons/vue/24/outline';
-import { computed, ref } from 'vue';
-import { useAuth } from '~/stores';
-
-const authStore = useAuth();
-const open = ref(false);
-const cartTotalProductCount = ref<number>(0);
-
-const isAuthenticated = computed(() => authStore.isAuthenticated);
-const logout = () => authStore.logout();
-
-// onMounted(async () => {
-//   await store.dispatch('cart/getCartsProducts', 27);
-//     const customerCartsProducts = store.getters['cart/cartProducts'];
-//     if (customerCartsProducts) {
-//       cartTotalProductCount.value = customerCartsProducts.cartTotalProductCount;
-
-//     }
-// });
-
-const navigation = {
-  categories: [
-    {
-      id: 'promotions',
-      name: 'Promotions',
-      featured: [
-        {
-          name: 'New Arrivals',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg',
-          imageAlt:
-            'Models sitting back to back, wearing Basic Tee in black and bone.'
-        },
-        {
-          name: 'Basic Tees',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg',
-          imageAlt:
-            'Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.'
-        }
-      ],
-      sections: []
-    },
-    {
-      id: 'genres',
-      name: 'Genres',
-      featured: [
-        {
-          name: 'New Arrivals',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
-          imageAlt:
-            'Drawstring top with elastic loop closure and textured interior padding.'
-        },
-        {
-          name: 'Artwork Tees',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
-          imageAlt:
-            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.'
-        }
-      ],
-      sections: [
-        { id: 'pop-americain', name: 'Pop Américain', items: [] },
-        { id: 'urban', name: 'Urban', items: [] },
-        { id: 'pop-francaise', name: 'Pop Française', items: [] },
-        { id: 'variete-francaise', name: 'Variété française', items: [] },
-        { id: 'rock', name: 'Rock', items: [] },
-        { id: 'metal', name: 'Métal', items: [] },
-        { id: 'soul', name: 'Soul', items: [] },
-        { id: 'rnb', name: 'RNB', items: [] },
-        { id: 'bandes-originales', name: 'Bandes Originales', items: [] },
-        { id: 'reggae', name: 'Reggae', items: [] },
-        { id: 'jazz', name: 'Jazz', items: [] },
-        { id: 'classique', name: 'Classique', items: [] },
-        { id: 'rumba', name: 'Rumba', items: [] },
-        { id: 'electrique', name: 'Électrique', items: [] }
-      ]
-    },
-    {
-      id: 'formats',
-      name: 'Formats',
-      featured: [
-        {
-          name: 'New Arrivals',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
-          imageAlt:
-            'Drawstring top with elastic loop closure and textured interior padding.'
-        },
-        {
-          name: 'Artwork Tees',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
-          imageAlt:
-            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.'
-        }
-      ],
-      sections: [
-        { id: 'picture', name: 'Picture', items: [] },
-        { id: 'couleurs', name: 'Couleurs', items: [] },
-        { id: 'collector', name: 'Collector', items: [] },
-        {
-          id: 'collections',
-          name: 'Collections',
-          items: [
-            { id: 'festivals', name: 'Festivals', href: '#' },
-            { id: 'classiques', name: 'Classiques', href: '#' },
-            { id: '90s', name: '90\'S', href: '#' },
-            { id: 'bons-affaires', name: 'Bons affaires', href: '#' },
-            { id: 'vinyles-rares', name: 'Vinyles-rares', href: '#' }
-          ]
-        }
-      ]
-    }
-  ],
-  pages: []
-};
-</script>

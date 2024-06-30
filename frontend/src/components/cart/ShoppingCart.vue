@@ -11,7 +11,7 @@ import { CartProductI } from '~/dto';
 
 defineProps<{
   cartItems: CartProductI;
-}>;
+}>();
 
 const emit = defineEmits<{
   (e: 'update-quantity', payload: { cartItemId: string, cartItemQuantity: number }): void,
