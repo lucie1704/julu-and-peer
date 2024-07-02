@@ -20,6 +20,35 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       User.hasOne(models.Customer, { foreignKey: 'userId' });
     }
+    static addHooks(models) {
+      User.addHook('beforeCreate', async (user) => {
+        const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
+        user.password = hash;
+        user.passwordConfirmation = undefined;
+        console.log('beforeSave has been called on User Model');
+      });
+
+      User.addHook('beforeUpdate', async (user, { fields }) => {
+        if (fields.includes("password")) {
+          console.log('beforeUpdate has been called on User Model');
+          const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
+          user.passwordConfirmation = undefined;
+          user.password = hash;
+        }
+      });
+      
+      // Maybe delete thoses parts because user not supposed to be in Mongo ?
+      User.addHook('afterCreate', async (user) => {
+        await createMongoUser(user);
+        console.log("User created in mongoDB");
+      });
+
+      User.addHook('afterUpdate', async (user) => {
+        await updateMongoUser(user);
+        console.log("afterUpdate");
+      });
+    }
+    
     async correctPassword(candidatePassword, userPassword) {
       return await bcrypt.compare(candidatePassword, userPassword);
     }
@@ -56,7 +85,7 @@ module.exports = (sequelize, DataTypes) => {
       this.emailConfirmExpires = Date.now() + 24 * 60 * 60 * 1000;
       this.emailConfirmed = false;
 
-      logger.info("Le lien pour confirmer l'email:", `http://localhost:8080/confirm-email/${confirmToken}`)
+      logger.info(`Le lien pour confirmer l'email: http://localhost:8080/confirm-email/${confirmToken}`)
 
       return confirmToken;
     }
@@ -207,28 +236,7 @@ module.exports = (sequelize, DataTypes) => {
         active: true,
       },
     },
-    hooks: {
-      beforeCreate: async (user) => {
-        const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
-        user.password = hash;
-        user.passwordConfirmation = undefined;
-        console.log('beforeSave has been called on User Model');
-      },
-      beforeUpdate: async (user,  { fields }) => {
-        if (fields.includes("password")) {
-          const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
-          user.passwordConfirmation = undefined;
-          user.password = hash;
-        }
-      },
-      afterCreate: async (user) => {
-        await createMongoUser(user)
-      },
-      afterUpdate: async (user, ) => {
-        await updateMongoUser(user)
-      },
-      
-    },
+    timestamps: true,
   });
   return User;
 };
