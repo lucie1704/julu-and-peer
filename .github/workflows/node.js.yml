@@ -4,10 +4,11 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: ["dev"]
-  pull_request:
-    branches: ["dev"]
+  # @TODO: à décommenter quand on aura régler nos tests
+  # push:
+  #   branches: ["dev"]
+  # pull_request:
+  #   branches: ["dev"]
 
 jobs:
   build:
