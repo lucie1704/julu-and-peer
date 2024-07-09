@@ -15,11 +15,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "16.x"
-      - run: cd backend && npm i
+          cache: "npm"
+
+      - name: Install dependencies
+        run: cd backend && npm install
 
       - name: Run tests
-      - run: cd backend && npm i && npm run test
+        run: cd backend && npm install
