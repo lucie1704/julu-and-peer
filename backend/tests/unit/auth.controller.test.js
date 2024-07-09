@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const newUser = require("../mock-data/new-user.json");
+const adminUser = require("../mock-data/new-user.json");
 const authController = require("../../controllers/authController");
 const Email = require('../../utils/email');
 const { User} = require('../../models');
@@ -10,7 +10,8 @@ jest.mock('../../models', () => {
   const dbMock = new SequelizeMock();
 
   const UserMock = dbMock.define('User', {
-    name: "justindev",
+    firstname: "Justin",
+    lastname: "KATASI",
     email:"jujupeerteam@gmail.com",
     role:  "admin",
     password: "Password123@",
@@ -44,15 +45,16 @@ beforeEach(() => {
 
 describe("AuthController.signup", () => {
   beforeEach(() => {
-    req.body = newUser;
+    req.body = adminUser;
   });
 
   it("should have a signup function", () => {
     expect(typeof authController.signup).toBe("function");
   });
+
   it("should call User.build", async() => {
     await authController.signup(req, res, next);
-    expect(User.build).toHaveBeenCalledWith(newUser);
+    expect(User.build).toHaveBeenCalledWith(adminUser);
   });
 
   it("should call User.createEmailConfirmToken", async() => {
