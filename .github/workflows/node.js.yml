@@ -15,10 +15,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Install dependencies and play tests
         uses: actions/setup-node@v4
         with:
           node-version: "16.x"
-      - run: cd backend
-      - run: npm i
+      - run: cd backend && npm i
       - run: npm test
