@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend/
 
     steps:
       - uses: actions/checkout@v4
@@ -20,9 +23,10 @@ jobs:
         with:
           node-version: "16.x"
           cache: "npm"
+          cache-dependency-path: "./backend/package-lock.json"
 
       - name: Install dependencies
         run: cd backend && npm install
 
       - name: Run tests
-        run: cd backend && npm install
+        run: npm run test
