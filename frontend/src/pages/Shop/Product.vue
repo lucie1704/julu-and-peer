@@ -20,7 +20,7 @@ const route = useRoute();
 const rating = 5;
 // TODO: Get available format from ProductFormat
 
-const customerId = '27';
+const customerId = '1';
 const quantity = ref<number>(1);
 
 onMounted(async () => {

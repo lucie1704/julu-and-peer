@@ -4,37 +4,62 @@ import { ProductI } from '~/dto';
 const ROOT_URL = 'http://localhost:3000/api/v1/products';
 
 interface ProductAPI {
-  getAllProducts: (jwt_token: string) => Promise<Array<ProductI>>;
-  getProductById: (id: string, jwt_token: string) => Promise<ProductI>;
+  getAllProducts: (jwt_token: string, cancel?: boolean) => Promise<Array<ProductI>>;
+  getProductById: (id: string, jwt_token: string, cancel?: boolean) => Promise<ProductI>;
 }
+const controller = new AbortController();
 
 const productAPI: ProductAPI = {
-  async getAllProducts(jwt_token: string) {
+
+  async getAllProducts(jwt_token: string, cancel:  boolean = false) {
+
     try {
+      if (cancel) {
+        controller.abort();
+      }
+  
       const res = await axios.get(`${ROOT_URL}`, {
         headers: {
           Authorization: `Bearer ${jwt_token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        signal: controller.signal
       });
+  
       return res.data;
+  
     } catch (error) {
-      console.error('Error. Faills to get all products:', error);
+      if (axios.isCancel(error)) {
+        console.log('Request canceled', error.message);
+      } else {
+        console.error('Error. Fails to get all products:', error);
+      }
       return null;
     }
   },
 
-  async getProductById(id: string, jwt_token: string) {
+  async getProductById(id: string, jwt_token: string, cancel: boolean = false) {
     try {
+      if (cancel) {
+        controller.abort();
+      }
+  
       const res = await axios.get(`${ROOT_URL}/${id}`, {
         headers: {
           Authorization: `Bearer ${jwt_token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        signal: controller.signal
       });
+  
       return res.data;
+  
     } catch (error) {
-      console.error('Error. Fails to get product :', error);
+      if (axios.isCancel(error)) {
+        console.log('Request canceled', error.message);
+      } else {
+        console.error('Error. Fails to get product:', error);
+      }
       return null;
     }
   }

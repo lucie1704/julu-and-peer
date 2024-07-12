@@ -23,7 +23,7 @@ exports.addToCartItem = catchAsyncError (async (req, res, next) => {
         quantity,
     });
 
-    return responseReturn(res, 201, { message: "Added to cart successfully", cartItem });
+    return responseReturn(res, 201, cartItem);
 
 });
 
@@ -41,7 +41,7 @@ exports.cartItemQuantityUpdate = catchAsyncError(async (req, res, next) => {
 
     await updatedCartItem.save();
 
-    responseReturn(res, 200, { message: "Quantity Updated", quantity: updatedCartItem.quantity });
+    responseReturn(res, 200, updatedCartItem.quantity );
 });
 
 exports.deleteCartItem = catchAsyncError(async (req, res) => {
@@ -51,7 +51,7 @@ exports.deleteCartItem = catchAsyncError(async (req, res) => {
     if(!cartItem) return next(new AppError('Cart Item not found', 404));
 
     await cartItem.destroy();
-    responseReturn(res,204,{message: "Cart-item Remove Successfully" })
+    responseReturn(res,204)
 });
 
 

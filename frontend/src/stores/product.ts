@@ -8,24 +8,24 @@ export const useProduct = defineStore('product', () => {
   const product = ref<ProductI>();
 
   const fetchAllProducts = async() => {
-    //Get jwt_token from auth module
-    const jwt_token = '';
-    const response = await productAPI.getAllProducts(jwt_token);
+  const jwt_token = ''; // Replace with actual logic to get the JWT token
+  
+  const fetchedProducts = await productAPI.getAllProducts(jwt_token);
 
-    if (products.value) {
-      products.value = response;
-    } else {
-      console.log('Error fail to fetch products');
-    }
+  if (fetchedProducts) {
+    products.value = fetchedProducts;
+  } else {
+    console.log('Error fail to fetch products');
+  }
   };
 
   const fetchProductById = async(id: string) => {
     //Get jwt_token from auth module
     const jwt_token = '';
-    const response = await productAPI.getProductById(id, jwt_token);
+    const fetchedProduct = await productAPI.getProductById(id, jwt_token);
 
-    if (product.value) {
-      product.value = response;
+    if (fetchedProduct) {
+      product.value = fetchedProduct;
 
     } else {
       console.log('Error fail to fetch product');

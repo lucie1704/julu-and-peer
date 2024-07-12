@@ -24,13 +24,7 @@ const createSendToken = (user, statusCode, req, res) => {
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
   });
   
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    data: {
-      user
-    }
-  });
+  res.status(statusCode).json(token);
 };
 
 exports.signup = catchAsyncError(async (req, res) => {
@@ -58,7 +52,7 @@ exports.signup = catchAsyncError(async (req, res) => {
   await newUser.save();
 
   // Respond with success
-  res.status(200).json(newUser);
+  res.status(202);
 });
 
 exports.emailConfirm = catchAsyncError(async (req, res, next) => {
@@ -78,7 +72,7 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
     });
 
   if (!user) {
-    return next(new AppError('Token is invalid or has expired', 400, res));
+    return next(new AppError('Token is invalid or has expired', 404, res));
   }
 
   user.emailConfirmExpires = undefined;
@@ -92,8 +86,8 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
 
   // Automatically login the user in after email confirmation
   req.body.email = user.email;
-  return this.login(req, res, next);
 
+  createSendToken(user, 200, req, res);
 });
 
 exports.login = catchAsyncError(async (req, res, next) => {
@@ -109,7 +103,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   });
   
 
-  if(!user) return next(new AppError('This email does not exist !', 400))
+  if(!user) return next(new AppError('This email does not exist !', 404))
 
   if(!user.emailConfirmed) return next(new AppError('Your account is not confirmed. Please confirm your email address !', 400))
 
@@ -137,7 +131,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   await user.save();
 
 
-  createSendToken(user, 200, req, res);
+  createSendToken(user, 201, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -145,7 +139,7 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true
   });
-  res.status(200).json({ status: 'success' });
+  res.status(200);
 };
 
 exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
@@ -163,10 +157,8 @@ exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
 
     await new Email(user, resetPasswordtURL).sendPasswordReset();
 
-    res.status(200).json({
-      status: 'success',
-      message: 'Token sent to email!'
-    });
+    res.status(202);
+    
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
@@ -194,7 +186,7 @@ exports.resetMyPassword = catchAsyncError(async (req, res, next) => {
     });
   
   if (!user) {
-    return next(new AppError('Token is invalid or has expired', 400));
+    return next(new AppError('Token is invalid or has expired', 404));
   }
 
   // Construct login email URL

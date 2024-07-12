@@ -11,7 +11,7 @@ import { ShoppingCart } from '~/components';
 import { useCart } from '~/stores';
 
 const cartStore = useCart();
-const customerId = 27;
+const customerId = '1';
 
 const deleteCartAfterTimeout = async () => {
   setTimeout(async () => {

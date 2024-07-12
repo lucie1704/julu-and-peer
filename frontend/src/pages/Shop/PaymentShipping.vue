@@ -14,7 +14,7 @@ import { useCart, useOrder } from '~/stores';
 const cartStore = useCart();
 const orderStore = useOrder();
 
-const customerId = ref('27');
+const customerId = ref('1');
 const email = ref('');
 const shippingInfo = ref({
   firstName: '',
