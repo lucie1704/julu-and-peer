@@ -9,10 +9,11 @@ meta:
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { createCart } from '~/dto';
-import { useCart, useProduct } from '~/stores';
+import { useCart } from '~/stores/cart';
+import { useProduct } from '~/stores/product';
 
-const productStore = useProduct();
 const cartStore = useCart();
+const productStore = useProduct();
 
 const route = useRoute();
 

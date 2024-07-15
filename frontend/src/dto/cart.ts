@@ -7,7 +7,7 @@ export interface CartProduct {
   cartTotalProductCount: number;
   shippingFee: number;
   outOfStockProducts: number;
-  buyProductCartItem: Array<buyProductCartItem>;
+  availableProducts: Array<availableProducts>;
 }
 
 export interface Cart {
@@ -28,14 +28,14 @@ export interface CartItem {
   Product?: Array<Product>;
 }
 
-interface buyProductCartItem {
+interface availableProducts {
   id?: string;
   productId?: string;
   cartId?: string;
   quantity: number;
   createdAt?: string;
   updatedAt?: string;
-  Product: Array<Product>;
+  Product: Product;
 }
 
 export interface createCart {

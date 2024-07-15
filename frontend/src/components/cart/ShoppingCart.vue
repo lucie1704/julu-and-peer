@@ -91,23 +91,23 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                           class="-my-6 divide-y divide-gray-200"
                         >
                           <li
-                            v-for="cartItem in cartItems"
-                            :key="cartItem.id"
+                            v-for="cartProduct in cartItems.availableProducts"
+                            :key="cartProduct.id"
                             class="flex py-6"
                           >
                             <router-link
                               class="btn"
                               :to="{
                                 name: 'product',
-                                params: { id: cartItem?.Product?.id }
+                                params: { id: cartProduct.productId }
                               }"
                             >
                               <div
                                 class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
                               >
                                 <img
-                                  :src="cartItem?.Product?.imageSrc"
-                                  :alt="cartItem?.Product?.imageAlt"
+                                  :src="cartProduct.Product.imageSrc"
+                                  :alt="cartProduct.Product.imageAlt"
                                   class="h-full w-full object-cover object-center"
                                 >
                               </div>
@@ -119,21 +119,21 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                                   class="flex justify-between text-base font-medium text-gray-900"
                                 >
                                   <h3>
-                                    <a>{{ cartItem?.Product?.name }}</a>
+                                    <a>{{ cartProduct.Product.name }}</a>
                                   </h3>
                                   <p class="ml-4">
-                                    {{ cartItem?.Product?.price }}
+                                    {{ cartProduct.Product.price }}
                                   </p>
                                 </div>
                                 <p class="mt-1 text-sm text-gray-500">
-                                  {{ cartItem?.Product?.ProductFormat?.name }}
+                                  {{ cartProduct.Product.ProductFormat.name }}
                                 </p>
                               </div>
                               <div
                                 class="flex flex-1 items-end justify-between text-sm"
                               >
                                 <select
-                                  v-model="cartItem.quantity"
+                                  v-model="cartProduct.quantity"
                                   class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                   @change="emitUpdateQuantity('1', 1)"
                                 >
@@ -163,26 +163,26 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                   </div>
 
                   <div
-                    v-if="cartsProducts"
+                    v-if="cartItems"
                     class="border-t border-gray-200 px-4 py-6 sm:px-6"
                   >
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
                       <p>Subtotal</p>
-                      <p>{{ cartsProducts?.totalPrice }}</p>
+                      <p>{{ cartItems.totalPrice }}</p>
                     </div>
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
                       <p>Total Discount</p>
-                      <p>{{ cartsProducts?.totalDiscount }}</p>
+                      <p>{{ cartItems.totalDiscount }}</p>
                     </div>
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
                       <p>Total Products</p>
-                      <p>{{ cartsProducts?.cartTotalProductCount }}</p>
+                      <p>{{ cartItems.cartTotalProductCount }}</p>
                     </div>
                     <p class="mt-0.5 text-sm text-gray-500">
                       Shipping and taxes calculated at checkout.

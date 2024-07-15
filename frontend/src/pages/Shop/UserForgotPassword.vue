@@ -11,7 +11,7 @@ import { useField, useForm } from 'vee-validate';
 import { ref } from 'vue';
 import * as z from 'zod';
 import { UserEmail } from '~/dto';
-import { useAuth } from '~/stores';
+import { useAuth } from '~/stores/auth';
 
 const authStore = useAuth();
 const showErrors = ref(false);

@@ -21,7 +21,7 @@ import {
   XMarkIcon
 } from '@heroicons/vue/24/outline';
 import { computed, ref } from 'vue';
-import { useAuth } from '~/stores';
+import { useAuth } from '~/stores/auth';
 
 const authStore = useAuth();
 
