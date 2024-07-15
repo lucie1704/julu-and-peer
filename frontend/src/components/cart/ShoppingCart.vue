@@ -7,10 +7,10 @@ import {
   TransitionRoot
 } from '@headlessui/vue';
 import { ref } from 'vue';
-import { CartProductI } from '~/dto';
+import { CartProduct } from '~/dto';
 
 defineProps<{
-  cartItems: CartProductI;
+  cartItems: CartProduct;
 }>();
 
 const emit = defineEmits<{
@@ -19,6 +19,11 @@ const emit = defineEmits<{
 }>();
 
 const open = ref(true);
+
+const emitUpdateQuantity = (cartItemId: string, cartItemQuantity: number) => {
+  emit('update-quantity', { cartItemId, cartItemQuantity: Number(cartItemQuantity) });
+};
+const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId });
 </script>
 
 <template>
@@ -130,7 +135,7 @@ const open = ref(true);
                                 <select
                                   v-model="cartItem.quantity"
                                   class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  @change="emit('update-quantity', { cartItemId: cartItem.id, cartItemQuantity: cartItem.quantity })"
+                                  @change="emitUpdateQuantity('1', 1)"
                                 >
                                   <option
                                     v-for="n in 10"
@@ -144,7 +149,7 @@ const open = ref(true);
                                   <button
                                     type="button"
                                     class="font-medium text-indigo-600 hover:text-indigo-500"
-                                    @click="emit('remove-item', { cartItemId: cartItem.id })"
+                                    @click="emitRemoveItem('1')"
                                   >
                                     Remove
                                   </button>

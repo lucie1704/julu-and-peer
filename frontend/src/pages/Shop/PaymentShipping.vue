@@ -7,7 +7,7 @@ meta:
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { PlaceOrderI } from '~/dto';
+import { PlaceOrder } from '~/dto';
 import router from '~/router/router.ts';
 import { useCart, useOrder } from '~/stores';
 
@@ -69,7 +69,7 @@ const submitForm = async () => {
   if (!email.value || !shippingInfo.value || !cartStore.cartProducts)
     return console.error('Form validation failed!');
 
-  const orderData: PlaceOrderI = {
+  const orderData: PlaceOrder = {
     shippingFee: 20.0,
     products: cartStore.cartProducts.buyProductCartItem.map((cartItem) => ({
       id: cartItem.Product?.id,

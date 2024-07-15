@@ -1,12 +1,12 @@
-export interface PlaceOrderI {
+export interface PlaceOrder {
   shippingFee: number;
-  products: Array<OrderProductI>;
-  shippingInfo: ShippingInfoI;
+  products: Array<OrderProduct>;
+  shippingInfo: ShippingInfo;
   customerId: number;
   email: string;
 }
 
-export interface ShippingInfoI {
+export interface ShippingInfo {
   firstName: string;
   lastName: string;
   company: string;
@@ -19,14 +19,14 @@ export interface ShippingInfoI {
   phone: string;
 }
 
-export interface OrderSellerI {
+export interface OrderSeller {
   id: number;
-  products: Array<OrderProductI>;
+  products: Array<OrderProduct>;
   price: number;
   sellerId?: number;
 }
 
-export interface OrderProductI {
+export interface OrderProduct {
   id: number;
   name: string;
   description: string;
@@ -34,17 +34,17 @@ export interface OrderProductI {
   quantity: number;
 }
 
-export interface OrdersI {
-  orders: Array<OrderI>;
+export interface Orders {
+  orders: Array<Order>;
 }
 
-export interface OrderI {
+export interface Order {
   id: number;
   customerId: number;
-  products: Array<OrderProductI>;
+  products: Array<OrderProduct>;
   price: number;
   paymentStatus: string;
-  shippingInfo: ShippingInfoI;
+  shippingInfo: ShippingInfo;
   deliveryStatus: string;
   date: string;
   createdAt: string;

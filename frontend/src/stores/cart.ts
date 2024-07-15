@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import cartAPI from '~/api/cart';
-import { CartI, CartItemI, CartProductI, createCartI } from '~/dto';
+import { Cart, CartItem, CartProduct, createCart } from '~/dto';
 import router from '~/router/router';
 
 export const useCart = defineStore('cart', () => {
-  const cart = ref<CartI>();
-  const cartProducts = ref<CartProductI>();
-  const cartItem = ref<CartItemI>();
+  const cart = ref<Cart>();
+  const cartProducts = ref<CartProduct>();
+  const cartItem = ref<CartItem>();
   const quantity = ref<number>();
   const message = ref<string>();
 
@@ -31,7 +31,7 @@ export const useCart = defineStore('cart', () => {
     }
   };
 
-  const addCartItem = async (data: createCartI) => {
+  const addCartItem = async (data: createCart) => {
     // Retrieve JWT token from auth module (placeholder)
     const jwt_token = '';
     try {

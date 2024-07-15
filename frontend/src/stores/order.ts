@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import orderAPI from '~/api/order';
-import { OrderI, OrdersI, PlaceOrderI } from '~/dto';
+import { Order, Orders, PlaceOrder } from '~/dto';
 
 export const useOrder = defineStore('order', () => {
-  const orders = ref<OrdersI | null>();
-  const order = ref<OrderI | null>();
+  const orders = ref<Orders | null>();
+  const order = ref<Order | null>();
   const message = ref<string | null>(null);
   const orderId = ref<string>();
 
@@ -19,7 +19,7 @@ export const useOrder = defineStore('order', () => {
     }
   };
 
-  const placeOrder = async (orderData: PlaceOrderI) => {
+  const placeOrder = async (orderData: PlaceOrder) => {
     const jwt_token = '';
     try {
       const response = await orderAPI.placeOrder(jwt_token, orderData);

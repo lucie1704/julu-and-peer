@@ -1,4 +1,5 @@
 const express = require('express');
+const expressListEndpoints = require('express-list-endpoints');
 const authRouter = require('./routes/public/authRoutes');
 const userRouter = require('./routes/private/userRoutes');
 const customerRouter = require('./routes/private/customerRoutes');
@@ -121,5 +122,9 @@ app.all('*', (req, res, next) => {
 });
 
 app.use(globalErrorHandler);
+
+const endpoints = expressListEndpoints(app);
+
+console.log(endpoints);
 
 module.exports = app;
