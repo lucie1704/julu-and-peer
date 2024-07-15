@@ -1,58 +1,47 @@
-const productFormat = require('../models/productformat');
+const ProductFormat = require('../models/productformat');
+const AppError = require('../utils/appError');
+const catchAsyncError = require('../utils/catchAsyncError');
+const { responseReturn } = require('../utils/response');
 
-exports.getAllProductFormats = async (req, res) => {
-    try {
-        const formats = await productFormat.getAllProductFormats();
-        res.status(200).json(formats);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.getAllProductFormats = catchAsyncError(async (req, res) => {
+    const formats = await ProductFormat.findAll();
+    responseReturn(res, paymentMethods);
+});
 
-exports.getProductFormatById = async (req, res) => {
-    try {
-        const format = await productFormat.getProductFormatById(req.params.id);
-        if (format) {
-            res.status(200).json(format);
-        } else {
-            res.status(404).json({ message: 'Format not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.getProductFormatById = catchAsyncError(async (req, res, next) => {
+    const format = await ProductFormat.findByPk(req.params.id);
+    if (!format) return next(new AppError(404));
 
-exports.createProductFormat = async (req, res) => {
-    try {
-        const format = await productFormat.createProductFormat(req.body);
-        res.status(201).json(format);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    responseReturn(res, format);
+});
 
-exports.updateProductFormat = async (req, res) => {
-    try {
-        const format = await productFormat.updateProductFormat(req.params.id, req.body);
-        if (format) {
-            res.status(200).json(format);
-        } else {
-            res.status(404).json({ message: 'Format not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.createProductFormat = catchAsyncError(async (req, res) => {
+    const format = await ProductFormat.create(req.body);
+    responseReturn(res, format, 201);
+});
 
-exports.deleteProductFormat = async (req, res) => {
-    try {
-        const success = await productFormat.deleteProductFormat(req.params.id);
-        if (success) {
-            res.status(204).end();
-        } else {
-            res.status(404).json({ message: 'Format not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+exports.updateProductFormat = catchAsyncError(async (req, res, next) => {
+
+    const [nbUpdated, formats] = await ProductFormat.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true,
+    });
+
+    if (!nbUpdated === 1) return next(new AppError(404));
+
+    responseReturn(res, formats[0]);
+});
+
+exports.deleteProductFormat = async (req, res, next) => {
+    const result = await ProductFormat.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
+
+    if (!result) return next(new AppError(404));
+
+    res.status(204);
 };

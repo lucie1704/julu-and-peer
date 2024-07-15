@@ -1,58 +1,50 @@
-const productArtist = require('../models/productartist');
+const ProductArtist = require('../models/productartist');
+const AppError = require('../utils/appError');
+const catchAsyncError = require('../utils/catchAsyncError');
+const { responseReturn } = require('../utils/response');
 
-exports.getAllProductArtists = async (req, res) => {
-    try {
-        const artists = await productArtist.getAllProductArtists();
-        res.status(200).json(artists);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.getAllProductArtists = catchAsyncError(async (req, res) => {
+    const artists = await ProductArtist.findAll();
+    responseReturn(res, artists);
+});
 
-exports.getProductArtistById = async (req, res) => {
-    try {
-        const artist = await productArtist.getProductArtistById(req.params.id);
-        if (artist) {
-            res.status(200).json(artist);
-        } else {
-            res.status(404).json({ message: 'Artist not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.getProductArtistById = catchAsyncError(async (req, res, next) => {
 
-exports.createProductArtist = async (req, res) => {
-    try {
-        const artist = await productArtist.createProductArtist(req.body);
-        res.status(201).json(artist);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    const artist = await ProductArtist.findByPk(req.params.id);
+    
+    if (!artist) return next(new AppError(404));
 
-exports.updateProductArtist = async (req, res) => {
-    try {
-        const artist = await productArtist.updateProductArtist(req.params.id, req.body);
-        if (artist) {
-            res.status(200).json(artist);
-        } else {
-            res.status(404).json({ message: 'Artist not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    responseReturn(res, artist);
+});
 
-exports.deleteProductArtist = async (req, res) => {
-    try {
-        const success = await productArtist.deleteProductArtist(req.params.id);
-        if (success) {
-            res.status(204).end();
-        } else {
-            res.status(404).json({ message: 'Artist not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.createProductArtist = catchAsyncError(async (req, res) => {
+
+    const artist = await ProductArtist.create(req.body);
+    
+    responseReturn(res, artist, 201);
+});
+
+exports.updateProductArtist = catchAsyncError(async (req, res, next) => {
+    const [nbUpdated, artists] = await ProductArtist.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true,
+    });
+
+    if (!nbUpdated === 1) return next(new AppError(404));
+
+    responseReturn(res, artists[0]);
+});
+
+exports.deleteProductArtist = catchAsyncError(async (req, res, next) => {
+    const result = await ProductArtist.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
+
+    if (!result) return next(new AppError(404));
+
+    res.status(204);
+});

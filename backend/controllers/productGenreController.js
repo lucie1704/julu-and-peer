@@ -1,58 +1,46 @@
-const productGenre = require('../models/productgenre');
+const ProductGenre = require('../models/productgenre');
+const catchAsyncError = require('../utils/catchAsyncError');
+const { responseReturn } = require('../utils/response');
 
-exports.getAllProductGenres = async (req, res) => {
-    try {
-        const genres = await productGenre.getAllProductGenres();
-        res.status(200).json(genres);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+exports.getAllProductGenres = catchAsyncError(async (req, res) => {
+    const genres = await ProductGenre.findAll();
+
+    responseReturn(res, genres);
+});
+
+exports.getProductGenreById = catchAsyncError(async (req, res, next) => {
+    const genre = await ProductGenre.findByPk(req.params.id);
+    if (!genre) return next(new AppError(404));
+    
+    responseReturn(res, genre);
+});
+
+exports.createProductGenre = catchAsyncError(async (req, res) => {
+    const genre = await ProductGenre.create(req.body);
+    responseReturn(res, genre, 201);
+});
+
+exports.updateProductGenre = async (req, res, next) => {
+    const [nbUpdated, genres] = await ProductGenre.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true,
+    });
+
+    if (!nbUpdated === 1) return next(new AppError(404));
+
+    responseReturn(res, genres[0]);
 };
 
-exports.getProductGenreById = async (req, res) => {
-    try {
-        const genre = await productGenre.getProductGenreById(req.params.id);
-        if (genre) {
-            res.status(200).json(genre);
-        } else {
-            res.status(404).json({ message: 'Genre not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.deleteProductGenre = async (req, res, next) => {
+    const result = await ProductGenre.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
 
-exports.createProductGenre = async (req, res) => {
-    try {
-        const genre = await productGenre.createProductGenre(req.body);
-        res.status(201).json(genre);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    if (!result) return next(new AppError(404));
 
-exports.updateProductGenre = async (req, res) => {
-    try {
-        const genre = await productGenre.updateProductGenre(req.params.id, req.body);
-        if (genre) {
-            res.status(200).json(genre);
-        } else {
-            res.status(404).json({ message: 'Genre not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-exports.deleteProductGenre = async (req, res) => {
-    try {
-        const success = await productGenre.deleteProductGenre(req.params.id);
-        if (success) {
-            res.status(204).end();
-        } else {
-            res.status(404).json({ message: 'Genre not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.status(204);
 };

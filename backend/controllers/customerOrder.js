@@ -14,7 +14,7 @@ exports.createPayment = catchAsyncError(async (req, res, next) => {
   //       enabled: true
   //   }
   // })
-  // if(!payment) return next(new AppError('Payment faills, try agian !', 404));
+  // if(!payment) return next(new AppError(404));
 
   // responseReturn(res, 200, { clientSecret: payment.client_secret })
 
@@ -24,14 +24,14 @@ exports.paymentCheck = catchAsyncError (async (id) => {
 
   const customerOrder = await CustomerOrder.findByPk(id)
 
-  if(!customerOrder) return next(new AppError('Customer order not found', 404));
+  if(!customerOrder) return next(new AppError(404));
 
   let updatedOrder = null;
   if (customerOrder.paymentStatus === 'unpaid') {
     updatedOrder = await customerOrder.update({deliveryStatus: 'cancelled'})
   }
 
-  if(!updatedOrder) return next(new AppError('Error while updating  customer order', 404));
+  if(!updatedOrder) return next(new AppError(404));
 
   return true
 });
@@ -41,21 +41,19 @@ exports.orderConfirm = catchAsyncError(async (req, res, next) => {
 
   const customerOrder = await CustomerOrder.findByPk(orderId)
 
-  if(!customerOrder) return next(new AppError('Customer order Item not found', 404));
+  if(!customerOrder) return next(new AppError(404));
 
   const updatedOrder = await customerOrder.update({ paymentStatus: 'paid', deliveryStatus : 'pending'})
-  if(!updatedOrder) return next(new AppError('Error while updating  customer order', 404));
+  if(!updatedOrder) return next(new AppError(404));
 
-  responseReturn(res,200, {
-    message: 'Success'
-  })
+  res.status(200)
 });
 
 exports.placeOrder = catchAsyncError(async (req, res, next) => {
   const { shippingFee, products, shippingInfo, customerId } = req.body;
 
   if (!products || products.length === 0) {
-    return next(new AppError('No products provided', 400));
+    return next(new AppError(404));
   }
 
   const customerOrderProducts = products.map(item => ({
@@ -81,7 +79,7 @@ exports.placeOrder = catchAsyncError(async (req, res, next) => {
       return existingOrder.products.some(orderProduct => orderProduct.id === product.id);
       });
 
-    if (allProductsFound) return next(new AppError('Order already exists with the same products:', 404));
+    if (allProductsFound) return next(new AppError(409));
   }
 
   const order = await CustomerOrder.create({
@@ -95,14 +93,14 @@ exports.placeOrder = catchAsyncError(async (req, res, next) => {
   });
 
   if (!order) {
-    return next(new AppError('Error while creating order', 404));
+    return next(new AppError(404));
   }
 
   setTimeout(() => {
     exports.paymentCheck(order.id, next);
   }, 15000);
 
-  responseReturn(res, 200, { message: "Order Placed Successfully", orderId: order.id });
+  res.status(200)
 });
 
 exports.getOrders = catchAsyncError(async (req, res, next) => {
@@ -126,12 +124,10 @@ exports.getOrders = catchAsyncError(async (req, res, next) => {
   }
 
   if (!orders.length) {
-      return next(new AppError('No orders found', 404));
+      return next(new AppError(404));
   }
 
-  responseReturn(res, 200, {
-      orders
-  });
+  responseReturn(res, orders);
 });
 
 exports.getOrderDetails = catchAsyncError(async (req, res, next) => {
@@ -139,10 +135,8 @@ exports.getOrderDetails = catchAsyncError(async (req, res, next) => {
 
   const order = await CustomerOrder.findByPk(orderId)
 
-  if(!order) return next(new AppError('Customer order not found', 404));
+  if(!order) return next(new AppError(404));
 
-  responseReturn(res,200, {
-    order
-  })
+  responseReturn(res, order)
 });
 

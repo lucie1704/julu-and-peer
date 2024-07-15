@@ -1,6 +1,5 @@
 const express = require('express');
 const authRouter = require('./routes/public/authRoutes');
-const userRouter = require('./routes/private/userRoutes');
 const customerRouter = require('./routes/private/customerRoutes');
 const customerAddressRouter = require('./routes/private/customerAddressRoutes');
 const productRouter = require('./routes/private/productRoutes');
@@ -101,7 +100,6 @@ app.use('/helloworld', async (req, res, next) => {
 app.use('/api/v1/auth', authRouter);
 
 // Private
-app.use('/api/v1/users', userRouter);
 app.use('/api/v1/customers', customerRouter);
 app.use('/api/v1/customersaddress', customerAddressRouter);
 app.use('/api/v1/products', productRouter);
@@ -117,7 +115,7 @@ app.use('/api/v1/customerorder', orderRouter);
 
 // Handle requests for routes that are not defined in the application.
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404, res));
+  next(new AppError(404));
 });
 
 app.use(globalErrorHandler);

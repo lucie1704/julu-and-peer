@@ -72,12 +72,12 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
     });
 
   if (!user) {
-    return next(new AppError('Token is invalid or has expired', 404, res));
+    return next(new AppError(401));
   }
 
   user.emailConfirmExpires = undefined;
 
-  if (user.emailConfirmed) return next(new AppError('This email has already been confirmed. Please proceed to log in.', 409));
+  if (user.emailConfirmed) return next(new AppError(409));
 
   // Update user properties to confirm email
   user.emailConfirmToken = undefined;
@@ -93,7 +93,7 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
 exports.login = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password) return next(new AppError('Please provide email and password!', 400));
+  if (!email || !password) return next(new AppError(401));
   
   const user = await User.findOne({
     where: { email },
@@ -103,13 +103,13 @@ exports.login = catchAsyncError(async (req, res, next) => {
   });
   
 
-  if(!user) return next(new AppError('This email does not exist !', 404))
+  if(!user) return next(new AppError(404))
 
-  if(!user.emailConfirmed) return next(new AppError('Your account is not confirmed. Please confirm your email address !', 400))
+  if(!user.emailConfirmed) return next(new AppError(409))
 
   const canLoginAgain = user.handleFailedLoginAttempts(next);
 
-  if(!canLoginAgain) return next(new AppError('Account temporarily locked. Retry in 10 minutes. !', 400))
+  if(!canLoginAgain) return next(new AppError(423))
 
   let failAccess =  user.failAccess;
 
@@ -119,7 +119,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
 
     await user.save();
 
-    return next(new AppError('Incorrect email or password', 401));
+    return next(new AppError(401));
   }
 
 
@@ -131,7 +131,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   await user.save();
 
 
-  createSendToken(user, 201, req, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -139,7 +139,7 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true
   });
-  res.status(200);
+  res.status(204);
 };
 
 exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
@@ -147,7 +147,7 @@ exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({ where: { email :req.body.email } });
 
   if (!user) {
-    return next(new AppError('There is no user with email address.', 404));
+    return next(new AppError(404));
   }
 
   const resetToken = await user.createPasswordResetToken();
@@ -164,7 +164,7 @@ exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
     user.passwordResetExpires = undefined;
     await user.save();
 
-    return next(new AppError('There was an error sending the email. Try again later!', 500));
+    return next(new AppError(500));
   }
 
 });
@@ -186,7 +186,7 @@ exports.resetMyPassword = catchAsyncError(async (req, res, next) => {
     });
   
   if (!user) {
-    return next(new AppError('Token is invalid or has expired', 404));
+    return next(new AppError(404));
   }
 
   // Construct login email URL
@@ -214,9 +214,9 @@ exports.updateMyPassword = catchAsyncError(async (req, res, next) => {
     }
   });
 
-  if ((await user.correctPassword(req.body.password, user.password))) return next(new AppError('Incorrect. This password already existe, Please enter a new  password', 401));
+  if ((await user.correctPassword(req.body.password, user.password))) return next(new AppError(401, res));
 
-  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) return next(new AppError('Your current password is wrong.', 401));
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) return next(new AppError(401, res));
 
   user.password = req.body.password;
   user.passwordConfirmation = req.body.passwordConfirmation;
@@ -224,7 +224,5 @@ exports.updateMyPassword = catchAsyncError(async (req, res, next) => {
 
   await new Email(user, "").sendPasswordUpdated();
 
-  // Automatically login the user in after email confirmation
-  req.body.email = user.email;
-  return this.login(req, res, next);
+  createSendToken(user, 201, req, res);
 });

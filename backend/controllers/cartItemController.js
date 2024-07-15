@@ -8,14 +8,7 @@ exports.addToCartItem = catchAsyncError (async (req, res, next) => {
 
     const product = await Product.findOne({ where: { id: productId } });
 
-    if (!product) return next(new AppError('Product not found', 404));
-
-    const existingCartItem = await CartItem.findOne({
-        where: {
-            productId,
-            cartId,
-        }
-    });
+    if (!product) return next(new AppError(404));
 
     const cartItem = await CartItem.create({
         productId,
@@ -23,7 +16,7 @@ exports.addToCartItem = catchAsyncError (async (req, res, next) => {
         quantity,
     });
 
-    return responseReturn(res, 201, cartItem);
+    return responseReturn(res, cartItem, 201);
 
 });
 
@@ -33,25 +26,27 @@ exports.cartItemQuantityUpdate = catchAsyncError(async (req, res, next) => {
 
     const cartItem = await CartItem.findByPk(id);
 
-    if (!cartItem) return next(new AppError('Cart Item not found', 404));
+    if (!cartItem) return next(new AppError(404));
 
     const updatedCartItem = await cartItem.update({ quantity: req.body.quantity });
 
-    if (!updatedCartItem) return next(new AppError('Error while updating cart item quantity', 404));
+    if (!updatedCartItem) return next(new AppError(404));
 
     await updatedCartItem.save();
 
-    responseReturn(res, 200, updatedCartItem.quantity );
+    responseReturn(res, updatedCartItem.quantity );
 });
 
-exports.deleteCartItem = catchAsyncError(async (req, res) => {
+exports.deleteCartItem = catchAsyncError(async (req, res, next) => {
+    const result = await CartItem.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
 
-    const cartItem = await CartItem.findByPk(req.params.id);
+    if (!result) return next(new AppError(404));
 
-    if(!cartItem) return next(new AppError('Cart Item not found', 404));
-
-    await cartItem.destroy();
-    responseReturn(res,204)
+    res.status(204)
 });
 
 
