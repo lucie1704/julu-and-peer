@@ -7,7 +7,7 @@
     "dialect": "postgres"
   },
   "staging" : {
-    "use_env_variable": "postgres://udgrkafm07hboi:p3a8cb9f3f55ce47c4e79248e80d442f093a8c0020863affa308d47195edb42c3@ccaml3dimis7eh.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/der5t0vkn85pbu"
+    "use_env_variable": "DATABASE_URL"
   },
   "test": {
     "username": "root",
