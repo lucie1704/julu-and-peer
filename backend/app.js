@@ -126,4 +126,6 @@ app.use(globalErrorHandler);
 const endpoints = expressListEndpoints(app);
 // console.log(endpoints);
 
+app.set('trust proxy', true);
+
 module.exports = app;
