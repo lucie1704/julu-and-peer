@@ -124,7 +124,6 @@ app.all('*', (req, res, next) => {
 app.use(globalErrorHandler);
 
 const endpoints = expressListEndpoints(app);
-
-console.log(endpoints);
+// console.log(endpoints);
 
 module.exports = app;
