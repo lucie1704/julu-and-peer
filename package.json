@@ -2,7 +2,7 @@
     "name": "julu-and-peer",
     "version": "1.0.0",
     "scripts": {
-      "start": "cd backend && rm -R node_modules/ && rm package-lock.json && npm install && npm start",
+      "start": "cd backend && npm install && npm start",
       "heroku-postbuild": "cd frontend && npm install && npm run build"
     },
     "engines": {
