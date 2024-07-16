@@ -36,6 +36,7 @@ exports.signup = catchAsyncError(async (req, res) => {
     email,
     password,
     passwordConfirmation,
+    // TODO: This must be changed
     role
   });
 
