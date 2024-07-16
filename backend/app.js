@@ -27,6 +27,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const logger = require('./utils/logger');
+const serveStatic = require('serve-static');
 
 require("./models/mongo/db");
 
