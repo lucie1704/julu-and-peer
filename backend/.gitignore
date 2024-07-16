@@ -3,6 +3,5 @@ node_modules
 **/.DS_Store
 
 **/config.env
-/config/config.json
 
 **/development.
