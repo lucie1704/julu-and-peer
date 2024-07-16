@@ -4,4 +4,6 @@ node_modules
 
 **/config.env
 
-**/development.log
+**/development.
+
+.env.staging
