@@ -34,6 +34,17 @@ require("./models/mongo/db");
 // Start express app
 const app = express();
 
+// Serve static files from the Vue app
+app.use(serveStatic(path.join(__dirname, 'frontend/dist')));
+
+// Serve static assets from the 'frontend/dist' directory
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
+
+// Handle all other routes with index.html (so that Vue's router works)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
+});
+
 //Set env variable globally
 dotenv.config({ path: './config.env' });
 // const csurf = require('csurf');
@@ -128,13 +139,5 @@ const endpoints = expressListEndpoints(app);
 // console.log(endpoints);
 
 app.set('trust proxy', true);
-
-// Serve static files from the Vue app
-app.use(serveStatic(path.join(__dirname, 'frontend/dist')));
-
-// Handle all other routes with index.html (so that Vue's router works)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
-});
 
 module.exports = app;
