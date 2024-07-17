@@ -12,6 +12,9 @@ router
     .patch(customerController.update)
     .delete(customerController.delete);
 
+router
+    .route('/user/:id')
+    .get(customerController.getByUserId)
 
 // router.use(autorizationMiddleware('admin'));
 

@@ -1,5 +1,4 @@
-const Customer = require('../models/customer');
-const User = require('../models/user');
+const {User, Customer} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
 const AppError = require('./../utils/appError');
@@ -32,17 +31,38 @@ exports.getById = catchAsyncError(async (req, res, next) => {
     responseReturn(res, customer);
 });
 
+exports.getByUserId = catchAsyncError(async (req, res, next) => {
+    const customer = await Customer.findOne({
+        where: {userId: parseInt(req.params.id, 10) },
+        include: {
+            model: User,
+        },
+    });
+
+    if (!customer) return next(new AppError(404));
+    
+    responseReturn(res, customer);
+});
+
+
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, customers] = await Customer.update(req.body, {
         where: {
             id: parseInt(req.params.id, 10),
         },
-        returning: true,
+        returning: true
     });
 
     if (!nbUpdated === 1) return next(new AppError(404));
 
-    responseReturn(res, customers[0]);
+    const updatedCustomer = await Customer.findOne({
+        where: {id: parseInt(req.params.id, 10) },
+        include: {
+            model: User,
+        },
+    });
+    
+    responseReturn(res, updatedCustomer);
 });
 
 exports.delete = catchAsyncError(async (req, res, next) => {

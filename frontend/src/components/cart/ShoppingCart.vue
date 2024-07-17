@@ -90,7 +90,7 @@ const open = ref(true);
                             :key="cartProduct.id"
                             class="flex py-6"
                           >
-                          <router-link
+                            <router-link
                               class="btn"
                               :to="{
                                 name: 'product',
