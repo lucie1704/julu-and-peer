@@ -27,7 +27,7 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
     let totalDiscount = 0;
     const outOfStockProducts = [];
 
-    const buyProductCartItem = cart.CartItems.filter(cartItem => {
+    const availableProducts = cart.CartItems.filter(cartItem => {
         const product = cartItem.Product;
         if (product.availableStock >= cartItem.quantity) {
           totalPrice += product.price * cartItem.quantity;
@@ -49,7 +49,7 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
         cartTotalProductCount,
         shippingFee,
         outOfStockProducts,
-        buyProductCartItem
+        availableProducts
     });
 });
 

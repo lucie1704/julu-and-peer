@@ -7,12 +7,11 @@ meta:
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { PlaceOrderI } from '~/dto';
+import { PlaceOrder } from '~/dto';
 import router from '~/router/router.ts';
-import {
-  useCart,
-  useOrder,
-  useCustomer} from '~/stores';
+import { useCart } from '~/stores/cart';
+import { useCustomer } from '~/stores/customer';
+import { useOrder } from '~/stores/order';
 
 const cartStore = useCart();
 const orderStore = useOrder();
@@ -76,14 +75,14 @@ const submitForm = async () => {
   if (!email.value || !shippingInfo.value || !cartStore.cartProducts)
     return console.error('Form validation failed!');
 
-  const orderData: PlaceOrderI = {
+    const orderData: PlaceOrder = {
     shippingFee: 20.0,
-    products: cartStore.cartProducts.buyProductCartItem.map((cartItem) => ({
-      id: cartItem.Product?.id,
+    products: cartStore.cartProducts.availableProducts.map((cartItem) => ({
+      id: Number(cartItem.Product?.id),
       name: cartItem.Product?.name,
       description: cartItem.Product?.description,
-      price: parseFloat(cartItem.Product?.price).toFixed(1),
-      quantity: 2
+      price: cartItem.Product?.price,
+      quantity: cartItem.quantity
     })),
     shippingInfo: shippingInfo.value,
     email: email.value,
@@ -277,16 +276,16 @@ const submitForm = async () => {
             class="-my-6 divide-y divide-gray-200"
           >
             <li
-              v-for="cartItem in cartStore.cartProducts?.cart.CartItems"
-              :key="cartItem.id"
+              v-for="cartProduct in cartStore.cartProducts?.availableProducts"
+              :key="cartProduct.id"
               class="flex py-6"
             >
               <div
                 class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
               >
                 <img
-                  :src="cartItem?.Product?.imageSrc"
-                  :alt="cartItem?.Product?.imageAlt"
+                  :src="cartProduct.Product.imageSrc"
+                  :alt="cartProduct.Product.imageAlt"
                   class="h-full w-full object-cover object-center"
                 >
               </div>
@@ -297,22 +296,22 @@ const submitForm = async () => {
                     class="flex justify-between text-base font-medium text-gray-900"
                   >
                     <h3>
-                      <a>{{ cartItem?.Product?.name }}</a>
+                      <a>{{ cartProduct.Product.name }}</a>
                     </h3>
                     <p class="ml-4">
-                      {{ cartItem?.Product?.price }}$
+                      {{ cartProduct.Product.price }}$
                     </p>
                   </div>
                   <p class="mt-1 text-sm text-gray-500">
-                    {{ cartItem?.Product?.ProductFormat?.name }}
+                    {{ cartProduct.Product.ProductFormat.name }}
                   </p>
                 </div>
 
                 <div class="flex flex-1 items-end justify-between text-sm">
                   <select
-                    v-model="cartItem.quantity"
+                    v-model="cartProduct.quantity"
                     class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    @change="updateQuantity(String(cartItem.id), cartItem.quantity)"
+                    @change="cartProduct.id && updateQuantity(cartProduct.id, cartProduct.quantity)"
                   >
                     <option
                       v-for="n in 10"
@@ -326,7 +325,7 @@ const submitForm = async () => {
                     <button
                       type="button"
                       class="font-medium text-indigo-600 hover:text-indigo-500"
-                      @click="removeItem(String(cartItem.id))"
+                      @click="cartProduct.id && removeItem(cartProduct.id)"
                     >
                       Remove
                     </button>
@@ -344,19 +343,19 @@ const submitForm = async () => {
               class="flex justify-between text-base font-medium text-gray-900"
             >
               <p>Subtotal</p>
-              <p>{{ cartStore.cartProducts?.totalPrice }}</p>
+              <p>{{ cartStore.cartProducts.totalPrice }}</p>
             </div>
             <div
               class="flex justify-between text-base font-medium text-gray-900"
             >
               <p>Total Discount</p>
-              <p>{{ cartStore.cartProducts?.totalDiscount }}</p>
+              <p>{{ cartStore.cartProducts.totalDiscount }}</p>
             </div>
             <div
               class="flex justify-between text-base font-medium text-gray-900"
             >
               <p>Total Products</p>
-              <p>{{ cartStore.cartProducts?.cartTotalProductCount }}</p>
+              <p>{{ cartStore.cartProducts.cartTotalProductCount }}</p>
             </div>
             <div
               class="flex justify-between text-sm font-medium text-gray-900 mt-4"
@@ -372,9 +371,9 @@ const submitForm = async () => {
               <p>
                 {{
                   calculateTotal(
-                    cartStore.cartProducts?.totalPrice,
-                    cartStore.cartProducts?.totalDiscount,
-                    cartStore.cartProducts?.shipping || 0
+                    cartStore.cartProducts.totalPrice,
+                    cartStore.cartProducts.totalDiscount,
+                    10
                   )
                 }}
               </p>

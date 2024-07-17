@@ -7,10 +7,10 @@ import {
   TransitionRoot
 } from '@headlessui/vue';
 import { ref } from 'vue';
-import { CartProductI } from '~/dto';
+import { CartProduct } from '~/dto';
 
 defineProps<{
-  cartItems: CartProductI;
+  cartItems: CartProduct;
 }>();
 
 const emit = defineEmits<{
@@ -19,6 +19,11 @@ const emit = defineEmits<{
 }>();
 
 const open = ref(true);
+
+const emitUpdateQuantity = (cartItemId: string, cartItemQuantity: number) => {
+  emit('update-quantity', { cartItemId, cartItemQuantity: Number(cartItemQuantity) });
+};
+const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId });
 </script>
 
 <template>
@@ -86,7 +91,7 @@ const open = ref(true);
                           class="-my-6 divide-y divide-gray-200"
                         >
                           <li
-                            v-for="cartProduct in cartItems.cart.CartItems"
+                            v-for="cartProduct in cartItems.availableProducts"
                             :key="cartProduct.id"
                             class="flex py-6"
                           >
@@ -94,15 +99,15 @@ const open = ref(true);
                               class="btn"
                               :to="{
                                 name: 'product',
-                                params: { id: cartProduct?.Product?.id }
+                                params: { id: cartProduct.productId }
                               }"
                             >
                               <div
                                 class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
                               >
                                 <img
-                                  :src="cartProduct?.Product?.imageSrc"
-                                  :alt="cartProduct?.Product?.imageAlt"
+                                  :src="cartProduct.Product.imageSrc"
+                                  :alt="cartProduct.Product.imageAlt"
                                   class="h-full w-full object-cover object-center"
                                 >
                               </div>
@@ -113,14 +118,14 @@ const open = ref(true);
                                   class="flex justify-between text-base font-medium text-gray-900"
                                 >
                                   <h3>
-                                    <a>{{ cartProduct?.Product?.name }}</a>
+                                    <a>{{ cartProduct.Product.name }}</a>
                                   </h3>
                                   <p class="ml-4">
-                                    {{ cartProduct?.Product?.price }}
+                                    {{ cartProduct.Product.price }}
                                   </p>
                                 </div>
                                 <p class="mt-1 text-sm text-gray-500">
-                                  {{ cartProduct?.Product?.ProductFormat?.name }}
+                                  {{ cartProduct.Product.ProductFormat.name }}
                                 </p>
                               </div>
                               <div
@@ -129,7 +134,7 @@ const open = ref(true);
                                 <select
                                   v-model="cartProduct.quantity"
                                   class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  @change="emit('update-quantity', { cartItemId: String(cartProduct.id), cartItemQuantity: cartProduct.quantity })"
+                                  @change="cartProduct.id && emitUpdateQuantity(cartProduct.id, cartProduct.quantity )"
                                 >
                                   <option
                                     v-for="n in 10"
@@ -143,7 +148,7 @@ const open = ref(true);
                                   <button
                                     type="button"
                                     class="font-medium text-indigo-600 hover:text-indigo-500"
-                                    @click="emit('remove-item', { cartItemId: String( cartProduct.id)})"
+                                    @click="cartProduct.id && emitRemoveItem(cartProduct.id)"
                                   >
                                     Remove
                                   </button>
@@ -164,19 +169,19 @@ const open = ref(true);
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
                       <p>Subtotal</p>
-                      <p>{{ cartItems?.totalPrice }}</p>
+                      <p>{{ cartItems.totalPrice }}</p>
                     </div>
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
                       <p>Total Discount</p>
-                      <p>{{ cartItems?.totalDiscount }}</p>
+                      <p>{{ cartItems.totalDiscount }}</p>
                     </div>
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
                       <p>Total Products</p>
-                      <p>{{ cartItems?.cartTotalProductCount }}</p>
+                      <p>{{ cartItems.cartTotalProductCount }}</p>
                     </div>
                     <p class="mt-0.5 text-sm text-gray-500">
                       Shipping and taxes calculated at checkout.

@@ -12,7 +12,7 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import * as z from 'zod';
 import { ConfirmEmail } from '~/dto';
-import { useAuth } from '~/stores';
+import { useAuth } from '~/stores/auth';
 
 const route = useRoute();
 const authStore = useAuth();

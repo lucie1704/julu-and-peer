@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import productAPI from '~/api/product';
-import { ProductI } from '~/dto';
+import { Product } from '~/dto';
 
 export const useProduct = defineStore('product', () => {
-  const products = ref<Array<ProductI>>();
-  const product = ref<ProductI>();
+  const products = ref<Array<Product>>();
+  const product = ref<Product>();
 
   const fetchAllProducts = async() => {
   const jwt_token = ''; // Replace with actual logic to get the JWT token

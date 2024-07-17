@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { OrderI, OrdersI, PlaceOrderI } from '~/dto';
+import { Order, Orders, PlaceOrder } from '~/dto';
 
 const ROOT_URL = 'http://localhost:3000/api/v1/customerorder';
 
@@ -7,17 +7,17 @@ interface OrderAPI {
   orderConfirm: (jwt_token: string, orderId: string) => Promise<string | null>;
   placeOrder: (
     jwt_token: string,
-    data: PlaceOrderI
+    data: PlaceOrder
   ) => Promise<{ message: string, orderId: string } | null>;
   getOrders: (
     jwt_token: string,
     customerId: string,
     status: string
-  ) => Promise<OrdersI | null>;
+  ) => Promise<Orders | null>;
   getOrderDetails: (
     jwt_token: string,
     orderId: string
-  ) => Promise<OrderI | null>;
+  ) => Promise<Order | null>;
 }
 
 const createHeaders = (jwt_token: string) => ({
@@ -37,7 +37,7 @@ const orderAPI: OrderAPI = {
       return null;
     }
   },
-  async placeOrder(jwt_token: string, data: PlaceOrderI) {
+  async placeOrder(jwt_token: string, data: PlaceOrder) {
     try {
       const res = await axios.post(`${ROOT_URL}/place-order`, data, {
         headers: createHeaders(jwt_token)
