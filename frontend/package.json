@@ -29,7 +29,8 @@
     "vue-router": "^4.3.2",
     "vuetify": "^3.6.6",
     "vuex": "^4.1.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "vue-tsc": "^2.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.3.0",
@@ -67,7 +68,6 @@
     "vue-eslint-parser": "^9.4.2",
     "vue-icon": "^2.3.0",
     "vue-router": "^4.3.2",
-    "vue-tsc": "^2.0.6",
     "vuex": "^4.1.0",
     "zod": "^3.23.8"
   }
