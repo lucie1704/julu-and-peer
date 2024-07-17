@@ -1,0 +1,10 @@
+mongodb:
+  type: mongodb:4.0.3
+  disk: 512
+
+postgresql:
+  type: postgresql:16
+  disk: 256
+  configuration:
+    schema:
+      - "public"
