@@ -23,14 +23,12 @@ const route = useRoute();
 const rating = 5;
 // TODO: Get available format from ProductFormat
 
-// const customerId = customerStore.customerId as string;
-
 const quantity = ref<number>(1);
 
 onMounted(async () => {
   await getProductDetail();
 
-  await customerStore.fetchByUserId('14');
+  await customerStore.fetchByUserId('3');
 
   if (customerStore.customerId) return await getCustomerCart(customerStore.customerId);
 });

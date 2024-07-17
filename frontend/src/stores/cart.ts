@@ -45,12 +45,8 @@ export const useCart = defineStore('cart', () => {
   const fetchCartProducts = async (customerId: string) => {
     // Retrieve JWT token from auth module (placeholder)
     const jwt_token = '';
-    try {
       const response = await cartAPI.getCartsProducts(jwt_token, customerId);
-      cartProducts.value = response;
-    } catch (error) {
-      console.error('Failed to fetch cart Products:', error);
-    }
+      if (response) return cartProducts.value = response;
   };
 
   const cartItemQuantityUpdate = async (payload: {

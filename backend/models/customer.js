@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Customer',
     timestamps: true,
     paranoid: true,
-    deletedAt: 'deletedAt',
+    deletedAt: true,
     defaultScope: {
       where: {
         active: true,

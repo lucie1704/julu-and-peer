@@ -33,8 +33,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
+      active: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+      },
       deletedAt: {
-        allowNull: false,
         type: Sequelize.DATE
       }
     });

@@ -129,7 +129,7 @@ const open = ref(true);
                                 <select
                                   v-model="cartProduct.quantity"
                                   class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  @change="emit('update-quantity', { cartItemId: cartProduct.id, cartItemQuantity: cartProduct.quantity })"
+                                  @change="emit('update-quantity', { cartItemId: String(cartProduct.id), cartItemQuantity: cartProduct.quantity })"
                                 >
                                   <option
                                     v-for="n in 10"
@@ -143,7 +143,7 @@ const open = ref(true);
                                   <button
                                     type="button"
                                     class="font-medium text-indigo-600 hover:text-indigo-500"
-                                    @click="emit('remove-item', { cartItemId: cartProduct.id })"
+                                    @click="emit('remove-item', { cartItemId: String( cartProduct.id)})"
                                   >
                                     Remove
                                   </button>
