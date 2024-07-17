@@ -24,7 +24,4 @@ router
     .patch(customerAddressController.updateCustomerAddress)
     .delete(customerAddressController.deleteCustomerAddress);
 
-router
-    .delete('/delete/:id', customerAddressController.deleteCustomerAddress);
-
 module.exports = router;

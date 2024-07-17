@@ -12,4 +12,8 @@ router.get('/get-order-details/:orderId',orderController.getOrderDetails)
 router.post('/create-payment',orderController.createPayment)
 router.get('/confirm-order/:orderId',orderController.orderConfirm)
 
+// Need admin role to get access to these routes
+// router.use(autorizationMiddleware('admin'));
+router.get('/', orderController.getAllOrders)
+
 module.exports = router;

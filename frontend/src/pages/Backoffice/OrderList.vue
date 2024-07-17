@@ -10,9 +10,7 @@
   import DataTable from '~/components/backoffice/DataTable.vue';
   import { getDataTable } from '~/composables/backoffice/getDataTable';
 
-  const { data, loading, error } = getDataTable('orders');
-  // TODO: Make Create Form + Api Call
-  // TODO: Make Edit Form + Api Call
+  const { data, loading, error } = getDataTable('customerorders');
   // TODO: Update getDataTable in order to supports orders.
 </script>
 
@@ -21,12 +19,6 @@
     <h1 class="text-2xl font-bold tracking-tight text-gray-900">
       Commandes
     </h1>
-    <button
-      type="button"
-      class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
-    >
-      Créer une commande
-    </button>
     <DataTable
       :data="data"
       :loading="loading"

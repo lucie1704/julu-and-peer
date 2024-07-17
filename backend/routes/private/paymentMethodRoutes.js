@@ -24,7 +24,4 @@ router
     .patch(paymentMethodController.updatePaymentMethod)
     .delete(paymentMethodController.deletePaymentMethod);
 
-router
-    .delete('/delete/:id', paymentMethodController.deletePaymentMethod);
-
 module.exports = router;

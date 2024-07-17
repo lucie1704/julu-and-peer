@@ -1,9 +1,23 @@
-const { ProductArtist } = require('../models');
+const { Product, ProductArtist } = require('../models');
 
 exports.getAllProductArtists = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const offset = (page - 1) * limit;
+    
     try {
-        const artists = await ProductArtist.findAll();
-        res.status(200).json(artists);
+        const { count, rows } = await ProductArtist.findAndCountAll({
+            limit,
+            offset,
+        });
+        const totalPages = Math.ceil(count / limit);
+        res.status(200).json({
+            page,
+            limit,
+            totalItems: count,
+            totalPages,
+            data: rows
+        });
     } catch (error) {
         res.status(500).json();
     }
@@ -60,6 +74,9 @@ exports.deleteProductArtist = async (req, res) => {
         await artist.destroy();
         res.status(204).json();
     } catch (error) {
-        res.status(500).json();
+        res.status(500).json({
+            message: "An error occured while trying to delete Artist",
+            details: error.message
+        });
     }
 };

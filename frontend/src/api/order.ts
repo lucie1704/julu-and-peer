@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { OrderI, OrdersI, PlaceOrderI } from '~/dto';
 
-const ROOT_URL = 'http://localhost:3000/api/v1/customerorder';
+const ROOT_URL = 'http://localhost:3000/api/v1/customerorders';
 
 interface OrderAPI {
   orderConfirm: (jwt_token: string, orderId: string) => Promise<string | null>;

@@ -24,7 +24,4 @@ router
     .patch(productGenreController.updateProductGenre)
     .delete(productGenreController.deleteProductGenre);
 
-router
-    .delete('/delete/:id', productGenreController.deleteProductGenre);
-
 module.exports = router;

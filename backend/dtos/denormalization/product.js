@@ -17,17 +17,17 @@ module.exports = async function denormalizeProduct(product, models) {
             // TODO: Includes futur new table Stock & Image
             { 
                 model: models.ProductGenre, 
-                attributes: ["id", "name"],
+                attributes: ["id", "name", "description"],
                 order: [["updatedAt", "DESC"]],
             },
             { 
                 model: models.ProductFormat, 
-                attributes: ["id", "name"],
+                attributes: ["id", "name", "description"],
                 order: [["updatedAt", "DESC"]],
             },
             { 
                 model: models.ProductArtist, 
-                attributes: ["id", "name"],
+                attributes: ["id", "name", "description"],
                 order: [["updatedAt", "DESC"]],
             },
             { 

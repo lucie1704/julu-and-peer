@@ -1,4 +1,5 @@
 const {Product, ProductGenre,ProductFormat,ProductArtist,ProductCustomerEvaluation } = require('../models');
+const ProductMongo = require("../models/mongo/product");
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
@@ -13,18 +14,49 @@ exports.createProduct = async (req, res) => {
 };
 
 exports.getAllProducts = catchAsyncError(async (req, res, next) => {
-    const products = await Product.findAll({
-            include: [
-                { model: ProductGenre },
-                { model: ProductFormat },
-                { model: ProductArtist },
-                { model: ProductCustomerEvaluation }
-            ]
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Product.findAndCountAll({
+        limit,
+        offset,
+        include: [
+            { model: ProductGenre },
+            { model: ProductFormat },
+            { model: ProductArtist },
+            { model: ProductCustomerEvaluation }
+        ]
+    });
+    const totalPages = Math.ceil(count / limit);
+
+    if(!rows) return next(new AppError('Error : fails to fetch products', 404));
+
+    res.status(200).json({
+        page,
+        limit,
+        totalItems: count,
+        totalPages,
+        data: rows
     });
 
-    if(!products) return next(new AppError('Error : fails to fetch products', 404));
+    // TODO: Make This part work according to Zod schema.
+    // const products = await ProductMongo.find()
+    // .skip(offset)
+    // .limit(limit)
+    // .exec();
+    // const totalItems = await ProductMongo.countDocuments().exec();
+    // const totalPages = Math.ceil(totalItems / limit);
 
-    return responseReturn(res, 200, products);
+    // if(!products) return next(new AppError('Error : fails to fetch products', 404));
+
+    // return responseReturn(res, 200, {
+    //     page,
+    //     limit,
+    //     totalItems,
+    //     totalPages,
+    //     data: products,
+    // });
 });
 
 exports.getProductById = catchAsyncError(async (req, res, next) => {

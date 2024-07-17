@@ -155,7 +155,7 @@ export const getDataTable = (url: string) => {
 
             // Ici on vas valider le schema avec Zod
             const schema = getSchema(url);
-            const validatedData = schema.parse(jsonData);
+            const validatedData = schema.parse(jsonData.data);
 
             // On clean les données reçues
             // const cleanedData = cleanData(url, validatedData);

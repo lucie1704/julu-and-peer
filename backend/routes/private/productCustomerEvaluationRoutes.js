@@ -24,7 +24,4 @@ router
     .patch(productCustomerEvaluationController.updateProductCustomerEvaluation)
     .delete(productCustomerEvaluationController.deleteProductCustomerEvaluation);
 
-router
-    .delete('/delete/:id', productCustomerEvaluationController.deleteProductCustomerEvaluation);
-
 module.exports = router;

@@ -1,9 +1,23 @@
-const { ProductGenre } = require('../models');
+const { Product, ProductGenre } = require('../models');
 
 exports.getAllProductGenres = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const offset = (page - 1) * limit;
+    
     try {
-        const genres = await ProductGenre.findAll();
-        res.status(200).json(genres);
+        const { count, rows } = await ProductGenre.findAndCountAll({
+            limit,
+            offset,
+        });
+        const totalPages = Math.ceil(count / limit);
+        res.status(200).json({
+            page,
+            limit,
+            totalItems: count,
+            totalPages,
+            data: rows
+        });
     } catch (error) {
         res.status(500).json();
     }
@@ -60,6 +74,9 @@ exports.deleteProductGenre = async (req, res) => {
         await genre.destroy();
         res.status(204).json();
     } catch (error) {
-        res.status(500).json();
+        res.status(500).json({
+            message: "An error occured while trying to delete Genre",
+            details: error.message
+        });
     }
 };

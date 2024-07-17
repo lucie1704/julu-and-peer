@@ -1,9 +1,23 @@
-const { ProductFormat } = require('../models');
+const { Product, ProductFormat } = require('../models');
 
 exports.getAllProductFormats = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const offset = (page - 1) * limit;
+    
     try {
-        const formats = await ProductFormat.findAll();
-        res.status(200).json(formats);
+        const { count, rows } = await ProductFormat.findAndCountAll({
+            limit,
+            offset,
+        });
+        const totalPages = Math.ceil(count / limit);
+        res.status(200).json({
+            page,
+            limit,
+            totalItems: count,
+            totalPages,
+            data: rows
+        });
     } catch (error) {
         res.status(500).json();
     }
@@ -60,6 +74,9 @@ exports.deleteProductFormat = async (req, res) => {
         await format.destroy();
         res.status(204).json();
     } catch (error) {
-        res.status(500).json();
+        res.status(500).json({
+            message: "An error occured while trying to delete Format",
+            details: error.message
+        });
     }
 };

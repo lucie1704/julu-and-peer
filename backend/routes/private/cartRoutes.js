@@ -28,7 +28,4 @@ router.get('/getcustomercart/:customerId',cartController.getCartByCustomerId)
 
 router.get('/getcartsproducts/:customerId',cartController.getCartsProducts)
 
-router
-    .delete('/delete/:id', cartController.deleteCart);
-
 module.exports = router;

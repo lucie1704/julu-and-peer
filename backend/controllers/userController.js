@@ -101,19 +101,30 @@ exports.updateUser =  catchAsyncError(async(req, res, next) => {
 });
 
 exports.getAllUsers = catchAsyncError(async (req, res, next) => {
-
-  const users = await User.findAll({
-    where: {
-      role: 'user'
-    },
-    include: [
-      { model: Customer },
-    ]
-  });
-
-  if (!users) {
-    return next(new AppError('No users found with', 404));
+  const page = parseInt(req.query.page) || 1;
+  const limit = 20;
+  const offset = (page - 1) * limit;
+  
+  try {
+      const { count, rows } = await User.findAndCountAll({
+          limit,
+          offset,
+          include: [
+            { model: Customer },
+          ]
+      });
+      const totalPages = Math.ceil(count / limit);
+      res.status(200).json({
+          page,
+          limit,
+          totalItems: count,
+          totalPages,
+          data: rows
+      });
+  } catch (error) {
+      res.status(500).json({
+        message: "An error occured while trying to get Users",
+        details: error.message
+    });
   }
-
-  return responseReturn(res, 200, users);
 });

@@ -1,5 +1,5 @@
 const {responseReturn} = require('../utils/response');
-const { CustomerOrder, Cart, CartItem, Product} = require('../models');
+const { CustomerOrder, Cart, CartItem, Product, Customer} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 
@@ -144,5 +144,48 @@ exports.getOrderDetails = catchAsyncError(async (req, res, next) => {
   responseReturn(res,200, {
     order
   })
+});
+
+exports.getAllOrders = catchAsyncError(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 20;
+  const offset = (page - 1) * limit;
+
+  const { count, rows } = await CustomerOrder.findAndCountAll({
+      limit,
+      offset,
+      include: [
+          { model: Customer }
+      ]
+  });
+  const totalPages = Math.ceil(count / limit);
+
+  if(!rows) return next(new AppError('Error : fails to fetch products', 404));
+
+  res.status(200).json({
+      page,
+      limit,
+      totalItems: count,
+      totalPages,
+      data: rows
+  });
+
+  // TODO: Make This part work according to Zod schema.
+  // const products = await OrderMongo.find()
+  // .skip(offset)
+  // .limit(limit)
+  // .exec();
+  // const totalItems = await OrderMongo.countDocuments().exec();
+  // const totalPages = Math.ceil(totalItems / limit);
+
+  // if(!products) return next(new AppError('Error : fails to fetch orders', 404));
+
+  // return responseReturn(res, 200, {
+  //     page,
+  //     limit,
+  //     totalItems,
+  //     totalPages,
+  //     data: products,
+  // });
 });
 

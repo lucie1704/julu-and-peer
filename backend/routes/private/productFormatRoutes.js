@@ -24,7 +24,4 @@ router
     .patch(productFormatController.updateProductFormat)
     .delete(productFormatController.deleteProductFormat);
 
-router
-    .delete('/delete/:id', productFormatController.deleteProductFormat);
-
 module.exports = router;

@@ -39,13 +39,11 @@ module.exports = (sequelize, DataTypes) => {
       
       // Maybe delete thoses parts because user not supposed to be in Mongo ?
       User.addHook('afterCreate', async (user) => {
-        await createMongoUser(user);
-        console.log("User created in mongoDB");
+        // TODO: Créer le customer avec UserId, Firstname, Lastname
       });
 
       User.addHook('afterUpdate', async (user) => {
-        await updateMongoUser(user);
-        console.log("afterUpdate");
+        // TODO: Update le customer avec UserId, Firstname, Lastname
       });
     }
     

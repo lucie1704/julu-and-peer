@@ -113,7 +113,7 @@ app.use('/api/v1/paymentmethods', paymentMethodRouter);
 app.use('/api/v1/carts', cartRouter);
 app.use('/api/v1/cartitem', cartItemRouter);
 app.use('/api/v1/wishlist', wishlistRouter);
-app.use('/api/v1/customerorder', orderRouter);
+app.use('/api/v1/customerorders', orderRouter);
 
 // Handle requests for routes that are not defined in the application.
 app.all('*', (req, res, next) => {
