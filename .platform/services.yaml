@@ -1,8 +1,6 @@
 mongodb:
-  type: mongodb:4.4
+  type: mongodb:3.6
   disk: 256
-  configuration:
-    endpoints: [primary]
 
 postgresql:
   type: postgresql:16
