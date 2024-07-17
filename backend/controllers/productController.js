@@ -18,13 +18,13 @@ exports.getAllProducts = catchAsyncError(async (req, res, next) => {
                 { model: ProductGenre },
                 { model: ProductFormat },
                 { model: ProductArtist },
-                {model: ProductCustomerEvaluation}
+                { model: ProductCustomerEvaluation }
             ]
     });
 
     if(!products) return next(new AppError('Error : fails to fetch products', 404));
 
-    return responseReturn(res, 201, products );
+    return responseReturn(res, 200, products);
 });
 
 exports.getProductById = catchAsyncError(async (req, res, next) => {
@@ -33,12 +33,12 @@ exports.getProductById = catchAsyncError(async (req, res, next) => {
             { model: ProductGenre },
             { model: ProductFormat },
             { model: ProductArtist },
-            {model: ProductCustomerEvaluation}
+            { model: ProductCustomerEvaluation }
         ]
     });
     if(!product) return next(new AppError('Product not found', 404));
 
-    return responseReturn(res, 201, product );
+    return responseReturn(res, 200, product);
 });
 
 exports.updateProduct = catchAsyncError(async (req, res, next) => {
@@ -49,19 +49,19 @@ exports.updateProduct = catchAsyncError(async (req, res, next) => {
     //TODO: Filter allowed propriaties
     await product.update(req.body);
 
-    return responseReturn(res, 201, product );
+    return responseReturn(res, 200, product);
 });
 
 
 exports.deleteProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findByPk(req.params.id);
         if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
+            return res.status(404).json();
         }
         await product.destroy();
-        res.status(204).json({ message: 'Product deleted successfully' });
+        res.status(204).json();
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json();
     }
 };

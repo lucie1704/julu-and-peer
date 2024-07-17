@@ -1,9 +1,11 @@
-const User = require('./../models/mongo/user');
+// const User = require('./../models/mongo/user');
+const {User, Customer } = require('../models');
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('./../utils/catchAsyncError');
 const sendSuccessResponse = require('../utils/sendSuccessResponse');
 const mongoose = require('mongoose');
 const filterObject = require('./../utils/filterObject');
+const {responseReturn} = require('../utils/response');
 
 
 // User role
@@ -100,11 +102,18 @@ exports.updateUser =  catchAsyncError(async(req, res, next) => {
 
 exports.getAllUsers = catchAsyncError(async (req, res, next) => {
 
-  const users = await User.find();
+  const users = await User.findAll({
+    where: {
+      role: 'user'
+    },
+    include: [
+      { model: Customer },
+    ]
+  });
 
   if (!users) {
     return next(new AppError('No users found with', 404));
   }
 
-  sendSuccessResponse(users, res)
+  return responseReturn(res, 200, users);
 });

@@ -13,6 +13,7 @@ module.exports = {
         email: 'john.doe@example.com',
         photo: 'default.jpg',
         role: 'user',
+        emailConfirmed: true,
         password: await bcrypt.hash('john.password123!', salt),
         passwordConfirmation: await bcrypt.hash('john.password123!', salt),
         passwordChangedAt: new Date(),
@@ -25,6 +26,7 @@ module.exports = {
         email: 'jane.smith@example.com',
         photo: 'default.jpg',
         role: 'user',
+        emailConfirmed: true,
         password: await bcrypt.hash('jane.password123!', salt),
         passwordConfirmation: await bcrypt.hash('jane.password123!', salt),
         passwordChangedAt: new Date(),
@@ -37,6 +39,7 @@ module.exports = {
         email: 'alice.johnson@example.com',
         photo: 'default.jpg',
         role: 'user',
+        emailConfirmed: true,
         password: await bcrypt.hash('alice.password123!', salt),
         passwordConfirmation: await bcrypt.hash('alice.password123!', salt),
         passwordChangedAt: new Date(),
@@ -49,6 +52,7 @@ module.exports = {
         email: 'michael.brown@example.com',
         photo: 'default.jpg',
         role: 'user',
+        emailConfirmed: true,
         password: await bcrypt.hash('michael.password123!', salt),
         passwordConfirmation: await bcrypt.hash('michael.password123!!', salt),
         passwordChangedAt: new Date(),
@@ -61,12 +65,26 @@ module.exports = {
         email: 'emily.taylor@example.com',
         photo: 'default.jpg',
         role: 'user',
+        emailConfirmed: true,
         password: await bcrypt.hash('emily.password123!', salt),
         passwordConfirmation: await bcrypt.hash('emily.password123!', salt),
         passwordChangedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
       },
+      {
+        firstname: 'Julu',
+        lastname: 'Peer',
+        email: 'admin@juluandpeer.com',
+        photo: 'default.jpg',
+        role: 'admin',
+        emailConfirmed: true,
+        password: await bcrypt.hash('Adminandpeer242!', salt),
+        passwordConfirmation: await bcrypt.hash('Adminandpeer242!', salt),
+        passwordChangedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
     ], {});
   },
 

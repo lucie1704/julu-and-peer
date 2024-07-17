@@ -1,29 +1,29 @@
 <route lang="yaml">
-path: /admin/users
-name: admin-users
-meta:
-  requiresAdmin: true
-  layout: BackofficeLayout
+  path: /admin/productartists
+  name: admin-productartists
+  meta:
+    requiresAdmin: true
+    layout: BackofficeLayout
 </route>
 
 <script lang="ts" setup>
   import DataTable from '~/components/backoffice/DataTable.vue';
   import { getDataTable } from '~/composables/backoffice/getDataTable';
 
-  const url = 'users';
+  const url = 'productartists';
   const { data, loading, error } = getDataTable(url);
 </script>
 
 <template>
   <div class="max-w-2xl px-4 py-16 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
     <h1 class="text-2xl font-bold tracking-tight text-gray-900">
-      Utilisateurs
+      Artistes
     </h1>
     <button
       type="button"
       class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
     >
-      Créer un utilisateur
+      Créer un artiste
     </button>
     <DataTable
       :data="data"
@@ -37,32 +37,13 @@ meta:
           <v-row>
             <v-col>
               <v-text-field
-                v-model="item.firstname"
-                label="Prénom"
+                v-model="item.name"
+                label="Nom de l'artiste"
               />
               <v-text-field
-                v-model="item.lastname"
-                label="Nom"
+                v-model="item.description"
+                label="Description"
               />
-              <v-text-field
-                v-model="item.email"
-                label="Email"
-                required
-                type="email"
-              />
-              <v-text-field
-                v-model="item.photo"
-                label="Photo"
-              />
-              <v-select
-                v-model="item.role"
-                :items="['user', 'customer', 'admin']"
-                label="Rôle"
-              />
-              <!--<v-checkbox
-                v-model="item.active"
-                label="Actif"
-              />-->
             </v-col>
           </v-row>
           <v-row>

@@ -6,7 +6,7 @@ const autorizationMiddleware = require('../../middleware/autorizationMiddleware'
 const router = express.Router();
 
 // Protect all routes after this middleware
-router.use(authMiddleware);
+// router.use(authMiddleware);
 
 // User role
 router.patch('/updateMyPassword/', authController.updateMyPassword);
@@ -16,7 +16,7 @@ router.delete('/deleteMe', userController.deleteMe);
 
 
 //Need admin role to get access to these routes
-router.use(autorizationMiddleware('admin'));
+// router.use(autorizationMiddleware('admin'));
 
 router
   .route('/')

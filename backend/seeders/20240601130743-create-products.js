@@ -1,5 +1,5 @@
 'use strict';
-const { ProductGenre, ProductFormat, ProductArtist } = require('../models');
+const { Product, ProductGenre, ProductFormat, ProductArtist } = require('../models');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
         description: 'A musical instrument typically made of wood with six strings and played with fingers or a plectrum.',
         price: 499.99,
         availableStock: 100,
-        genreId: genre.id ,
+        genreId: genre.id,
         formatId: format.id,
         artistId: artist.id,
         createdAt: new Date(),
@@ -46,7 +46,9 @@ module.exports = {
       }
     ];
 
-    await queryInterface.bulkInsert('Products', productsData, {});
+    for (const productData of productsData) {
+      await Product.create(productData);
+    }
   },
 
   down: async (queryInterface, Sequelize) => {

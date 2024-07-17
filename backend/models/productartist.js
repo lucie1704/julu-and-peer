@@ -1,7 +1,7 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+const denormalizeProduct = require("../dtos/denormalization/product");
+
 module.exports = (sequelize, DataTypes) => {
   class ProductArtist extends Model {
     /**
@@ -12,6 +12,27 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       ProductArtist.hasMany(models.Product, { foreignKey: 'artistId' });
+    }
+    static addHooks(models) {
+      ProductArtist.addHook('afterUpdate', async (artist, { fields }) => {
+        if (fields.includes('name') || fields.includes('description')) {
+          // On récupère tout les produits lié a l'artiste.
+          const products = await models.Product.findAll({ where: { artistId: artist.id } });
+          // On denormalize chaque produit.
+          for (const product of products) {
+            await denormalizeProduct(product, models);
+          }
+        }
+      });
+      // TODO: Clear document in Mongo.
+      // ProductArtist.addHook('afterDelete', async (artist, { fields }) => {
+      //   // On récupère tout les produits lié a l'artiste.
+      //   const products = await models.Product.findAll({ where: { artistId: artist.id } });
+      //   // On denormalize chaque produit.
+      //   for (const product of products) {
+      //     await denormalizeProduct(product, models);
+      //   }
+      // });
     }
   }
   ProductArtist.init({

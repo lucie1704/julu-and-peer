@@ -1,7 +1,7 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+const denormalizeProduct = require("../dtos/denormalization/product");
+
 module.exports = (sequelize, DataTypes) => {
   class ProductGenre extends Model {
     /**
@@ -12,6 +12,27 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       ProductGenre.hasMany(models.Product, { foreignKey: 'genreId' });
+    }
+    static addHooks(models) {
+      ProductGenre.addHook('afterUpdate', async (genre, { fields }) => {
+        if (fields.includes('name') || fields.includes('description')) {
+          // On récupère tout les produits lié au genre.
+          const products = await models.Product.findAll({ where: { genreId: genre.id } });
+          // On denormalize chaque produit.
+          for (const product of products) {
+            await denormalizeProduct(product, models);
+          }
+        }
+      });
+      // TODO: Clean document in Mongo.
+      // ProductGenre.addHook('afterDelete', async (format, { fields }) => {
+      //   // On récupère tout les produits lié au format.
+      //   const products = await models.Product.findAll({ where: { formatId: format.id } });
+      //   // On denormalize chaque produit.
+      //   for (const product of products) {
+      //     await denormalizeProduct(product, models);
+      //   }
+      // });
     }
   }
   ProductGenre.init({

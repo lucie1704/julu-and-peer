@@ -10,7 +10,7 @@ const router = express.Router();
 
 // Here do other routes
 
-//Need admin role to get access to these routes
+// Need admin role to get access to these routes
 // router.use(autorizationMiddleware('admin'));
 
 router
@@ -23,8 +23,5 @@ router
     .get(productController.getProductById)
     .patch(productController.updateProduct)
     .delete(productController.deleteProduct);
-
-router
-    .delete('/delete/:id', productController.deleteProduct);
 
 module.exports = router;

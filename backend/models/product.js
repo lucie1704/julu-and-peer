@@ -1,7 +1,7 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+const denormalizeProduct = require("../dtos/denormalization/product");
+
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     /**
@@ -17,6 +17,19 @@ module.exports = (sequelize, DataTypes) => {
       Product.hasMany(models.ProductCustomerEvaluation, { foreignKey: 'productId' });
       Product.belongsToMany(models.Order, { through: models.OrdersProducts })
       Product.belongsToMany(models.Wishlist, { through: 'WishlistsProducts' });
+    }
+    static addHooks(models) {
+      Product.addHook('afterCreate', async (product) => {
+        // TODO: Check for table associated doesn't appear on mongo.
+        await denormalizeProduct(product, models)
+      });
+      Product.addHook('afterUpdate', async (product, { fields }) => {
+        // Maybe check fields in case.
+        await denormalizeProduct(product, models)
+      });
+      // TODO: Delete Product document in Mongo.
+      // Product.addHook('afterDelete', async (product, { fields }) => {
+      // });
     }
   }
   Product.init({
