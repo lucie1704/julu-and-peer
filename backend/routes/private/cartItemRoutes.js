@@ -3,16 +3,15 @@ const cartItemController = require('../../controllers/cartItemController');
 const authMiddleware = require('../../middleware/authMiddleware');
 const router = express.Router();
 
-
-// Protect all routes after this middleware
 // router.use(authMiddleware);
+
 router
     .route('/')
-    .post(cartItemController.addToCartItem)
+    .post(cartItemController.add)
 
 router
     .route('/:id')
-    .patch(cartItemController.cartItemQuantityUpdate)
-    .delete(cartItemController.deleteCartItem);
+    .patch(cartItemController.update)
+    .delete(cartItemController.delete);
 
 module.exports = router;

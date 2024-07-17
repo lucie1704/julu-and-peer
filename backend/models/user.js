@@ -2,7 +2,7 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const AppError = require('../utils/appError');
-const {createMongoUser, updateMongoUser} = require("../dtos/denormalization/userMongo");
+const { createMongoUser, updateMongoUser } = require("../dtos/denormalization/userMongo");
 
 const {
   Model
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.hasOne(models.Customer, { foreignKey: 'userId' });
+      User.hasOne(models.Customer, { foreignKey: 'userId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     }
     static addHooks(models) {
       User.addHook('beforeCreate', async (user) => {
@@ -200,10 +200,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       defaultValue: 0
     },
-    maxFailedLoginAt: DataTypes.DATE
+    maxFailedLoginAt: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'User',
+    paranoid: true,
+    deletedAt: true,
     defaultScope: {
       attributes: { exclude:
         [
@@ -217,7 +219,8 @@ module.exports = (sequelize, DataTypes) => {
         'passwordChangedAt',
         'failAccess',
         'maxFailedLoginAt',
-        'active'
+        'active',
+        'role'
       ]
       },
       where: {

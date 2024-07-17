@@ -3,12 +3,12 @@ const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
 
-exports.createProduct = catchAsyncError(async (req, res) => {
+exports.create = catchAsyncError(async (req, res) => {
     const product = await Product.create(req.body);
     responseReturn(res, product, 201);
 });
 
-exports.getAllProducts = catchAsyncError(async (req, res) => {
+exports.getAll = catchAsyncError(async (req, res) => {
     const products = await Product.findAll({
             include: [
                 { model: ProductGenre },
@@ -21,7 +21,7 @@ exports.getAllProducts = catchAsyncError(async (req, res) => {
     return responseReturn(res, products );
 });
 
-exports.getProductById = catchAsyncError(async (req, res, next) => {
+exports.getById = catchAsyncError(async (req, res, next) => {
     const product = await Product.findByPk(req.params.id, {
         include: [
             { model: ProductGenre },
@@ -36,7 +36,7 @@ exports.getProductById = catchAsyncError(async (req, res, next) => {
     return responseReturn(res, product );
 });
 
-exports.updateProduct = catchAsyncError(async (req, res, next) => {
+exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, products] = await Product.update(req.body, {
         where: {
             id: parseInt(req.params.id, 10),
@@ -49,7 +49,7 @@ exports.updateProduct = catchAsyncError(async (req, res, next) => {
     responseReturn(res, products[0]);
 });
 
-exports.deleteProduct = async (req, res, next) => {
+exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await Product.destroy({
         where: {
             id: parseInt(req.params.id, 10),
@@ -59,4 +59,4 @@ exports.deleteProduct = async (req, res, next) => {
     if (!result) return next(new AppError(404));
 
     res.status(204);
-};
+});

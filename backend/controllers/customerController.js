@@ -4,7 +4,7 @@ const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
 const AppError = require('./../utils/appError');
 
-exports.createCustomer = catchAsyncError(async (req, res, next) => {
+exports.create = catchAsyncError(async (req, res, next) => {
     const { userId, firstName, lastName } = req.body;
 
     const user = await User.findByPk(userId);
@@ -15,7 +15,7 @@ exports.createCustomer = catchAsyncError(async (req, res, next) => {
     responseReturn(res, customer, 201);
 });
 
-exports.getCustomers = catchAsyncError(async (req, res, next) => {
+exports.getAll = catchAsyncError(async (req, res, next) => {
     const customers = await Customer.findAll({ include: User });
     
     if (!customers) return next(new AppError(404));
@@ -23,7 +23,7 @@ exports.getCustomers = catchAsyncError(async (req, res, next) => {
     responseReturn(res, customers);
 });
 
-exports.getCustomerById = catchAsyncError(async (req, res, next) => {
+exports.getById = catchAsyncError(async (req, res, next) => {
     const { id } = req.params;
 
     const customer = await Customer.findByPk(id, { include: User });
@@ -32,7 +32,7 @@ exports.getCustomerById = catchAsyncError(async (req, res, next) => {
     responseReturn(res, customer);
 });
 
-exports.updateCustomer = catchAsyncError(async (req, res, next) => {
+exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, customers] = await Customer.update(req.body, {
         where: {
             id: parseInt(req.params.id, 10),
@@ -45,7 +45,7 @@ exports.updateCustomer = catchAsyncError(async (req, res, next) => {
     responseReturn(res, customers[0]);
 });
 
-exports.deleteCustomer = catchAsyncError(async (req, res, next) => {
+exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await Customer.destroy({
         where: {
             id: parseInt(req.params.id, 10),

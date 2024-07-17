@@ -3,7 +3,7 @@ const { Wishlist } = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 
-exports.createWishlist = catchAsyncError (async (req, res, next) => {
+exports.create = catchAsyncError (async (req, res, next) => {
   const { slug, productId } = req.body
   
   const wishlist = await Wishlist.findOne({ where: { slug, productId } });
@@ -15,7 +15,7 @@ exports.createWishlist = catchAsyncError (async (req, res, next) => {
   return responseReturn(res, createdWishlist, 201);
 });
 
-exports.getWishlist = catchAsyncError (async (req, res, next) => {
+exports.getAll = catchAsyncError (async (req, res, next) => {
 
   const wishlists = await Wishlist.findAll({ where: { customerId : req.params.id, } });;
 
@@ -26,7 +26,28 @@ exports.getWishlist = catchAsyncError (async (req, res, next) => {
   responseReturn(res,  wishlists)
 });
 
-exports.deleteWishlist = catchAsyncError (async (req, res, next) => {
+exports.getById = catchAsyncError(async (req, res, next) => {
+  const wishlist = await Wishlist.findByPk(req.params.id);
+  if (!wishlist) return next(new AppError(404));
+  
+  responseReturn(res, wishlist);
+});
+
+exports.update = catchAsyncError(async (req, res, next) => {
+  const [nbUpdated, wishlists] = await Wishlist.update(req.body, {
+      where: {
+          id: parseInt(req.params.id, 10),
+      },
+      returning: true,
+  });
+
+  if (!nbUpdated === 1) return next(new AppError(404));
+
+  responseReturn(res, wishlists[0]);
+});
+
+
+exports.delete = catchAsyncError (async (req, res, next) => {
   const result = await Wishlist.destroy({
     where: {
         id: parseInt(req.params.id, 10),

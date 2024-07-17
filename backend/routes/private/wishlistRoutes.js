@@ -9,12 +9,13 @@ const router = express.Router();
 
 router
     .route('/')
-    .post(wishlistController.createWishlist)
+    .post(wishlistController.create)
 
 router
     .route('/:id')
-    .get( wishlistController.getWishlist)
-    .delete( wishlistController.deleteWishlist);
+    .get(wishlistController.getAll)
+    .delete(wishlistController.delete)
+    .patch(wishlistController.update)
 
 
 module.exports = router;

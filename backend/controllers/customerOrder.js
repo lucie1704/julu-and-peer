@@ -3,23 +3,6 @@ const { CustomerOrder, Cart, CartItem, Product} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 
-exports.createPayment = catchAsyncError(async (req, res, next) => {
-  // const { price } = req.body
-
-  //TODO: Use stripe
-  // const payment = await stripe.paymentIntents.create({
-  //   amount: price * 100,
-  //   currency: 'usd',
-  //   automatic_payment_methods: {
-  //       enabled: true
-  //   }
-  // })
-  // if(!payment) return next(new AppError(404));
-
-  // responseReturn(res, 200, { clientSecret: payment.client_secret })
-
-});
-
 exports.paymentCheck = catchAsyncError (async (id) => {
 
   const customerOrder = await CustomerOrder.findByPk(id)
@@ -37,9 +20,9 @@ exports.paymentCheck = catchAsyncError (async (id) => {
 });
 
 exports.orderConfirm = catchAsyncError(async (req, res, next) => {
-  const {orderId} = req.params
+  const {id} = req.params
 
-  const customerOrder = await CustomerOrder.findByPk(orderId)
+  const customerOrder = await CustomerOrder.findByPk(id)
 
   if(!customerOrder) return next(new AppError(404));
 
@@ -49,7 +32,7 @@ exports.orderConfirm = catchAsyncError(async (req, res, next) => {
   res.status(200)
 });
 
-exports.placeOrder = catchAsyncError(async (req, res, next) => {
+exports.create = catchAsyncError(async (req, res, next) => {
   const { shippingFee, products, shippingInfo, customerId } = req.body;
 
   if (!products || products.length === 0) {
@@ -103,7 +86,7 @@ exports.placeOrder = catchAsyncError(async (req, res, next) => {
   res.status(200)
 });
 
-exports.getOrders = catchAsyncError(async (req, res, next) => {
+exports.getAll = catchAsyncError(async (req, res, next) => {
   const { customerId, status } = req.params;
 
   let orders;
@@ -130,7 +113,7 @@ exports.getOrders = catchAsyncError(async (req, res, next) => {
   responseReturn(res, orders);
 });
 
-exports.getOrderDetails = catchAsyncError(async (req, res, next) => {
+exports.getById = catchAsyncError(async (req, res, next) => {
   const {orderId} = req.params
 
   const order = await CustomerOrder.findByPk(orderId)

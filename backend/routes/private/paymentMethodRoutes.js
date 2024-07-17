@@ -4,27 +4,22 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
+// router.use(authMiddleware);
+router
+    .route('/')
+    .post(paymentMethodController.create)
 
-// Protect all routes after this middleware
-router.use(authMiddleware);
 
-// Here do other routes
-
-//Need admin role to get access to these routes
-router.use(autorizationMiddleware('admin'));
+// router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')
-    .post(paymentMethodController.createPaymentMethod)
-    .get(paymentMethodController.getAllPaymentMethods);
+    .get(paymentMethodController.getAll);
 
 router
     .route('/:id')
-    .get(paymentMethodController.getPaymentMethodById)
-    .patch(paymentMethodController.updatePaymentMethod)
-    .delete(paymentMethodController.deletePaymentMethod);
-
-router
-    .delete('/delete/:id', paymentMethodController.deletePaymentMethod);
+    .get(paymentMethodController.getById)
+    .patch(paymentMethodController.update)
+    .delete(paymentMethodController.delete);
 
 module.exports = router;

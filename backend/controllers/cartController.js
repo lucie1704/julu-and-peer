@@ -3,11 +3,11 @@ const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
 
-exports.getCartsProducts = catchAsyncError(async (req, res, next) => {
-    const { customerId } = req.params;
+exports.getProducts = catchAsyncError(async (req, res, next) => {
+    const { id } = req.params;
 
     const cart = await Cart.findOne({
-        where: { customerId },
+        where: { customerId : id},
         include: {
             model: CartItem,
             include: {
@@ -53,7 +53,7 @@ exports.getCartsProducts = catchAsyncError(async (req, res, next) => {
     });
 });
 
-exports.getAllCarts = catchAsyncError (async (req, res) => {
+exports.getAll = catchAsyncError (async (req, res) => {
 
     const carts = await Cart.findAll();
 
@@ -62,22 +62,21 @@ exports.getAllCarts = catchAsyncError (async (req, res) => {
     responseReturn(res, carts);
 });
 
-exports.getCartById = catchAsyncError(async (req, res, next) => {
+exports.getById = catchAsyncError(async (req, res, next) => {
     const cart = await Cart.findByPk(req.params.id)
     if (!cart) return next(new AppError(404));
     return responseReturn(res, cart);
 });
 
-exports.getCartByCustomerId = catchAsyncError(async (req, res, next) => {
-    const { customerId } = req.params;
+exports.getByCustomerId = catchAsyncError(async (req, res, next) => {
+    const { id } = req.params;
 
-    const cart = await Cart.findOne({ where: { customerId } });
+    const cart = await Cart.findOne({ where: { customerId: id } });
     if (!cart) return next(new AppError(404));
     return responseReturn(res, cart);
 });
 
-
-exports.createCart = catchAsyncError(async (req, res, next) => {
+exports.create = catchAsyncError(async (req, res, next) => {
     const { customerId } = req.body;
 
     const existedCart = await Cart.findOne({ where: { customerId } });
@@ -91,7 +90,7 @@ exports.createCart = catchAsyncError(async (req, res, next) => {
     return responseReturn(res, cart, 201);
 });
 
-exports.updateCart = catchAsyncError(async (req, res, next) => {
+exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, carts] = await Cart.update(req.body, {
         where: {
             id: parseInt(req.params.id, 10),
@@ -104,7 +103,7 @@ exports.updateCart = catchAsyncError(async (req, res, next) => {
     responseReturn(res, carts[0]);
 });
 
-exports.deleteCart = catchAsyncError(async( req, res, next) => {
+exports.delete = catchAsyncError(async( req, res, next) => {
     const result = await Cart.destroy({
         where: {
             id: parseInt(req.params.id, 10),

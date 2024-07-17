@@ -28,7 +28,7 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signup = catchAsyncError(async (req, res) => {
-  const { firstname, lastname, email, password, passwordConfirmation, role } = req.body;
+  const { firstname, lastname, email, password, passwordConfirmation } = req.body;
   
   const newUser = User.build({
     firstname,
@@ -36,8 +36,6 @@ exports.signup = catchAsyncError(async (req, res) => {
     email,
     password,
     passwordConfirmation,
-    // TODO: This must be changed
-    role
   });
 
   // Generate email confirmation token

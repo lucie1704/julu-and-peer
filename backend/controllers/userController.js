@@ -36,6 +36,7 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
     responseReturn(res, user);
 });
 
+// TODO: A changer : Faire annonymiser les données personnelles de l'utilisateur
 exports.deleteMe = catchAsyncError(async (req, res, next) => {
   const result = await User.destroy({
     where: {
@@ -50,7 +51,7 @@ exports.deleteMe = catchAsyncError(async (req, res, next) => {
 
 // Méthodes pour Admin role
 
-exports.getAllUsers = catchAsyncError(async ( req, res, next) => {
+exports.getAll = catchAsyncError(async ( req, res, next) => {
   const users = await User.findAll({ include: Customer });
     
   if (!users) return next(new AppError(404));
@@ -58,7 +59,7 @@ exports.getAllUsers = catchAsyncError(async ( req, res, next) => {
   responseReturn(res, users);
 });
 
-exports.getUser = catchAsyncError(async ( req, res, next) => {
+exports.get = catchAsyncError(async ( req, res, next) => {
   const { id } = req.params;
 
   const user = await User.findByPk(id);
@@ -67,19 +68,37 @@ exports.getUser = catchAsyncError(async ( req, res, next) => {
   responseReturn(res, user);
 });
 
-exports.deleteUser = catchAsyncError(async (req, res, next) => {
-  const result = await User.destroy({
+exports.create = catchAsyncError(async ( req, res, next) => {
+  const { firstname, lastname, email, password, passwordConfirmation } = req.body;
+  
+  const user = User.build({
+    firstname,
+    lastname,
+    email,
+    password,
+    passwordConfirmation,
+  });
+  await user.save();
+
+  responseReturn(res, user);
+});
+
+
+exports.delete = catchAsyncError(async (req, res, next) => {
+  const user = await User.findOne({
     where: {
-        id: parseInt(req.params.id, 10),
+      id: parseInt(req.params.id, 10),
     },
   });
 
-  if (!result) return next(new AppError(404));
+  if (!user) return next(new AppError(404, 'User not found'));
 
-  res.status(204);
+  await user.destroy();
+
+  res.status(204).send();
 });
 
-exports.updateUser = catchAsyncError(async (req, res, next) => {
+exports.update = catchAsyncError(async (req, res, next) => {
 
   if (req.body.password || req.body.passwordConfirmation) {
     return next(
@@ -98,5 +117,11 @@ exports.updateUser = catchAsyncError(async (req, res, next) => {
 
     if (!nbUpdated === 1) return next(new AppError(404));
 
-    responseReturn(res, users[0]);
+    const { id, firstname, lastname, email, photo } = users[0];
+    const user = { id, firstname, lastname, email, photo };
+    responseReturn(res, user);
 });
+
+
+
+

@@ -3,7 +3,7 @@ const { Product, CartItem} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 
-exports.addToCartItem = catchAsyncError (async (req, res, next) => {
+exports.add = catchAsyncError (async (req, res, next) => {
     const {productId, cartId, quantity } = req.body;
 
     const product = await Product.findOne({ where: { id: productId } });
@@ -20,7 +20,7 @@ exports.addToCartItem = catchAsyncError (async (req, res, next) => {
 
 });
 
-exports.cartItemQuantityUpdate = catchAsyncError(async (req, res, next) => {
+exports.update = catchAsyncError(async (req, res, next) => {
 
     const { id } = req.params;
 
@@ -37,7 +37,7 @@ exports.cartItemQuantityUpdate = catchAsyncError(async (req, res, next) => {
     responseReturn(res, updatedCartItem.quantity );
 });
 
-exports.deleteCartItem = catchAsyncError(async (req, res, next) => {
+exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await CartItem.destroy({
         where: {
             id: parseInt(req.params.id, 10),
