@@ -5,7 +5,7 @@ mongodb:
   # (https://docs.platform.sh/add-services/mongodb.html#supported-versions)
   # when choosing a version. If you specify a version number which is not available,
   # the CLI will return an error.
-  type: mongodb:4.4
+  type: mongodb:
   # The disk attribute is the size of the persistent disk (in MB) allocated to the service.
   disk: 512
 
