@@ -17,8 +17,8 @@ module.exports = (sequelize, DataTypes) => {
       Product.hasMany(models.ProductCustomerEvaluation, { foreignKey: 'productId' });
       Product.belongsToMany(models.Order, { through: models.OrdersProducts })
       Product.belongsToMany(models.Wishlist, { through: 'WishlistsProducts' });
-      Product.hasOne(models.Stock);
-      Product.hasOne(models.Image);
+      Product.hasMany(models.Stock);
+      Product.hasMany(models.Image);
     }
   }
   Product.init({
@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
     },
     price: {
       type: DataTypes.DECIMAL,

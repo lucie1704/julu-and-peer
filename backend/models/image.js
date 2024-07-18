@@ -26,7 +26,6 @@ module.exports = (sequelize, DataTypes) => {
   Image.init({
     width: DataTypes.INTEGER,
     height: DataTypes.INTEGER,
-    url: DataTypes.STRING,
     type: DataTypes.STRING,
     description: DataTypes.TEXT,
     alt: DataTypes.TEXT,

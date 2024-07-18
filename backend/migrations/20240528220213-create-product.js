@@ -17,6 +17,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      quantity: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
       price: {
         allowNull: false,
         type: Sequelize.DECIMAL
