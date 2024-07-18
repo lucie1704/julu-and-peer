@@ -20,12 +20,6 @@
     <h1 class="text-2xl font-bold tracking-tight text-gray-900">
       Genres
     </h1>
-    <button
-      type="button"
-      class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
-    >
-      Créer un genre
-    </button>
     <DataTable
       :data="data"
       :loading="loading"
@@ -34,30 +28,33 @@
     >
       <!-- Start Edit Form Slot-->
       <template #form="{ item, submit }">
-        <v-form @submit.prevent="submit">
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="item.name"
-                label="Nom du genre"
-              />
-              <v-text-field
-                v-model="item.description"
-                label="Description"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-btn
-                type="submit"
-                color="blue"
-              >
-                Modifier
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-form>
+        <v-card class="text-center pa-5">
+          <v-card-title>{{ item.id ? 'Modifier un genre' : 'Créer un genre' }}</v-card-title>
+          <v-form @submit.prevent="submit">
+            <v-row>
+              <v-col>
+                <v-text-field
+                  v-model="item.name"
+                  label="Nom du genre"
+                />
+                <v-text-field
+                  v-model="item.description"
+                  label="Description"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-btn
+                  type="submit"
+                  color="blue"
+                >
+                  {{ item.id ? 'Modifier' : 'Créer' }}
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card>
       </template>
       <!-- End Edit Form Slot -->
     </DataTable>

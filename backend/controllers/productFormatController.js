@@ -38,7 +38,7 @@ exports.getProductFormatById = async (req, res) => {
 
 exports.createProductFormat = async (req, res) => {
     try {
-        const format = await ProductFormat.createProductFormat(req.body);
+        const format = await ProductFormat.create(data);
         res.status(201).json(format);
     } catch (error) {
         res.status(500).json();
@@ -69,7 +69,7 @@ exports.deleteProductFormat = async (req, res) => {
 
         // On check si il y a un produit associé, si ce n'est pas le cas on peut le supprimer.
         if (productsCount > 0) {
-            return res.status(400).json({ message: 'Cannot delete format with associated products' });
+            return res.status(400).json({ message: 'Vous ne pouvez pas supprimer un format qui est encore associé a des produits.' });
         }
         await format.destroy();
         res.status(204).json();

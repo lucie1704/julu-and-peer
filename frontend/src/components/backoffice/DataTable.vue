@@ -14,58 +14,80 @@
 
     const showEditItemDialog = ref(false);
     const showDeleteItemDialog = ref(false);
+    const showErrorDialog = ref(false);
+    const errorMessage = ref('');
 
     const itemToEdit = ref();
     const itemToDelete = ref();
+    const isEditing = ref(false);
 
     const deleteItem = item => {
       itemToDelete.value = item;
       showDeleteItemDialog.value = true;
     };
 
-    const editItem = item => {
+    const editItem = (item) => {
       itemToEdit.value = { ...item };
+      isEditing.value = true;
+      showEditItemDialog.value = true;
+    };
+
+    const initializeNewItem = () => {
+      if (props.data && props.data.length > 0) {
+        const newItem = {};
+        Object.keys(props.data[0]).forEach(key => {
+          newItem[key] = '';
+        });
+        return newItem;
+      }
+      return null;
+    };
+
+    const createNewItem = () => {
+      itemToEdit.value = initializeNewItem();
+      isEditing.value = false;
       showEditItemDialog.value = true;
     };
 
     const submitEditItem = async() => {
+      const { id, ...data } = itemToEdit.value;
       try {
-        const response = await axios.patch(`${base_url}/${itemToEdit.value.id}`, itemToEdit.value, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        showEditItemDialog.value = false;
-
-        if (response.status !== 200) {
-          //TODO: Show Error.
+        if (isEditing.value) {
+          await axios.patch(`${base_url}/${id}`, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+        } else {
+          await axios.post(base_url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
         }
-
-      } catch (error) {
-        // TODO: Show Error.
-        console.error('Error updating item:', error);
         showEditItemDialog.value = false;
+      } catch (error) {
+        showEditItemDialog.value = false;
+        showErrorDialog.value = true;
+        errorMessage.value = error.response.data.message;
+        console.error('Error updating item:', error);
       }
     };
 
+
     const submitDeleteItem = async(item) => {
       try {
-        const response = await axios.delete(`${base_url}/${item.id}`, {
+        await axios.delete(`${base_url}/${item.id}`, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
-
-        if (response.status !== 204) {
-          throw new Error('Failed to delete item');
-        }
-
-        // TODO: Reload DataTable + Close Modal.
+        // TODO: Reload DataTable
         showDeleteItemDialog.value = false;
       } catch (error) {
-        // TODO: Close Modal + Happen Error Modal.
-        showEditItemDialog.value = false;
+        showDeleteItemDialog.value = false;
+        showErrorDialog.value = true;
+        errorMessage.value = error.response.data.message;
         console.error('Error deleting item:', error);
       }
 
@@ -74,6 +96,13 @@
 </script>
 
 <template>
+  <button
+    type="button"
+    class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
+    @click="createNewItem"
+  >
+    Nouveau
+  </button>
   <div class="container p-4 mx-auto">
     <div
       v-if="loading"
@@ -138,19 +167,16 @@
         </tbody>
       </table>
     </div>
-    <!-- Edit modal -->
+    <!-- Create/Edit modal -->
     <v-dialog
       v-model="showEditItemDialog"
       width="500px"
     >
-      <v-card class="text-center pa-5">
-        <v-card-title>Modifier</v-card-title>
-        <slot
-          name="form"
-          :item="itemToEdit"
-          :submit="submitEditItem"
-        />
-      </v-card>
+      <slot
+        name="form"
+        :item="itemToEdit"
+        :submit="submitEditItem"
+      />
     </v-dialog>
     <!-- Delete modal -->
     <v-dialog
@@ -166,6 +192,26 @@
               @click="submitDeleteItem(itemToDelete)"
             >
               Supprimer
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
+    <!-- Error modal -->
+    <v-dialog
+      v-model="showErrorDialog"
+      width="500px"
+    >
+      <v-card class="text-center pa-5">
+        <v-card-title>Oups une erreur est survenue..</v-card-title>
+        <v-card-text>{{ errorMessage }}</v-card-text>
+        <v-row>
+          <v-col>
+            <v-btn
+              color="red"
+              @click="showErrorDialog = false"
+            >
+              Fermer
             </v-btn>
           </v-col>
         </v-row>

@@ -74,16 +74,28 @@ exports.getProductById = catchAsyncError(async (req, res, next) => {
 });
 
 exports.updateProduct = catchAsyncError(async (req, res, next) => {
-    const product = await Product.findByPk(req.params.id);
+    try {
+        // Deconstruct body in order to get ID from objects.
+        const { ProductArtist, ProductGenre, ProductFormat, ...data } = req.body;
+    
+        const updatedData = {
+            ...data,
+            artistId: ProductArtist.id,
+            genreId: ProductGenre.id,
+            formatId: ProductFormat.id,
+        };
 
-    if(!product) return next(new AppError('Product not found', 404));
+        const product = await Product.findByPk(req.params.id);
 
-    //TODO: Filter allowed propriaties
-    await product.update(req.body);
-
-    return responseReturn(res, 200, product);
+        if(!product) return next(new AppError('Product not found', 404));
+    
+        await product.update(updatedData);
+    
+        return responseReturn(res, 200, product);
+    } catch (error) {
+        res.status(500).json({ message: 'Une erreur est survenue lors de la mise a jour du produit.' });
+    }
 });
-
 
 exports.deleteProduct = async (req, res) => {
     try {
@@ -95,5 +107,32 @@ exports.deleteProduct = async (req, res) => {
         res.status(204).json();
     } catch (error) {
         res.status(400).json();
+    }
+};
+
+exports.getProductOptions = async (req, res) => {
+    try {
+        const artists = await ProductArtist.findAll({
+            attributes: ['id', 'name'],
+            order: [['name', 'ASC']]
+        });
+        
+        const formats = await ProductFormat.findAll({
+            attributes: ['id', 'name'],
+            order: [['name', 'ASC']]
+        });
+        
+        const genres = await ProductGenre.findAll({
+            attributes: ['id', 'name'],
+            order: [['name', 'ASC']]
+        });
+
+        res.status(200).json({
+            artists,
+            formats,
+            genres
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Une erreur s'est produite lors de la tentative de récupération de données." });
     }
 };

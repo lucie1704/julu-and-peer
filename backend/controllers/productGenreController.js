@@ -69,7 +69,7 @@ exports.deleteProductGenre = async (req, res) => {
 
         // On check si il y a un produit associé, si ce n'est pas le cas on peut le supprimer.
         if (productsCount > 0) {
-            return res.status(400).json({ message: 'Cannot delete genre with associated products' });
+            return res.status(400).json({ message: 'Vous ne pouvez pas supprimer un genre qui est encore associé a des produits.' });
         }
         await genre.destroy();
         res.status(204).json();

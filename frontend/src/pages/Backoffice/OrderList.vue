@@ -10,7 +10,8 @@
   import DataTable from '~/components/backoffice/DataTable.vue';
   import { getDataTable } from '~/composables/backoffice/getDataTable';
 
-  const { data, loading, error } = getDataTable('customerorders');
+  const url = 'customerorders';
+  const { data, loading, error } = getDataTable(url);
   // TODO: Update getDataTable in order to supports orders.
 </script>
 
@@ -23,6 +24,7 @@
       :data="data"
       :loading="loading"
       :error="error"
+      :url="url"
     />
   </div>
 </template>

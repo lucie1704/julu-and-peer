@@ -69,7 +69,7 @@ exports.deleteProductArtist = async (req, res) => {
 
         // On check si il y a un produit associé, si ce n'est pas le cas on peut le supprimer.
         if (productsCount > 0) {
-            return res.status(400).json({ message: 'Cannot delete artist with associated products' });
+            return res.status(400).json({ message: 'Vous ne pouvez pas supprimer un artiste qui est encore associé a des produits.' });
         }
         await artist.destroy();
         res.status(204).json();
