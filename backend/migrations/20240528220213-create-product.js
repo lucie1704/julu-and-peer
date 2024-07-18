@@ -26,10 +26,6 @@ module.exports = {
         allowNull: false,
         defaultValue: 0
       },
-      availableStock: {
-        allowNull: false,
-        type: Sequelize.INTEGER
-      },
       genreId: {
         allowNull: false,
         type: Sequelize.INTEGER,
@@ -61,14 +57,6 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      },
-      imageSrc: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      imageAlt: {
-        allowNull: true,
-        type: Sequelize.STRING
       },
       reviewCount: {
         allowNull: true,
