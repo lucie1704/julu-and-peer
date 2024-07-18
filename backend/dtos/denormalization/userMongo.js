@@ -6,7 +6,7 @@ exports.createMongoUser = async (user) => {
   const {id, firstname, lastname, email} = user;
   const newUser = await User.create({id, firstname, lastname, email});
 
-  if (!newUser) return next(new AppError('Error failled to create user', 404));
+  if (!newUser) return next(new AppError(404));
 
   await newUser.save();
 };
@@ -18,7 +18,7 @@ exports.updateMongoUser = async (user) => {
   // });
 
   // if (!updatedUser) {
-  //   return next(new AppError('No user found with that ID', 404));
+  //   return next(new AppError(404));
   // }
 
   // await updatedUser.save();

@@ -3,19 +3,12 @@ const { Product, CartItem} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 
-exports.addToCartItem = catchAsyncError (async (req, res, next) => {
+exports.add = catchAsyncError (async (req, res, next) => {
     const {productId, cartId, quantity } = req.body;
 
     const product = await Product.findOne({ where: { id: productId } });
 
-    if (!product) return next(new AppError('Product not found', 404));
-
-    const existingCartItem = await CartItem.findOne({
-        where: {
-            productId,
-            cartId,
-        }
-    });
+    if (!product) return next(new AppError(404));
 
     const cartItem = await CartItem.create({
         productId,
@@ -23,35 +16,37 @@ exports.addToCartItem = catchAsyncError (async (req, res, next) => {
         quantity,
     });
 
-    return responseReturn(res, 201, { message: "Added to cart successfully", cartItem });
+    return responseReturn(res, cartItem, 201);
 
 });
 
-exports.cartItemQuantityUpdate = catchAsyncError(async (req, res, next) => {
+exports.update = catchAsyncError(async (req, res, next) => {
 
     const { id } = req.params;
 
     const cartItem = await CartItem.findByPk(id);
 
-    if (!cartItem) return next(new AppError('Cart Item not found', 404));
+    if (!cartItem) return next(new AppError(404));
 
     const updatedCartItem = await cartItem.update({ quantity: req.body.quantity });
 
-    if (!updatedCartItem) return next(new AppError('Error while updating cart item quantity', 404));
+    if (!updatedCartItem) return next(new AppError(404));
 
     await updatedCartItem.save();
 
-    responseReturn(res, 200, { message: "Quantity Updated", quantity: updatedCartItem.quantity });
+    responseReturn(res, updatedCartItem.quantity );
 });
 
-exports.deleteCartItem = catchAsyncError(async (req, res) => {
+exports.delete = catchAsyncError(async (req, res, next) => {
+    const result = await CartItem.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
 
-    const cartItem = await CartItem.findByPk(req.params.id);
+    if (!result) return next(new AppError(404));
 
-    if(!cartItem) return next(new AppError('Cart Item not found', 404));
-
-    await cartItem.destroy();
-    responseReturn(res,204,{message: "Cart-item Remove Successfully" })
+    res.status(204)
 });
 
 

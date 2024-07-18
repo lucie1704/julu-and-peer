@@ -1,4 +1,5 @@
 export { useAuth } from './auth';
-export { useOrder } from './order';
 export { useCart } from './cart';
+export { useCustomer } from './customer';
+export { useOrder } from './order';
 export { useProduct } from './product';

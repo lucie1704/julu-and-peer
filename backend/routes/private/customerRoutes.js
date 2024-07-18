@@ -4,27 +4,23 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
-
-// Protect all routes after this middleware
-router.use(authMiddleware);
-
-// TODO: Define if we use this route to update User parent or delete this part
-
-//Need admin role to get access to these routes
-router.use(autorizationMiddleware('admin'));
-
-router
-    .route('/')
-    .get(customerController.getCustomers)
-    .post(customerController.createCustomer);
+// router.use(authMiddleware);
 
 router
     .route('/:id')
-    .get(customerController.getCustomerById)
-    .patch(customerController.updateCustomer)
-    .delete(customerController.deleteCustomer);
+    .get(customerController.getById)
+    .patch(customerController.update)
+    .delete(customerController.delete);
 
 router
-    .delete('/delete/:id', customerController.deleteCustomer);
+    .route('/user/:id')
+    .get(customerController.getByUserId)
+
+// router.use(autorizationMiddleware('admin'));
+
+router
+    .route('/')
+    .get(customerController.getAll)
+    .post(customerController.create);
 
 module.exports = router;

@@ -3,16 +3,12 @@ const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
 
-exports.createProduct = async (req, res) => {
-    try {
-        const product = await Product.create(req.body);
-        res.status(201).json(product);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
+exports.create = catchAsyncError(async (req, res) => {
+    const product = await Product.create(req.body);
+    responseReturn(res, product, 201);
+});
 
-exports.getAllProducts = catchAsyncError(async (req, res, next) => {
+exports.getAll = catchAsyncError(async (req, res) => {
     const products = await Product.findAll({
             include: [
                 { model: ProductGenre },
@@ -22,12 +18,10 @@ exports.getAllProducts = catchAsyncError(async (req, res, next) => {
             ]
     });
 
-    if(!products) return next(new AppError('Error : fails to fetch products', 404));
-
-    return responseReturn(res, 201, products );
+    return responseReturn(res, products );
 });
 
-exports.getProductById = catchAsyncError(async (req, res, next) => {
+exports.getById = catchAsyncError(async (req, res, next) => {
     const product = await Product.findByPk(req.params.id, {
         include: [
             { model: ProductGenre },
@@ -36,32 +30,33 @@ exports.getProductById = catchAsyncError(async (req, res, next) => {
             {model: ProductCustomerEvaluation}
         ]
     });
-    if(!product) return next(new AppError('Product not found', 404));
 
-    return responseReturn(res, 201, product );
+    if(!product) return next(new AppError(404));
+
+    return responseReturn(res, product );
 });
 
-exports.updateProduct = catchAsyncError(async (req, res, next) => {
-    const product = await Product.findByPk(req.params.id);
+exports.update = catchAsyncError(async (req, res, next) => {
+    const [nbUpdated, products] = await Product.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true,
+    });
 
-    if(!product) return next(new AppError('Product not found', 404));
+    if (!nbUpdated === 1) return next(new AppError(404));
 
-    //TODO: Filter allowed propriaties
-    await product.update(req.body);
-
-    return responseReturn(res, 201, product );
+    responseReturn(res, products[0]);
 });
 
+exports.delete = catchAsyncError(async (req, res, next) => {
+    const result = await Product.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
 
-exports.deleteProduct = async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id);
-        if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-        await product.destroy();
-        res.status(204).json({ message: 'Product deleted successfully' });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
+    if (!result) return next(new AppError(404));
+
+    res.status(204);
+});

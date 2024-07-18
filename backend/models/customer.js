@@ -11,9 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Customer.belongsTo(models.User, { foreignKey: 'userId' });
-      Customer.hasMany(models.CustomerAddress, { foreignKey: 'customerId' });
-      Customer.hasOne(models.Cart, { foreignKey: 'customerId' });
+      const cascadeOptions = { onDelete: 'CASCADE', onUpdate: 'CASCADE' };
+      
+      Customer.belongsTo(models.User, { foreignKey: 'userId',  ...cascadeOptions});
+      Customer.hasMany(models.CustomerAddress, { foreignKey: 'customerId', ...cascadeOptions});
+      Customer.hasOne(models.Cart, { foreignKey: 'customerId', ...cascadeOptions });
       Customer.hasMany(models.Promotion);
       Customer.hasMany(models.Wishlist);
       Customer.hasMany(models.Order);
@@ -33,6 +35,13 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Customer',
     timestamps: true,
+    paranoid: true,
+    deletedAt: true,
+    defaultScope: {
+      where: {
+        active: true,
+      },
+    }
   });
   return Customer;
 };

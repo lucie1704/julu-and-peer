@@ -5,31 +5,25 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
-// Protect all routes after this middleware
-router.use(authMiddleware);
 
-// User role
-router.patch('/updateMyPassword/', authController.updateMyPassword);
-router.get('/me', userController.getMe, userController.getUser);
+// router.use(authMiddleware);
+// router.use(autorizationMiddleware('admin'));
+router.get('/me', userController.getMe);
 router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
 
-//Need admin role to get access to these routes
-router.use(autorizationMiddleware('admin'));
-
+// router.use(autorizationMiddleware('admin'));
 router
   .route('/')
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .post(userController.create)
+  .get(userController.getAll)
 
 router
   .route('/:id')
-  .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
-
-router
-  .delete('/softdelete/:id', userController.softDelete);
+  .get(userController.get)
+  .patch(userController.update)
+  .delete(userController.delete);
+  
 
 module.exports = router;

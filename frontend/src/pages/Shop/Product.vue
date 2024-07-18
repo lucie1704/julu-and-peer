@@ -9,26 +9,28 @@ meta:
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { createCartI } from '~/dto';
-import { useCart, useProduct } from '~/stores';
+import {
+  useCart,
+  useCustomer,
+  useProduct } from '~/stores';
 
 const productStore = useProduct();
 const cartStore = useCart();
+const customerStore = useCustomer();
 
 const route = useRoute();
 
-// TODO: Get it from product ProductCustomerEvaluations
 const rating = 5;
 // TODO: Get available format from ProductFormat
 
-const customerId = '27';
 const quantity = ref<number>(1);
 
 onMounted(async () => {
-  // Get product detail
   await getProductDetail();
 
-  // Get customer cart
-  await getCustomerCart(customerId);
+  await customerStore.fetchByUserId('3');
+
+  if (customerStore.customerId) return await getCustomerCart(customerStore.customerId);
 });
 
 const getProductDetail = async () => {
@@ -59,7 +61,7 @@ const getCustomerCart = async (customerId: string) => {
 
 const submitForm = async () => {
   if (!productStore.product
-    || !customerId
+    || !customerStore.customerId
     || !cartStore.cart
     || !quantity.value)
     return console.error('Form validation failed!');

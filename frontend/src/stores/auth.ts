@@ -34,10 +34,8 @@ export const useAuth = defineStore('auth', () => {
   };
 
   const signup = async (user: SignUp) => {
-    const data = await authAPI.signup(user);
-    if (data.status) {
-      status.value = data.status;
-      username.value = data.data.user;
+    const response = await authAPI.signup(user);
+    if (response) {
       message.value = 'Nous t \' avons envoyé un email pour valider ton compte.';
       router.push('/confirmModal');
     } else {

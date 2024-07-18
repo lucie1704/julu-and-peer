@@ -33,7 +33,7 @@ const cartAPI: CartAPI = {
   async getCartByCustomerId(jwt_token: string, customerId: string) {
     try {
       const res = await axios.get(
-        `${ROOT_URL}/carts/getcustomercart/${customerId}`,
+        `${ROOT_URL}/carts/customer/${customerId}`,
         {
           headers: createHeaders(jwt_token)
         }
@@ -64,7 +64,7 @@ const cartAPI: CartAPI = {
   async getCartsProducts(jwt_token: string, customerId: string) {
     try {
       const res = await axios.get(
-        `${ROOT_URL}/carts/getcartsproducts/${customerId}`,
+        `${ROOT_URL}/carts/products/${customerId}`,
         {
           headers: createHeaders(jwt_token)
         }

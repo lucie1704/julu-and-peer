@@ -9,7 +9,6 @@ export const useCart = defineStore('cart', () => {
   const cartProducts = ref<CartProductI>();
   const cartItem = ref<CartItemI>();
   const quantity = ref<number>();
-  const message = ref<string>();
 
   const fetchCartByCustomerId = async (customerId: string) => {
     const jwt_token = '';
@@ -46,12 +45,8 @@ export const useCart = defineStore('cart', () => {
   const fetchCartProducts = async (customerId: string) => {
     // Retrieve JWT token from auth module (placeholder)
     const jwt_token = '';
-    try {
       const response = await cartAPI.getCartsProducts(jwt_token, customerId);
-      cartProducts.value = response;
-    } catch (error) {
-      console.error('Failed to fetch cart Products:', error);
-    }
+      if (response) return cartProducts.value = response;
   };
 
   const cartItemQuantityUpdate = async (payload: {
@@ -76,8 +71,7 @@ export const useCart = defineStore('cart', () => {
     // Retrieve JWT token from auth module (placeholder)
     const jwt_token = '';
     try {
-      const response = await cartAPI.deleteCartItem(jwt_token, id);
-      message.value = response;
+      await cartAPI.deleteCartItem(jwt_token, id);
     } catch (error) {
       console.error('Failed to delete CartItem:', error);
     }
@@ -87,9 +81,8 @@ export const useCart = defineStore('cart', () => {
     // Retrieve JWT token from auth module (placeholder)
     const jwt_token = '';
     try {
-      const response = await cartAPI.deleteCart(jwt_token, id);
+      await cartAPI.deleteCart(jwt_token, id);
       cartProducts.value = undefined;
-      message.value = response;
     } catch (error) {
       console.error('Failed to delete Cart:', error);
     }
@@ -100,7 +93,6 @@ export const useCart = defineStore('cart', () => {
     cartProducts,
     cartItem,
     quantity,
-    message,
     fetchCartByCustomerId,
     createCart,
     addCartItem,

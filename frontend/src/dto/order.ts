@@ -2,7 +2,7 @@ export interface PlaceOrderI {
   shippingFee: number;
   products: Array<OrderProductI>;
   shippingInfo: ShippingInfoI;
-  customerId: number;
+  customerId: string;
   email: string;
 }
 

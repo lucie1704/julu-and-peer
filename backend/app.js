@@ -117,7 +117,7 @@ app.use('/api/v1/customerorder', orderRouter);
 
 // Handle requests for routes that are not defined in the application.
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404, res));
+  next(new AppError(404));
 });
 
 app.use(globalErrorHandler);
