@@ -22,6 +22,12 @@ mounts:
 # The size of the persistent disk of the application (in MB).
 disk: 512
 
+variables:
+  env:
+    JWT_EXPIRES_IN: "6000"
+    JWT_SECRET: "auxbqspdoqpidqzdbkjxsjkqsnd"
+    MONGO_URL: "mongodb://root:password@mongodb:27017/app?authSource=admin"
+
 # The relationships of the application with services or other applications.
 #
 # The left-hand side is the name of the relationship as it will be exposed
