@@ -1,7 +1,7 @@
-# mongodb:
-#   type: mongodb:3.6
-#   disk: 256
+mongodb:
+  type: mongodb:3.6
+  disk: 256
 
-# postgresql:
-#   type: postgresql:16
-#   disk: 256
+postgresql:
+  type: postgresql:16
+  disk: 256
