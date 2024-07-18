@@ -24,6 +24,7 @@ disk: 512
 
 variables:
   env:
+    NODE_ENV: "prod"
     JWT_EXPIRES_IN: "6000"
     JWT_SECRET: "auxbqspdoqpidqzdbkjxsjkqsnd"
     MONGO_URL: "mongodb://root:password@mongodb:27017/app?authSource=admin"

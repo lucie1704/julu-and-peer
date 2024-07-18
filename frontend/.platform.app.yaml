@@ -35,4 +35,4 @@ mounts:
 # Specify environment variables, if any
 variables:
   env:
-    NODE_ENV: "production"
+    NODE_ENV: "prod"
