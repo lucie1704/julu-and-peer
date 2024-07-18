@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
       Product.hasMany(models.ProductCustomerEvaluation, { foreignKey: 'productId' });
       Product.belongsToMany(models.Order, { through: models.OrdersProducts })
       Product.belongsToMany(models.Wishlist, { through: 'WishlistsProducts' });
+      Product.hasOne(models.Stock);
+      Product.hasOne(models.Image);
     }
   }
   Product.init({
@@ -34,18 +36,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     discount: {
       type: DataTypes.DECIMAL,
-    },
-    availableStock: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    imageSrc: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    imageAlt: {
-      type: DataTypes.STRING,
-      allowNull: true
     },
     reviewCount: {
       type: DataTypes.INTEGER,

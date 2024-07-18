@@ -338,18 +338,15 @@ const navigation = {
 
             <div class="ml-4 flex lg:ml-0">
               <a href="#">
-                <span class="sr-only">Your Company</span>
+                <span class="sr-only">Julu&Peer</span>
                 <router-link to="/products">
                   <img
-                    class="h-8 w-auto"
+                    class="h-16 w-auto"
                     src="../../public/logo-julu-and-peer.png"
-                    alt=""
+                    alt="Logo Julu&Peer"
                   >
                 </router-link>
               </a>
-              <p class="text-xl font-extrabold ml-4">
-                Julu&Peer
-              </p>
             </div>
             <PopoverGroup class="hidden lg:ml-8 lg:block lg:self-stretch">
               <div class="flex h-full space-x-8">
