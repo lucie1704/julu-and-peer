@@ -8,34 +8,35 @@ meta:
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { ShoppingCart } from '~/components';
-import { useCart, useCustomer } from '~/stores';
+import { useCart } from '~/stores/cart';
+import { useCustomer } from '~/stores/customer';
 
 const cartStore = useCart();
 const customerStore = useCustomer();
 
 const deleteCartAfterTimeout = async () => {
   setTimeout(async () => {
-    try {
-      await cartStore.deleteCart(String(cartStore.cartProducts?.cart?.id));
-      console.log('Cart deleted after 15 minutes');
-    } catch (error) {
-      console.error('Error deleting cart after timeout:', error);
+    if (cartStore.cartProducts && cartStore.cartProducts.cart.id) {
+      try {
+        await cartStore.deleteCart(cartStore.cartProducts.cart.id);
+        console.log('Cart deleted after 15 minutes');
+      } catch (error) {
+        console.error('Error deleting cart after timeout:', error);
+      }
     }
   }, 15 * 60 * 1000);
 };
 
 onMounted(async () => {
-
   await customerStore.fetchByUserId('3');
-
   await cartStore.fetchCartProducts(customerStore.customerId as string);
-  
+
   if (cartStore.cartProducts?.cart) {
     await deleteCartAfterTimeout();
   }
 });
 
-const updateQuantity = async (payload : {cartItemId: string, cartItemQuantity: number}) => {
+const updateQuantity = async (payload: { cartItemId: string, cartItemQuantity: number }) => {
   try {
     await cartStore.cartItemQuantityUpdate({
       cartItemId: payload.cartItemId,
@@ -50,7 +51,6 @@ const updateQuantity = async (payload : {cartItemId: string, cartItemQuantity: n
 const removeItem = async ( payload: { cartItemId: string }) => {
   try {
     await cartStore.deleteCartItem(payload.cartItemId);
-
     await cartStore.fetchCartProducts(customerStore.customerId as string);
   } catch (error) {
     console.error('Error removing cart item:', error);

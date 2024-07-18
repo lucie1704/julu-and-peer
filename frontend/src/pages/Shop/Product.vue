@@ -8,11 +8,10 @@ meta:
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { createCartI } from '~/dto';
-import {
-  useCart,
-  useCustomer,
-  useProduct } from '~/stores';
+import { createCart } from '~/dto';
+import { useCart } from '~/stores/cart';
+import { useCustomer } from '~/stores/customer';
+import { useProduct } from '~/stores/product';
 
 const productStore = useProduct();
 const cartStore = useCart();
@@ -69,7 +68,7 @@ const submitForm = async () => {
   const productId = productStore.product.id;
   const cartId = cartStore.cart.id as string;
 
-  const data: createCartI = {
+  const data: createCart = {
     productId,
     cartId,
     quantity: quantity.value

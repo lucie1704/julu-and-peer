@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CartI, CartItemI, CartProductI, createCartI } from '~/dto';
+import { Cart, CartItem, CartProduct, createCart } from '~/dto';
 
 const ROOT_URL = 'http://localhost:3000/api/v1';
 
@@ -8,13 +8,13 @@ interface CartAPI {
   getCartByCustomerId: (
     jwt_token: string,
     customerId: string
-  ) => Promise<CartI>;
-  createCart: (jwt_token: string, customerId: string) => Promise<CartI>;
+  ) => Promise<Cart>;
+  createCart: (jwt_token: string, customerId: string) => Promise<Cart>;
   getCartsProducts: (
     jwt_token: string,
     customerId: string
-  ) => Promise<CartProductI>;
-  addToCartItem: (jwt_token: string, data: createCartI) => Promise<CartItemI>;
+  ) => Promise<CartProduct>;
+  addToCartItem: (jwt_token: string, data: createCart) => Promise<CartItem>;
   cartItemQuantityUpdate: (
     jwt_token: string,
     id: string,
@@ -76,7 +76,7 @@ const cartAPI: CartAPI = {
     }
   },
 
-  async addToCartItem(jwt_token: string, data: createCartI) {
+  async addToCartItem(jwt_token: string, data: createCart) {
     try {
       const res = await axios.post(`${ROOT_URL}/cartitem/`, data, {
         headers: createHeaders(jwt_token)

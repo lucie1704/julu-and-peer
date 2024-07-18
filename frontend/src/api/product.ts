@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { ProductI } from '~/dto';
+import { Product } from '~/dto';
 
 const ROOT_URL = 'http://localhost:3000/api/v1/products';
 
 interface ProductAPI {
-  getAllProducts: (jwt_token: string, cancel?: boolean) => Promise<Array<ProductI>>;
-  getProductById: (id: string, jwt_token: string, cancel?: boolean) => Promise<ProductI>;
+  getAllProducts: (jwt_token: string, cancel?: boolean) => Promise<Array<Product>>;
+  getProductById: (id: string, jwt_token: string, cancel?: boolean) => Promise<Product>;
 }
 const controller = new AbortController();
 
@@ -17,7 +17,7 @@ const productAPI: ProductAPI = {
       if (cancel) {
         controller.abort();
       }
-  
+
       const res = await axios.get(`${ROOT_URL}`, {
         headers: {
           Authorization: `Bearer ${jwt_token}`,
@@ -25,9 +25,9 @@ const productAPI: ProductAPI = {
         },
         signal: controller.signal
       });
-  
+
       return res.data;
-  
+
     } catch (error) {
       if (axios.isCancel(error)) {
         console.log('Request canceled', error.message);
@@ -43,7 +43,7 @@ const productAPI: ProductAPI = {
       if (cancel) {
         controller.abort();
       }
-  
+
       const res = await axios.get(`${ROOT_URL}/${id}`, {
         headers: {
           Authorization: `Bearer ${jwt_token}`,
@@ -51,9 +51,9 @@ const productAPI: ProductAPI = {
         },
         signal: controller.signal
       });
-  
+
       return res.data;
-  
+
     } catch (error) {
       if (axios.isCancel(error)) {
         console.log('Request canceled', error.message);

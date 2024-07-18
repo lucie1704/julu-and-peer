@@ -21,7 +21,7 @@ import {
   XMarkIcon
 } from '@heroicons/vue/24/outline';
 import { computed, ref } from 'vue';
-import { useAuth } from '~/stores';
+import { useAuth } from '~/stores/auth';
 
 const authStore = useAuth();
 
@@ -132,8 +132,7 @@ const navigation = {
         }
       ]
     }
-  ],
-  pages: []
+  ]
 };
 </script>
 
@@ -281,19 +280,6 @@ const navigation = {
                   </TabPanel>
                 </TabPanels>
               </TabGroup>
-
-              <div class="space-y-6 border-t border-gray-200 px-4 py-6">
-                <div
-                  v-for="page in navigation.pages"
-                  :key="page.name"
-                  class="flow-root"
-                >
-                  <a
-                    :href="page.href"
-                    class="-m-2 block p-2 font-medium text-gray-900"
-                  >{{ page.name }}</a>
-                </div>
-              </div>
 
               <div class="space-y-6 border-t border-gray-200 px-4 py-6">
                 <div class="flow-root">
@@ -475,13 +461,6 @@ const navigation = {
                     </PopoverPanel>
                   </transition>
                 </Popover>
-
-                <a
-                  v-for="page in navigation.pages"
-                  :key="page.name"
-                  :href="page.href"
-                  class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800"
-                >{{ page.name }}</a>
               </div>
             </PopoverGroup>
 

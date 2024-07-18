@@ -12,7 +12,7 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import * as z from 'zod';
 import { ResetPassword } from '~/dto';
-import { useAuth } from '~/stores';
+import { useAuth } from '~/stores/auth';
 
 const authStore = useAuth();
 const route = useRoute();
