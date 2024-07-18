@@ -184,7 +184,7 @@ const open = ref(true);
                     <div class="mt-6">
                       <router-link
                         class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                        to="/customer/shipping"
+                        to="/customer/payment/shipping"
                       >
                         Checkout
                       </router-link>

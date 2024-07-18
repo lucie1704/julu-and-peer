@@ -65,6 +65,8 @@ exports.create = catchAsyncError(async (req, res, next) => {
     if (allProductsFound) return next(new AppError(409));
   }
 
+  // TODO: Update customerAddresse
+  
   const order = await CustomerOrder.create({
     customerId,
     shippingInfo,

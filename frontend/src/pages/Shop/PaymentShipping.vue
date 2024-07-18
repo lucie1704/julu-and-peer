@@ -9,12 +9,17 @@ meta:
 import { computed, onMounted, ref } from 'vue';
 import { PlaceOrderI } from '~/dto';
 import router from '~/router/router.ts';
-import { useCart, useOrder } from '~/stores';
+import {
+  useCart,
+  useOrder,
+  useCustomer} from '~/stores';
 
 const cartStore = useCart();
 const orderStore = useOrder();
+const customerStore = useCustomer();
 
-const customerId = ref('1');
+//TODO: Put email in shippingInfo
+
 const email = ref('');
 const shippingInfo = ref({
   firstName: '',
@@ -26,17 +31,19 @@ const shippingInfo = ref({
   country: 'France',
   state: '',
   postalCode: '',
-  phone: ''
+  phone: '',
 });
 
 onMounted(async() => {
-  await cartStore.fetchCartProducts(customerId.value);
+  await customerStore.fetchByUserId('3');
+
+  await cartStore.fetchCartProducts(customerStore.customerId as string);
 });
 
 const removeItem = async (cartItemId: string) => {
   try {
     await cartStore.deleteCartItem(cartItemId);
-    await cartStore.fetchCartProducts(customerId.value);
+    await cartStore.fetchCartProducts(customerStore.customerId as string);
   } catch (error) {
     console.error('Error removing cart item:', error);
   }
@@ -48,7 +55,7 @@ const updateQuantity = async (cartItemId: string, newQuantity: number) => {
       cartItemId,
       newQuantity
     });
-    await cartStore.fetchCartProducts(customerId.value);
+    await cartStore.fetchCartProducts(customerStore.customerId as string);
   } catch (error) {
     console.error('Error updating cart item quantity:', error);
   }
@@ -79,13 +86,12 @@ const submitForm = async () => {
       quantity: 2
     })),
     shippingInfo: shippingInfo.value,
-    email: 'justin@gmail.com',
-    customerId: 27
+    email: email.value,
+    customerId: customerStore.customerId as string
   };
 
   try {
     await orderStore.placeOrder(orderData);
-    // @TODO: DELETE CART
     const cartId = cartStore.cartProducts.cart.id;
     if (cartId) await cartStore.deleteCart(cartId);
 
@@ -306,7 +312,7 @@ const submitForm = async () => {
                   <select
                     v-model="cartItem.quantity"
                     class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    @change="updateQuantity(cartItem.id, cartItem.quantity)"
+                    @change="updateQuantity(String(cartItem.id), cartItem.quantity)"
                   >
                     <option
                       v-for="n in 10"
@@ -320,7 +326,7 @@ const submitForm = async () => {
                     <button
                       type="button"
                       class="font-medium text-indigo-600 hover:text-indigo-500"
-                      @click="removeItem(cartItem.id)"
+                      @click="removeItem(String(cartItem.id))"
                     >
                       Remove
                     </button>
@@ -331,26 +337,26 @@ const submitForm = async () => {
           </ul>
 
           <div
-            v-if="cartsProducts"
+            v-if="cartStore.cartProducts"
             class="mt-6 border-t border-gray-200 pt-4"
           >
             <div
               class="flex justify-between text-base font-medium text-gray-900"
             >
               <p>Subtotal</p>
-              <p>{{ cartsProducts?.totalPrice }}</p>
+              <p>{{ cartStore.cartProducts?.totalPrice }}</p>
             </div>
             <div
               class="flex justify-between text-base font-medium text-gray-900"
             >
               <p>Total Discount</p>
-              <p>{{ cartsProducts?.totalDiscount }}</p>
+              <p>{{ cartStore.cartProducts?.totalDiscount }}</p>
             </div>
             <div
               class="flex justify-between text-base font-medium text-gray-900"
             >
               <p>Total Products</p>
-              <p>{{ cartsProducts?.cartTotalProductCount }}</p>
+              <p>{{ cartStore.cartProducts?.cartTotalProductCount }}</p>
             </div>
             <div
               class="flex justify-between text-sm font-medium text-gray-900 mt-4"
@@ -366,9 +372,9 @@ const submitForm = async () => {
               <p>
                 {{
                   calculateTotal(
-                    cartsProducts?.totalPrice,
-                    cartsProducts?.totalDiscount,
-                    cartsProducts?.shipping || 10
+                    cartStore.cartProducts?.totalPrice,
+                    cartStore.cartProducts?.totalDiscount,
+                    cartStore.cartProducts?.shipping || 0
                   )
                 }}
               </p>

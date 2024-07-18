@@ -21,7 +21,7 @@ const deleteCartAfterTimeout = async () => {
     } catch (error) {
       console.error('Error deleting cart after timeout:', error);
     }
-  }, 15 * 60 * 10);
+  }, 15 * 60 * 1000);
 };
 
 onMounted(async () => {
