@@ -8,7 +8,8 @@ meta:
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { ShoppingCart } from '~/components';
-import { useCart, useCustomer } from '~/stores';
+import { useCart } from '~/stores/cart';
+import { useCustomer } from '~/stores/customer';
 
 const cartStore = useCart();
 const customerStore = useCustomer();
