@@ -14,6 +14,8 @@ help:
 	@echo "  restart-backend	: Restart backend container"
 	@echo "  backend-shell		: Open a shell session in the backend container"
 	@echo "  frontend-shell	: Open a shell session in the frontend container"
+	@echo "  db-drop        	: Drop the database for Postgres and Mongo"
+	@echo "  db-create      	: Create the database for Postgres"
 	@echo "  migrate		: Sequelize migrate"
 	@echo "  seeders		: Load all seeders"
 
@@ -39,6 +41,12 @@ backend-shell:
 
 frontend-shell:
 	$(DOCKER_COMPOSE) exec -it frontend bash
+
+db-drop:
+	$(DOCKER_COMPOSE) exec -it backend sequelize db:drop && $(DOCKER_COMPOSE) exec -it backend npm run reset:mongo
+
+db-create:
+	$(DOCKER_COMPOSE) exec -it backend sequelize db:create
 
 migrate:
 	$(DOCKER_COMPOSE) exec -it backend sequelize db:migrate
