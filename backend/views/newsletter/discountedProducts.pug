@@ -1,0 +1,7 @@
+each product in discountedProducts
+  .product
+    .product-image
+      img(src=product.image alt=product.name)
+    .product-details
+      h2= product.name
+      p Ancien prix: #{product.oldPrice}€ - Nouveau prix: #{product.newPrice}€

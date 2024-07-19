@@ -1,0 +1,31 @@
+doctype html
+html
+  head
+    eta(name='viewport', content='width=device-width')
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    title= "Newsletter"
+    include _style
+    
+  body
+    .container
+      .header
+        img(src="https://via.placeholder.com/100" alt="E-commerce Logo")
+        h1 Newsletter
+        form(action="#" method="post")
+          .header-input-container
+            input#email-address.header-input(type="email" name="email" autocomplete="email" required placeholder="Enter your email")
+            button.header-button(type="submit") Subscribe
+      if newProducts && newProducts.length > 1
+        .section
+          h2 Nouveaux Produits
+          include newProducts.pug
+
+      if discountedProducts && discountedProducts.length > 1
+        .section
+          h2 Réductions de Prix
+          include discountedProducts.pug
+
+      if restockedProducts && restockedProducts.length > 1
+        .section
+          h2 Restock de Produits
+          include restockedProducts.pug
