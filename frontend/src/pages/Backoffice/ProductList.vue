@@ -12,7 +12,7 @@ meta:
   import { getDataTable } from '~/composables/backoffice/getDataTable';
 
   const url = 'products';
-  const { data, loading, error, refresh } = getDataTable(url);
+  const { data, loading, error, currentPage, totalPages, setPage, refresh } = getDataTable(url);
   const { options } = getDataOptions(url);
 
 </script>
@@ -28,6 +28,9 @@ meta:
       :error="error"
       :url="url"
       :new-item="options.newItem"
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      :set-page="setPage"
       :refresh="refresh"
     >
       <!-- Start Edit Form Slot-->

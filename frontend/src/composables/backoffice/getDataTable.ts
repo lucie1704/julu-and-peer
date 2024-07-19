@@ -92,14 +92,16 @@ export const getDataTable = (url: string) => {
     const data = ref(null);
     const loading = ref(true);
     const error = ref(null);
+    const currentPage = ref(1);
+    const totalPages = ref(1);
 
     // Ici on vas récupérer la data selon l'url que l'on donne au composable
-    const fetchData = async () => {
+    const fetchData = async (page = 1) => {
         loading.value = true;
         error.value = null;
 
         try {
-            const response = await fetch(`${baseURL}${url}`);
+            const response = await fetch(`${baseURL}${url}?page=${page}`);
             if (!response.ok) {
                 throw new Error('Une erreur est survenue lors de la récupération des données.');
             }
@@ -110,6 +112,8 @@ export const getDataTable = (url: string) => {
             const validatedData = schema.parse(jsonData.data);
 
             data.value = validatedData;
+            currentPage.value = page;
+            totalPages.value = jsonData.totalPages;
         } catch (err) {
             error.value = err.message;
         } finally {
@@ -121,11 +125,20 @@ export const getDataTable = (url: string) => {
         fetchData();
     });
 
+    const setPage = (page: number) => {
+        if (page > 0 && page <= totalPages.value) {
+            fetchData(page);
+        }
+    };
+
     // On renvoie les données nécessaires.
     return {
         data,
         loading,
         error,
+        currentPage,
+        totalPages,
+        setPage,
         refresh: fetchData,
     };
 };

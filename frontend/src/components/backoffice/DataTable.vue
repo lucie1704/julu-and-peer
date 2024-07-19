@@ -1,6 +1,6 @@
 <script lang="ts" setup>
     import axios from 'axios';
-    import { ref } from 'vue';
+    import { ref, computed } from 'vue';
 
     const props = defineProps<{
       data: Array<Record<string, any>> | null;
@@ -8,6 +8,9 @@
       error: string | null;
       url: string;
       newItem: object | undefined;
+      currentPage: number,
+      totalPages: number,
+      setPage: (page: number) => void
       refresh: () => void
     }>();
 
@@ -40,6 +43,7 @@
       showEditItemDialog.value = true;
     };
 
+    // Submit logic for create and edit
     const submitEditItem = async() => {
       // Deconstruct id in order to not have it in req.body
       const { id, ...data } = itemToEdit.value;
@@ -67,6 +71,7 @@
       }
     };
 
+    // Submit logic for delete
     const submitDeleteItem = async(item) => {
       try {
         await axios.delete(`${base_url}/${item.id}`, {
@@ -84,6 +89,7 @@
       }
     };
 
+    // This part is for cleaning value before show in DataTable
     const cleanDisplayValue = (value) => {
       if (value && typeof value === 'object' && value.name) {
         return value.name;
@@ -92,6 +98,25 @@
       }
       return value;
     };
+
+    // This part is for pagination logic
+    const maxPagesToShow = 3;
+    const pagesToShow = computed(() => {
+      const pages = [];
+      let startPage = Math.max(1, props.currentPage - Math.floor(maxPagesToShow / 2));
+      let endPage = startPage + maxPagesToShow - 1;
+
+      if (endPage > props.totalPages) {
+        endPage = props.totalPages;
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      return pages;
+    });
 
 </script>
 
@@ -166,6 +191,48 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <div
+      v-if="totalPages > 1"
+      class="flex justify-center mt-4"
+    >
+      <button
+        :disabled="currentPage === 1"
+        class="px-3 py-1 mx-1 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-gray-300"
+        @click="setPage(1)"
+      >
+        Première
+      </button>
+      <button
+        :disabled="currentPage === 1"
+        class="px-3 py-1 mx-1 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-gray-300"
+        @click="setPage(currentPage - 1)"
+      >
+        <
+      </button>
+      <button
+        v-for="page in pagesToShow"
+        :key="page"
+        :class="{'bg-blue-500 text-white': currentPage === page, 'bg-gray-200 text-gray-700': currentPage !== page}"
+        class="px-3 py-1 mx-1 rounded hover:bg-blue-600 hover:text-white"
+        @click="setPage(page)"
+      >
+        {{ page }}
+      </button>
+      <button
+        :disabled="currentPage === totalPages"
+        class="px-3 py-1 mx-1 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-gray-300"
+        @click="setPage(currentPage + 1)"
+      >
+        >
+      </button>
+      <button
+        :disabled="currentPage === totalPages"
+        class="px-3 py-1 mx-1 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-gray-300"
+        @click="setPage(totalPages)"
+      >
+        Dernière
+      </button>
     </div>
     <!-- Create/Edit modal -->
     <v-dialog
