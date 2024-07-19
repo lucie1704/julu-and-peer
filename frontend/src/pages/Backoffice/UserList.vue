@@ -11,7 +11,7 @@ meta:
   import { getDataTable } from '~/composables/backoffice/getDataTable';
 
   const url = 'users';
-  const { data, loading, error } = getDataTable(url);
+  const { data, loading, error, refresh } = getDataTable(url);
 </script>
 
 <template>
@@ -24,6 +24,7 @@ meta:
       :loading="loading"
       :error="error"
       :url="url"
+      :refresh="refresh"
     >
       <!-- Start Edit Form Slot-->
       <template #form="{ item, submit }">

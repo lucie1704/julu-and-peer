@@ -11,7 +11,7 @@
   import { getDataTable } from '~/composables/backoffice/getDataTable';
 
   const url = 'customerorders';
-  const { data, loading, error } = getDataTable(url);
+  const { data, loading, error, refresh } = getDataTable(url);
   // TODO: Update getDataTable in order to supports orders.
 </script>
 
@@ -25,6 +25,7 @@
       :loading="loading"
       :error="error"
       :url="url"
+      :refresh="refresh"
     />
   </div>
 </template>

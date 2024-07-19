@@ -25,7 +25,7 @@ exports.getAllProductGenres = async (req, res) => {
 
 exports.getProductGenreById = async (req, res) => {
     try {
-        const genre = await ProductGenre.getProductGenreById(req.params.id);
+        const genre = await ProductGenre.findByPk(req.params.id);
         if (genre) {
             res.status(200).json(genre);
         } else {
@@ -38,7 +38,7 @@ exports.getProductGenreById = async (req, res) => {
 
 exports.createProductGenre = async (req, res) => {
     try {
-        const genre = await ProductGenre.createProductGenre(req.body);
+        const genre = await ProductGenre.create(req.body);
         res.status(201).json(genre);
     } catch (error) {
         res.status(500).json();
@@ -62,7 +62,7 @@ exports.updateProductGenre = async (req, res) => {
 exports.deleteProductGenre = async (req, res) => {
     try {
         const genre = await ProductGenre.findByPk(req.params.id);
-        if (!genre) {  
+        if (!genre) {
             return res.status(404).json();
         }
         const productsCount = await Product.count({ where: { genreId: genre.id } });
@@ -78,5 +78,20 @@ exports.deleteProductGenre = async (req, res) => {
             message: "An error occured while trying to delete Genre",
             details: error.message
         });
+    }
+};
+
+exports.getProductGenreOptions = async (req, res) => {
+    try {
+        const newItem = {
+            name: '',
+            description: ''
+        };
+
+        res.status(200).json({
+            newItem
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Une erreur s'est produite lors de la tentative de récupération de données." });
     }
 };

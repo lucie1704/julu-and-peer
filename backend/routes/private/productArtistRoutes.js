@@ -19,6 +19,10 @@ router
     .get(productArtistController.getAllProductArtists);
 
 router
+    .route('/options')
+    .get(productArtistController.getProductArtistOptions);
+
+router
     .route('/:id')
     .get(productArtistController.getProductArtistById)
     .patch(productArtistController.updateProductArtist)

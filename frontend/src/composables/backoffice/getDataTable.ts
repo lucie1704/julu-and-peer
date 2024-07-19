@@ -88,54 +88,6 @@ const getSchema = (url: string): ZodSchema<any> => {
     }
 };
 
-// const cleanData = (url, data) => {
-//   switch (url) {
-//     // Clean only for specific data if needed.
-//       case 'users':
-//           return data.map(user => ({
-//             id: user.id,
-//             prenom: user.firstname,
-//             nom: user.lastname,
-//             email: user.email,
-//             role: user.role
-//           }));
-//       case 'products':
-//           return data.map(product => ({
-//               id: product.id,
-//               image: product.imageSrc,
-//               nom: product.name,
-//               prix: product.price,
-//               stock: product.availableStock,
-//               reviews: product.reviewCount,
-//               genre: product.ProductGenre.name,
-//               format: product.ProductFormat.name,
-//               artiste: product.ProductArtist.name,
-//           }));
-//       case 'productartists':
-//         return data.map(artist => ({
-//           id: artist.id,
-//           nom: artist.name,
-//           description: artist.description,
-//         }));
-
-//       case 'productformats':
-//         return data.map(format => ({
-//           id: format.id,
-//           nom: format.name,
-//           description: format.description,
-//         }));
-
-//       case 'productgenres':
-//         return data.map(genre => ({
-//           id: genre.id,
-//           nom: genre.name,
-//           description: genre.description,
-//         }));
-//       default:
-//           return data;
-//   }
-// };
-
 export const getDataTable = (url: string) => {
     const data = ref(null);
     const loading = ref(true);
@@ -157,10 +109,6 @@ export const getDataTable = (url: string) => {
             const schema = getSchema(url);
             const validatedData = schema.parse(jsonData.data);
 
-            // On clean les données reçues
-            // const cleanedData = cleanData(url, validatedData);
-
-            // data.value = cleanedData;
             data.value = validatedData;
         } catch (err) {
             error.value = err.message;
@@ -178,5 +126,6 @@ export const getDataTable = (url: string) => {
         data,
         loading,
         error,
+        refresh: fetchData,
     };
 };

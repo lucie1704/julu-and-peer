@@ -25,7 +25,7 @@ exports.getAllProductFormats = async (req, res) => {
 
 exports.getProductFormatById = async (req, res) => {
     try {
-        const format = await ProductFormat.getProductFormatById(req.params.id);
+        const format = await ProductFormat.findByPk(req.params.id);
         if (format) {
             res.status(200).json(format);
         } else {
@@ -38,7 +38,7 @@ exports.getProductFormatById = async (req, res) => {
 
 exports.createProductFormat = async (req, res) => {
     try {
-        const format = await ProductFormat.create(data);
+        const format = await ProductFormat.create(req.body);
         res.status(201).json(format);
     } catch (error) {
         res.status(500).json();
@@ -78,5 +78,20 @@ exports.deleteProductFormat = async (req, res) => {
             message: "An error occured while trying to delete Format",
             details: error.message
         });
+    }
+};
+
+exports.getProductFormatOptions = async (req, res) => {
+    try {
+        const newItem = {
+            name: '',
+            description: ''
+        };
+
+        res.status(200).json({
+            newItem
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Une erreur s'est produite lors de la tentative de récupération de données." });
     }
 };

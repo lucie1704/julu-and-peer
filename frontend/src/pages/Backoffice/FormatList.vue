@@ -8,11 +8,13 @@
 
 <script lang="ts" setup>
   import DataTable from '~/components/backoffice/DataTable.vue';
+  import { getDataOptions } from '~/composables/backoffice/getDataOptions';
   import { getDataTable } from '~/composables/backoffice/getDataTable';
 
   const url = 'productformats';
-  const { data, loading, error } = getDataTable(url);
-  // TODO: Make Create Form + Api Call
+  const { data, loading, error, refresh } = getDataTable(url);
+  const { options } = getDataOptions(url);
+
 </script>
 
 <template>
@@ -25,6 +27,8 @@
       :loading="loading"
       :error="error"
       :url="url"
+      :new-item="options.newItem"
+      :refresh="refresh"
     >
       <!-- Start Edit Form Slot-->
       <template #form="{ item, submit }">

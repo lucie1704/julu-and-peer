@@ -19,6 +19,10 @@ router
     .get(productFormatController.getAllProductFormats);
 
 router
+    .route('/options')
+    .get(productFormatController.getProductFormatOptions);
+
+router
     .route('/:id')
     .get(productFormatController.getProductFormatById)
     .patch(productFormatController.updateProductFormat)

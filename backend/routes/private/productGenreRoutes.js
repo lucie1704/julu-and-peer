@@ -19,6 +19,10 @@ router
     .get(productGenreController.getAllProductGenres);
 
 router
+    .route('/options')
+    .get(productGenreController.getProductGenreOptions);
+
+router
     .route('/:id')
     .get(productGenreController.getProductGenreById)
     .patch(productGenreController.updateProductGenre)

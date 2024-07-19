@@ -7,6 +7,8 @@
       loading: boolean;
       error: string | null;
       url: string;
+      newItem: object | undefined;
+      refresh: () => void
     }>();
 
     // TODO: Use ENV variable for URL.
@@ -32,24 +34,14 @@
       showEditItemDialog.value = true;
     };
 
-    const initializeNewItem = () => {
-      if (props.data && props.data.length > 0) {
-        const newItem = {};
-        Object.keys(props.data[0]).forEach(key => {
-          newItem[key] = '';
-        });
-        return newItem;
-      }
-      return null;
-    };
-
     const createNewItem = () => {
-      itemToEdit.value = initializeNewItem();
+      itemToEdit.value = { ...props.newItem };
       isEditing.value = false;
       showEditItemDialog.value = true;
     };
 
     const submitEditItem = async() => {
+      // Deconstruct id in order to not have it in req.body
       const { id, ...data } = itemToEdit.value;
       try {
         if (isEditing.value) {
@@ -66,6 +58,7 @@
           });
         }
         showEditItemDialog.value = false;
+        props.refresh();
       } catch (error) {
         showEditItemDialog.value = false;
         showErrorDialog.value = true;
@@ -74,7 +67,6 @@
       }
     };
 
-
     const submitDeleteItem = async(item) => {
       try {
         await axios.delete(`${base_url}/${item.id}`, {
@@ -82,15 +74,23 @@
             'Content-Type': 'application/json'
           }
         });
-        // TODO: Reload DataTable
         showDeleteItemDialog.value = false;
+        props.refresh();
       } catch (error) {
         showDeleteItemDialog.value = false;
         showErrorDialog.value = true;
         errorMessage.value = error.response.data.message;
         console.error('Error deleting item:', error);
       }
+    };
 
+    const cleanDisplayValue = (value) => {
+      if (value && typeof value === 'object' && value.name) {
+        return value.name;
+      } else if (value && typeof value === 'object' && value.firstName && value.lastName) {
+        return `${value.firstName} ${value.lastName}`;
+      }
+      return value;
     };
 
 </script>
@@ -147,7 +147,7 @@
               :key="key"
               class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap"
             >
-              {{ value }}
+              {{ cleanDisplayValue(value) }}
             </td>
             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
               <button

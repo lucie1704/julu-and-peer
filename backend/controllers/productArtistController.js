@@ -25,7 +25,7 @@ exports.getAllProductArtists = async (req, res) => {
 
 exports.getProductArtistById = async (req, res) => {
     try {
-        const artist = await ProductArtist.getProductArtistById(req.params.id);
+        const artist = await ProductArtist.findByPk(req.params.id);
         if (artist) {
             res.status(200).json(artist);
         } else {
@@ -38,7 +38,7 @@ exports.getProductArtistById = async (req, res) => {
 
 exports.createProductArtist = async (req, res) => {
     try {
-        const artist = await ProductArtist.createProductArtist(req.body);
+        const artist = await ProductArtist.create(req.body);
         res.status(201).json(artist);
     } catch (error) {
         res.status(500).json();
@@ -78,5 +78,20 @@ exports.deleteProductArtist = async (req, res) => {
             message: "An error occured while trying to delete Artist",
             details: error.message
         });
+    }
+};
+
+exports.getProductArtistOptions = async (req, res) => {
+    try {
+        const newItem = {
+            name: '',
+            description: ''
+        };
+
+        res.status(200).json({
+            newItem
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Une erreur s'est produite lors de la tentative de récupération de données." });
     }
 };

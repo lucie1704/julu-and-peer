@@ -6,7 +6,17 @@ const {responseReturn} = require('../utils/response');
 
 exports.createProduct = async (req, res) => {
     try {
-        const product = await Product.create(req.body);
+        // Deconstruct body in order to get ID from objects.
+        const { ProductArtist, ProductGenre, ProductFormat, ...data } = req.body;
+    
+        const createData = {
+            ...data,
+            artistId: ProductArtist.id,
+            genreId: ProductGenre.id,
+            formatId: ProductFormat.id,
+        };
+
+        const product = await Product.create(createData);
         res.status(201).json(product);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -112,6 +122,20 @@ exports.deleteProduct = async (req, res) => {
 
 exports.getProductOptions = async (req, res) => {
     try {
+        const newItem = {
+            name: '',
+            description: '',
+            price: 0,
+            availableStock: 0,
+            imageSrc: '',
+            imageAlt: '',
+            reviewCount: 0,
+            discount: 0,
+            ProductArtist: { 'id': null },
+            ProductGenre: { 'id': null },
+            ProductFormat: { 'id': null }
+        };
+
         const artists = await ProductArtist.findAll({
             attributes: ['id', 'name'],
             order: [['name', 'ASC']]
@@ -130,7 +154,8 @@ exports.getProductOptions = async (req, res) => {
         res.status(200).json({
             artists,
             formats,
-            genres
+            genres,
+            newItem
         });
     } catch (error) {
         res.status(500).json({ message: "Une erreur s'est produite lors de la tentative de récupération de données." });
