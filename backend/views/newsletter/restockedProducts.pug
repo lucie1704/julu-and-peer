@@ -1,0 +1,7 @@
+each product in restockedProducts
+  .product
+    .product-image
+      img(src=product.image alt=product.name)
+    .product-details
+      h2= product.name
+      p= product.description
