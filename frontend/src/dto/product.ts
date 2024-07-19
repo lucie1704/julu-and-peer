@@ -1,4 +1,4 @@
-export interface ProductI {
+export interface Product {
   id: string;
   name: string;
   description: string;
@@ -8,24 +8,24 @@ export interface ProductI {
   availableStock: number;
   imageSrc: string;
   imageAlt: string;
-  ProductGenre: ProductGenreI;
-  ProductFormat: ProductFormatI;
-  ProductArtist: ProductArtistI;
+  ProductGenre: ProductGenre;
+  ProductFormat: ProductFormat;
+  ProductArtist: ProductArtist;
 }
 
-interface ProductGenreI {
+interface ProductGenre {
   id: string;
   name: string;
   description: string;
 }
 
-interface ProductFormatI {
+interface ProductFormat {
   id: string;
   name: string;
   description: string;
 }
 
-interface ProductArtistI {
+interface ProductArtist {
   id: string;
   name: string;
   description: string;

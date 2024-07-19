@@ -8,47 +8,50 @@ meta:
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { ShoppingCart } from '~/components';
-import { useCart } from '~/stores';
+import { useCart } from '~/stores/cart';
+import { useCustomer } from '~/stores/customer';
 
 const cartStore = useCart();
-const customerId = 27;
+const customerStore = useCustomer();
 
 const deleteCartAfterTimeout = async () => {
   setTimeout(async () => {
-    try {
-      await cartStore.deleteCart(cartProducts.value?.cart.id);
-      cartProducts.value = {};
-      console.log('Cart deleted after 1 minute');
-    } catch (error) {
-      console.error('Error deleting cart after timeout:', error);
+    if (cartStore.cartProducts && cartStore.cartProducts.cart.id) {
+      try {
+        await cartStore.deleteCart(cartStore.cartProducts.cart.id);
+        console.log('Cart deleted after 15 minutes');
+      } catch (error) {
+        console.error('Error deleting cart after timeout:', error);
+      }
     }
-  }, 60000);
+  }, 15 * 60 * 1000);
 };
 
 onMounted(async () => {
-  await cartStore.fetchCartProducts(customerId);
+  await customerStore.fetchByUserId('3');
+  await cartStore.fetchCartProducts(customerStore.customerId as string);
 
-  if (cartStore.cartProducts.cart) {
+  if (cartStore.cartProducts?.cart) {
     await deleteCartAfterTimeout();
   }
 });
 
-const updateQuantity = async (cartItemId: number, newQuantity: number) => {
+const updateQuantity = async (payload: { cartItemId: string, cartItemQuantity: number }) => {
   try {
     await cartStore.cartItemQuantityUpdate({
-      cartItemId,
-      newQuantity
+      cartItemId: payload.cartItemId,
+      newQuantity: payload.cartItemQuantity
     });
-    await cartStore.fetchCartProducts(customerId);
+    await cartStore.fetchCartProducts(customerStore.customerId as string);
   } catch (error) {
     console.error('Error updating cart item quantity:', error);
   }
 };
 
-const removeItem = async (cartItemId: number) => {
+const removeItem = async ( payload: { cartItemId: string }) => {
   try {
-    await cartStore.deleteCartItem(cartItemId);
-    await cartStore.fetchCartProducts(customerId);
+    await cartStore.deleteCartItem(payload.cartItemId);
+    await cartStore.fetchCartProducts(customerStore.customerId as string);
   } catch (error) {
     console.error('Error removing cart item:', error);
   }
@@ -59,8 +62,8 @@ const removeItem = async (cartItemId: number) => {
   <shopping-cart
     v-if="cartStore.cartProducts"
     :cart-items="cartStore.cartProducts"
-    @update-quantity="updateQuantity()"
-    @remove-item="removeItem()"
+    @update-quantity="updateQuantity"
+    @remove-item="removeItem"
   />
   <div v-else>
     Pas encore de produits dans le panier

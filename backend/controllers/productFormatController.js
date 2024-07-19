@@ -1,97 +1,75 @@
 const { Product, ProductFormat } = require('../models');
+const AppError = require('../utils/appError');
+const catchAsyncError = require('../utils/catchAsyncError');
+const { responseReturn } = require('../utils/response');
 
-exports.getAllProductFormats = async (req, res) => {
+exports.getAll = catchAsyncError(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const offset = (page - 1) * limit;
-    
-    try {
-        const { count, rows } = await ProductFormat.findAndCountAll({
-            limit,
-            offset,
-        });
-        const totalPages = Math.ceil(count / limit);
-        res.status(200).json({
-            page,
-            limit,
-            totalItems: count,
-            totalPages,
-            data: rows
-        });
-    } catch (error) {
-        res.status(500).json();
+
+    const { count, rows } = await ProductFormat.findAndCountAll({
+        limit,
+        offset,
+    });
+    const totalPages = Math.ceil(count / limit);
+
+    responseReturn(res, {
+        page,
+        limit,
+        totalItems: count,
+        totalPages,
+        data: rows
+    })
+});
+
+exports.getById = catchAsyncError(async (req, res, next) => {
+    const format = await ProductFormat.findByPk(req.params.id);
+    if (!format) return next(new AppError(404));
+
+    responseReturn(res, format);
+});
+
+exports.create = catchAsyncError(async (req, res) => {
+    const format = await ProductFormat.create(req.body);
+    responseReturn(res, format, 201);
+});
+
+exports.update = catchAsyncError(async (req, res, next) => {
+
+    const [nbUpdated, formats] = await ProductFormat.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true,
+    });
+
+    if (!nbUpdated === 1) return next(new AppError(404));
+
+    responseReturn(res, formats[0]);
+});
+
+exports.delete = catchAsyncError(async (req, res, next) => {
+    const format = await ProductFormat.findByPk(req.params.id);
+
+    if (!format) return next(new AppError(404));
+
+    const productsCount = await Product.count({ where: { formatId: format.id } });
+
+    // On check si il y a un produit associé, si ce n'est pas le cas on peut le supprimer.
+    if (productsCount > 0) {
+        return res.status(400).json({ message: 'Vous ne pouvez pas supprimer un format qui est encore associé a des produits.' });
     }
-};
 
-exports.getProductFormatById = async (req, res) => {
-    try {
-        const format = await ProductFormat.findByPk(req.params.id);
-        if (format) {
-            res.status(200).json(format);
-        } else {
-            res.status(404).json({ message: 'Format not found' });
-        }
-    } catch (error) {
-        res.status(500).json();
-    }
-};
+    const result = await format.destroy();
+    responseReturn(res, result, 204);
+});
 
-exports.createProductFormat = async (req, res) => {
-    try {
-        const format = await ProductFormat.create(req.body);
-        res.status(201).json(format);
-    } catch (error) {
-        res.status(500).json();
-    }
-};
+exports.options = catchAsyncError(async (req, res, next) => {
+    const newItem = {
+        name: '',
+        description: ''
+    };
 
-exports.updateProductFormat = async (req, res) => {
-    try {
-        const format = await ProductFormat.findByPk(req.params.id);
-
-        if (!format) res.status(404).json();
-
-        await format.update(req.body);
-
-        res.status(200).json(format);
-    } catch (error) {
-        res.status(500).json();
-    }
-};
-
-exports.deleteProductFormat = async (req, res) => {
-    try {
-        const format = await ProductFormat.findByPk(req.params.id);
-        if (!format) {  
-            return res.status(404).json();
-        }
-        const productsCount = await Product.count({ where: { formatId: format.id } });
-
-        // On check si il y a un produit associé, si ce n'est pas le cas on peut le supprimer.
-        if (productsCount > 0) {
-            return res.status(400).json({ message: 'Vous ne pouvez pas supprimer un format qui est encore associé a des produits.' });
-        }
-        await format.destroy();
-        res.status(204).json();
-    } catch (error) {
-        res.status(500).json({
-            message: "An error occured while trying to delete Format",
-            details: error.message
-        });
-    }
-};
-
-exports.getProductFormatOptions = async (req, res) => {
-    try {
-        const newItem = {
-            name: '',
-            description: ''
-        };
-
-        res.status(200).json({
-            newItem
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Une erreur s'est produite lors de la tentative de récupération de données." });
-    }
-};
+    responseReturn(res, newItem)
+});

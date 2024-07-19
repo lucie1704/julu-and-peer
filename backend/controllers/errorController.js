@@ -1,29 +1,22 @@
 const AppError = require('./../utils/appError');
 
 const handleCastErrorDB = err => {
-  const message = `Invalid ${err.path}: ${err.value}.`;
-  return new AppError(message, 400);
+  return new AppError(400);
 };
 
 const handleDuplicateFieldsDB = err => {
-  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-
-  const message = `Duplicate field value: ${value}. Please use another value!`;
-  return new AppError(message, 400);
+  return new AppError(409);
 };
 
 const handleValidationErrorDB = err => {
-  const errors = Object.values(err.errors).map(el => el.message);
-
-  const message = `Invalid input data. ${errors.join('. ')}`;
-  return new AppError(message, 400);
+  return new AppError(400);
 };
 
 const handleJWTError = () =>
-  new AppError('Invalid token. Please log in again!', 401);
+  new AppError(401);
 
 const handleJWTExpiredError = () =>
-  new AppError('Your token has expired! Please log in again.', 401);
+  new AppError(401);
 
 const sendErrorDev = (err, req, res) => {
   if (req.originalUrl.startsWith('/api')) {
@@ -65,14 +58,13 @@ const sendErrorProd = (err, req, res) => {
     });
   }
   console.error('ERROR 💥', err);
-  return res.status(err.statusCode).render('error', {
+  return res.status(500).render('error', {
     title: 'Something went wrong!',
     msg: 'Please try again later.'
   });
 };
 
 module.exports = (err, req, res, next) => {
-
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 

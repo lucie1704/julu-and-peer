@@ -1,130 +1,138 @@
-// const User = require('./../models/mongo/user');
-const {User, Customer } = require('../models');
-const AppError = require('./../utils/appError');
-const catchAsyncError = require('./../utils/catchAsyncError');
-const sendSuccessResponse = require('../utils/sendSuccessResponse');
-const mongoose = require('mongoose');
-const filterObject = require('./../utils/filterObject');
-const {responseReturn} = require('../utils/response');
+const {User, Customer} = require('../models');
+const AppError = require('../utils/appError');
+const catchAsyncError = require('../utils/catchAsyncError');
+const filterObject = require('../utils/filterObject');
+const { responseReturn } = require('../utils/response');
 
 
-// User role
-exports.getMe = (req, res, next) => {
-  req.params.id = req.user.id;
-  next();
+// Méthodes pour User role
+
+exports.getMe = (req, res,) => {
+  res.json(req.user);
 };
 
 exports.updateMe = catchAsyncError(async (req, res, next) => {
 
   if (req.body.password || req.body.passwordConfirmation) {
     return next(
-      new AppError(
-        'This route is not for password updates. Please use /updateMyPassword.',
-        400
-      )
+      new AppError(400)
     );
   }
 
-  const filteredBody = filterObject(req.body, 'name', 'email');
+  const filteredBody = filterObject(req.body, 'firstname', 'lastname', 'photo');
 
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
-    new: true,
-    runValidators: true
-  });
+  const [nbUpdated, users] = await User.update(filteredBody, {
+    where: {
+        id: parseInt(req.user.id, 10),
+    },
+        returning: true,
+    });
 
-  sendSuccessResponse(updatedUser, res);
+    if (!nbUpdated === 1) return next(new AppError(404));
 
+    const { id, firstname, lastname, email, photo } = users[0];
+    const user = { id, firstname, lastname, email, photo };
+
+    responseReturn(res, user);
 });
 
+// TODO: A changer : Faire annonymiser les données personnelles de l'utilisateur
 exports.deleteMe = catchAsyncError(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false });
-  sendSuccessResponse(null, res)
-});
-
-// Admin role
-exports.createUser = catchAsyncError(async (req, res, next) => {
-  
-  const user = await User.create(req.body);
-
-  sendSuccessResponse(user, res)
-});
-
-exports.getUser = catchAsyncError(async ( req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next(new AppError('Invalid user ID', 400, res));
-
-  const user = await User.findById(req.params.id);
-  
-  if (!user) return next(new AppError('No document found with that ID', 404, res));
-
-  sendSuccessResponse(user, res)
-});
-
-exports.deleteUser = catchAsyncError(async (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next(new AppError('Invalid user ID', 400, res));
-
-  const user = await User.findByIdAndDelete(req.params.id);
-
-    if (!user) {
-      return next(new AppError('No user found with that ID', 404, res));
-    }
-  
-  sendSuccessResponse(null, res)
-});
-
-exports.softDelete = catchAsyncError(async (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next(new AppError('Invalid user ID', 400, res));
-
-  const user = await User.findById(req.params.id).select('+active');
-
-  if(!user.active) return next(new AppError('User does not existe', 400, res));
-
-  await User.findByIdAndUpdate(req.params.id, { active: false });
-
-  sendSuccessResponse(null, res)
-});
-
-exports.updateUser =  catchAsyncError(async(req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next(new AppError('Invalid user ID', 400, res));
-
-  const filteredBody = filterObject(req.body, 'name', 'email', 'photo', 'role', );
-
-  const user = await User.findByIdAndUpdate(req.params.id, filteredBody, {
-    new: true,
-    runValidators: true
+  const result = await User.destroy({
+    where: {
+        id: parseInt(req.user.id, 10),
+    },
   });
 
-  if (!user) {
-    return next(new AppError('No user found with that ID', 404));
-  }
+  if (!result) return next(new AppError(404));
 
-  sendSuccessResponse(null, res)
+  res.status(204);
 });
 
-exports.getAllUsers = catchAsyncError(async (req, res, next) => {
+// Méthodes pour Admin role
+
+exports.getAll = catchAsyncError(async ( req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = 20;
   const offset = (page - 1) * limit;
-  
-  try {
-      const { count, rows } = await User.findAndCountAll({
+
+  const { count, rows } = await User.findAndCountAll({
           limit,
           offset,
           include: [
             { model: Customer },
           ]
       });
-      const totalPages = Math.ceil(count / limit);
-      res.status(200).json({
-          page,
-          limit,
-          totalItems: count,
-          totalPages,
-          data: rows
-      });
-  } catch (error) {
-      res.status(500).json({
-        message: "An error occured while trying to get Users",
-        details: error.message
-    });
+  const totalPages = Math.ceil(count / limit);
+
+  responseReturn(res, {
+      page,
+      limit,
+      totalItems: count,
+      totalPages,
+      data: rows
+  });
+});
+
+exports.get = catchAsyncError(async ( req, res, next) => {
+  const { id } = req.params;
+
+  const user = await User.findByPk(id);
+  if (!user) return next(new AppError(404));
+  
+  responseReturn(res, user);
+});
+
+exports.create = catchAsyncError(async ( req, res, next) => {
+  const { firstname, lastname, email, password, passwordConfirmation } = req.body;
+  
+  const user = User.build({
+    firstname,
+    lastname,
+    email,
+    password,
+    passwordConfirmation,
+  });
+  await user.save();
+
+  responseReturn(res, user);
+});
+
+
+exports.delete = catchAsyncError(async (req, res, next) => {
+  const user = await User.findOne({
+    where: {
+      id: parseInt(req.params.id, 10),
+    },
+  });
+
+  if (!user) return next(new AppError(404, 'User not found'));
+
+  await user.destroy();
+
+  res.status(204).send();
+});
+
+exports.update = catchAsyncError(async (req, res, next) => {
+
+  if (req.body.password || req.body.passwordConfirmation) {
+    return next(
+      new AppError(400)
+    );
   }
+
+  const filteredBody = filterObject(req.body, 'firstname', 'lastname', 'email', 'photo');
+
+  const [nbUpdated, users] = await User.update(filteredBody, {
+    where: {
+        id: parseInt(req.params.id, 10),
+    },
+        returning: true,
+    });
+
+    if (!nbUpdated === 1) return next(new AppError(404));
+
+    const { id, firstname, lastname, email, photo } = users[0];
+    const user = { id, firstname, lastname, email, photo };
+    responseReturn(res, user);
 });

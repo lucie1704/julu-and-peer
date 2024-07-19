@@ -1,78 +1,78 @@
-const Customer = require('../models/customer');
-const User = require('../models/user');
+const {User, Customer} = require('../models');
+const catchAsyncError = require('../utils/catchAsyncError');
+const { responseReturn } = require('../utils/response');
+const AppError = require('./../utils/appError');
 
-// Create a new Customer
-exports.createCustomer = async (req, res) => {
-    try {
-        const { userId, firstName, lastName } = req.body;
-        const user = await User.findById(userId);
+exports.create = catchAsyncError(async (req, res, next) => {
+    const { userId, firstName, lastName } = req.body;
 
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
+    const user = await User.findByPk(userId);
+    if (!user) return next(new AppError(404));
+ 
+    const customer = await Customer.create({ userId, firstName, lastName });
 
-        const customer = await Customer.create({ userId, firstName, lastName });
-        res.status(201).json(customer);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    responseReturn(res, customer, 201);
+});
 
-// Get all Customers
-exports.getCustomers = async (req, res) => {
-    try {
-        const customers = await Customer.findAll({ include: User });
-        res.status(200).json(customers);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.getAll = catchAsyncError(async (req, res, next) => {
+    const customers = await Customer.findAll({ include: User });
+    
+    if (!customers) return next(new AppError(404));
 
-// Get a Customer by ID
-exports.getCustomerById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const customer = await Customer.findById(id, { include: User });
-        if (customer) {
-            res.status(200).json(customer);
-        } else {
-            res.status(404).json({ error: 'Customer not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    responseReturn(res, customers);
+});
 
-// Update a Customer
-exports.updateCustomer = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { firstName, lastName } = req.body;
-        const customer = await Customer.findById(id);
-        if (customer) {
-            customer.firstName = firstName;
-            customer.lastName = lastName;
-            await customer.save();
-            res.status(200).json(customer);
-        } else {
-            res.status(404).json({ error: 'Customer not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.getById = catchAsyncError(async (req, res, next) => {
+    const { id } = req.params;
 
-// Soft delete a Customer
-exports.deleteCustomer = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const customer = await Customer.findById(id);
-        if (customer) {
-            // TODO: Soft Delete customer with User.
-        } else {
-            res.status(404).json({ error: 'Customer not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+    const customer = await Customer.findByPk(id, { include: User });
+    if (!customer) return next(new AppError(404));
+    
+    responseReturn(res, customer);
+});
+
+exports.getByUserId = catchAsyncError(async (req, res, next) => {
+    const customer = await Customer.findOne({
+        where: {userId: parseInt(req.params.id, 10) },
+        include: {
+            model: User,
+        },
+    });
+
+    if (!customer) return next(new AppError(404));
+    
+    responseReturn(res, customer);
+});
+
+
+exports.update = catchAsyncError(async (req, res, next) => {
+    const [nbUpdated, customers] = await Customer.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true
+    });
+
+    if (!nbUpdated === 1) return next(new AppError(404));
+
+    const updatedCustomer = await Customer.findOne({
+        where: {id: parseInt(req.params.id, 10) },
+        include: {
+            model: User,
+        },
+    });
+    
+    responseReturn(res, updatedCustomer);
+});
+
+exports.delete = catchAsyncError(async (req, res, next) => {
+    const result = await Customer.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
+
+    if (!result) return next(new AppError(404));
+
+    res.status(204);
+});

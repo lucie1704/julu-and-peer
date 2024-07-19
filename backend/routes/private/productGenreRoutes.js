@@ -5,27 +5,22 @@ const autorizationMiddleware = require('../../middleware/autorizationMiddleware'
 const router = express.Router();
 
 
-// Protect all routes after this middleware
 // router.use(authMiddleware);
-
-// Here do other routes
-
-//Need admin role to get access to these routes
 // router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')
-    .post(productGenreController.createProductGenre)
-    .get(productGenreController.getAllProductGenres);
+    .post(productGenreController.create)
+    .get(productGenreController.getAll);
 
 router
     .route('/options')
-    .get(productGenreController.getProductGenreOptions);
+    .get(productGenreController.options);
 
 router
     .route('/:id')
-    .get(productGenreController.getProductGenreById)
-    .patch(productGenreController.updateProductGenre)
-    .delete(productGenreController.deleteProductGenre);
+    .get(productGenreController.getById)
+    .patch(productGenreController.update)
+    .delete(productGenreController.delete);
 
 module.exports = router;

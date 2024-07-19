@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { ProductI } from '~/dto';
+import { Product } from '~/dto';
 
 defineProps<{
-  product: ProductI
+  product: Product
 }>();
 
 const discountedPrice = (price: number, discount: number) => {

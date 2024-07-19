@@ -1,97 +1,78 @@
 const { Product, ProductArtist } = require('../models');
+const AppError = require('../utils/appError');
+const catchAsyncError = require('../utils/catchAsyncError');
+const { responseReturn } = require('../utils/response');
 
-exports.getAllProductArtists = async (req, res) => {
+exports.getAll = catchAsyncError(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const offset = (page - 1) * limit;
     
-    try {
-        const { count, rows } = await ProductArtist.findAndCountAll({
-            limit,
-            offset,
-        });
-        const totalPages = Math.ceil(count / limit);
-        res.status(200).json({
-            page,
-            limit,
-            totalItems: count,
-            totalPages,
-            data: rows
-        });
-    } catch (error) {
-        res.status(500).json();
-    }
-};
+    const { count, rows } = await ProductArtist.findAndCountAll({
+        limit,
+        offset,
+    });
+    const totalPages = Math.ceil(count / limit);
 
-exports.getProductArtistById = async (req, res) => {
-    try {
-        const artist = await ProductArtist.findByPk(req.params.id);
-        if (artist) {
-            res.status(200).json(artist);
-        } else {
-            res.status(404).json({ message: 'Artist not found' });
-        }
-    } catch (error) {
-        res.status(500).json();
-    }
-};
+    responseReturn(res, {
+        page,
+        limit,
+        totalItems: count,
+        totalPages,
+        data: rows
+    })
+});
 
-exports.createProductArtist = async (req, res) => {
-    try {
-        const artist = await ProductArtist.create(req.body);
-        res.status(201).json(artist);
-    } catch (error) {
-        res.status(500).json();
-    }
-};
+exports.getById = catchAsyncError(async (req, res, next) => {
 
-exports.updateProductArtist = async (req, res) => {
-    try {
-        const artist = await ProductArtist.findByPk(req.params.id);
+    const artist = await ProductArtist.findByPk(req.params.id);
+    
+    if (!artist) return next(new AppError(404));
 
-        if (!artist) res.status(404).json();
+    responseReturn(res, artist);
+});
 
-        await artist.update(req.body);
+exports.create = catchAsyncError(async (req, res) => {
 
-        res.status(200).json(artist);
-    } catch (error) {
-        res.status(500).json();
-    }
-};
+    const artist = await ProductArtist.create(req.body);
+    
+    responseReturn(res, artist, 201);
+});
 
-exports.deleteProductArtist = async (req, res) => {
-    try {
-        const artist = await ProductArtist.findByPk(req.params.id);
-        if (!artist) {  
-            return res.status(404).json();
-        }
-        const productsCount = await Product.count({ where: { artistId: artist.id } });
+exports.update = catchAsyncError(async (req, res, next) => {
+    const [nbUpdated, artists] = await ProductArtist.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true,
+    });
 
-        // On check si il y a un produit associé, si ce n'est pas le cas on peut le supprimer.
-        if (productsCount > 0) {
-            return res.status(400).json({ message: 'Vous ne pouvez pas supprimer un artiste qui est encore associé a des produits.' });
-        }
-        await artist.destroy();
-        res.status(204).json();
-    } catch (error) {
-        res.status(500).json({
-            message: "An error occured while trying to delete Artist",
-            details: error.message
-        });
-    }
-};
+    if (!nbUpdated === 1) return next(new AppError(404));
 
-exports.getProductArtistOptions = async (req, res) => {
-    try {
-        const newItem = {
-            name: '',
-            description: ''
-        };
+    responseReturn(res, artists[0]);
+});
 
-        res.status(200).json({
-            newItem
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Une erreur s'est produite lors de la tentative de récupération de données." });
-    }
-};
+exports.delete = catchAsyncError(async (req, res, next) => {
+    const artist = await ProductArtist.findByPk(req.params.id);
+    
+    if (!artist) return next(new AppError(404));
+
+    const productsCount = await Product.count({ where: { artistId: artist.id } });
+
+    // On check si il y a un produit associé, si ce n'est pas le cas on peut le supprimer.
+    if (productsCount > 0) {
+        return res.status(400).json({ message: 'Vous ne pouvez pas supprimer un artiste qui est encore associé a des produits.' });
+    };
+
+    const result = await artist.destroy();
+    responseReturn(res, result, 204);
+});
+
+exports.options = catchAsyncError(async (req, res, next) => {
+    const newItem = {
+        name: '',
+        description: ''
+    };
+
+    responseReturn(res, newItem)
+});

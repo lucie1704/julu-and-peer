@@ -1,67 +1,52 @@
 const CustomerAddress = require('../models/customeraddress');
 const Customer = require('../models/customer');
+const catchAsyncError = require('../utils/catchAsyncError');
+const AppError = require('../utils/appError');
+const { responseReturn } = require('../utils/response');
 
-// Create a new CustomerAddress
-exports.createCustomerAddress = async (req, res) => {
-    try {
-        const customer = await Customer.findById(req.body.customerId);
-        if (!customer) {
-            return res.status(404).json({ error: 'Customer not found' });
-        }
-        const customerAddress = await CustomerAddress.create(req.body);
-        res.status(201).json(customerAddress);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
 
-// Get all CustomerAddresses
-exports.getAllCustomerAddresses = async (req, res) => {
-    try {
-        const customerAddresses = await CustomerAddress.findAll();
-        res.status(200).json(customerAddresses);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
+exports.create = catchAsyncError (async (req, res, next) => {
+    const customer = await Customer.findByPk(req.body.customerId);
+    if (!customer)  return  next(new AppError(404));
 
-// Get a single CustomerAddress by id
-exports.getCustomerAddressById = async (req, res) => {
-    try {
-        const customerAddress = await CustomerAddress.findById(req.params.id);
-        if (!customerAddress) {
-            return res.status(404).json({ error: 'CustomerAddress not found' });
-        }
-        res.status(200).json(customerAddress);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
+    const customerAddress = await CustomerAddress.create(req.body);
 
-// Update a CustomerAddress
-exports.updateCustomerAddress = async (req, res) => {
-    try {
-        const customerAddress = await CustomerAddress.findById(req.params.id);
-        if (!customerAddress) {
-            return res.status(404).json({ error: 'CustomerAddress not found' });
-        }
-        await customerAddress.update(req.body);
-        res.status(200).json(customerAddress);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
+    return responseReturn(res, customerAddress);
+});
 
-// Delete a CustomerAddress
-exports.deleteCustomerAddress = async (req, res) => {
-    try {
-        const customerAddress = await CustomerAddress.findById(req.params.id);
-        if (!customerAddress) {
-            return res.status(404).json({ error: 'CustomerAddress not found' });
-        }
-        await customerAddress.destroy();
-        res.status(204).json({ message: 'CustomerAddress deleted successfully' });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
+exports.getAll = catchAsyncError(async (req, res) => {
+    const customerAddresses = await CustomerAddress.findAll();
+    return responseReturn(res, customerAddresses);
+});
+
+exports.getById = catchAsyncError (async (req, res, next) => {
+    const customerAddress = await CustomerAddress.findByPk(req.params.id);
+
+    if (!customerAddress)  return  next(new AppError(404));
+    return responseReturn(res, customerAddress);
+});
+
+exports.update = catchAsyncError(async (req, res, next) => {
+    const [nbUpdated, customerAddresses] = await CustomerAddress.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true,
+    });
+
+    if (!nbUpdated === 1) return next(new AppError(404));
+
+    responseReturn(res, customerAddresses[0]);
+});
+
+exports.delete = catchAsyncError(async (req, res, next) => {
+    const result = await CustomerAddress.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
+
+    if (!result) return next(new AppError(404));
+
+    res.status(204);
+});

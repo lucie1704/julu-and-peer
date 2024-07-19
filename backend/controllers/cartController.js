@@ -3,11 +3,11 @@ const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
 
-exports.getCartsProducts = catchAsyncError(async (req, res, next) => {
-    const { customerId } = req.params;
+exports.getProducts = catchAsyncError(async (req, res, next) => {
+    const { id } = req.params;
 
     const cart = await Cart.findOne({
-        where: { customerId },
+        where: { customerId : id},
         include: {
             model: CartItem,
             include: {
@@ -21,13 +21,13 @@ exports.getCartsProducts = catchAsyncError(async (req, res, next) => {
         }
     });
 
-    if (!cart) return next(new AppError('Cart not found', 404));
+    if (!cart) return next(new AppError(404));
 
     let totalPrice = 0;
     let totalDiscount = 0;
     const outOfStockProducts = [];
 
-    const buyProductCartItem = cart.CartItems.filter(cartItem => {
+    const availableProducts = cart.CartItems.filter(cartItem => {
         const product = cartItem.Product;
         if (product.availableStock >= cartItem.quantity) {
           totalPrice += product.price * cartItem.quantity;
@@ -42,74 +42,75 @@ exports.getCartsProducts = catchAsyncError(async (req, res, next) => {
     const cartTotalProductCount = cart.CartItems.length;
     const shippingFee = 50;
 
-    responseReturn(res, 200, {
+    responseReturn(res, {
         cart,
         totalPrice,
         totalDiscount,
         cartTotalProductCount,
         shippingFee,
         outOfStockProducts,
-        buyProductCartItem
+        availableProducts
     });
 });
 
-exports.getAllCarts = async (req, res) => {
-    try {
-        const carts = await Cart.findAll();
-        res.status(200).json(carts);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.getAll = catchAsyncError (async (req, res) => {
 
-exports.getCartById = catchAsyncError(async (req, res, next) => {
+    const carts = await Cart.findAll();
+
+    if (!carts) return next(new AppError(404));
+
+    responseReturn(res, carts);
+});
+
+exports.getById = catchAsyncError(async (req, res, next) => {
     const cart = await Cart.findByPk(req.params.id)
-    if (!cart) return next(new AppError('No found !', 404));
-    return responseReturn(res, 201, cart);
+    if (!cart) return next(new AppError(404));
+    return responseReturn(res, cart);
 });
 
-exports.getCartByCustomerId = catchAsyncError(async (req, res, next) => {
-    const { customerId } = req.params;
+exports.getByCustomerId = catchAsyncError(async (req, res, next) => {
+    const { id } = req.params;
 
-    const cart = await Cart.findOne({ where: { customerId } });
-    if (!cart) return next(new AppError('No found !', 404));
-    return responseReturn(res, 201, cart);
+    const cart = await Cart.findOne({ where: { customerId: id } });
+    if (!cart) return next(new AppError(404));
+    return responseReturn(res, cart);
 });
 
-
-exports.createCart = catchAsyncError(async (req, res, next) => {
+exports.create = catchAsyncError(async (req, res, next) => {
     const { customerId } = req.body;
 
     const existedCart = await Cart.findOne({ where: { customerId } });
 
-    if (existedCart) return next(new AppError('Fails to create cart. This cart already existe', 400));
+    if (existedCart) return next(new AppError(409));
 
     const cart = await Cart.create({ customerId });
 
-    if (!cart) return next(new AppError('Fails to create cart', 404));
+    if (!cart) return next(new AppError(404));
 
-    return responseReturn(res, 201, cart);
+    return responseReturn(res, cart, 201);
 });
 
-exports.updateCart = async (req, res) => {
-    try {
-        const cart = await Cart.findById(req.params.id);
-        if (cart) {
-            await cart.update(req.body);
-            res.status(200).json(cart);
-        } else {
-            res.status(404).json({ message: 'Cart not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+exports.update = catchAsyncError(async (req, res, next) => {
+    const [nbUpdated, carts] = await Cart.update(req.body, {
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+        returning: true,
+    });
 
-exports.deleteCart = catchAsyncError(async( req, res, next) => {
-    
-    const cart = await Cart.findByPk(req.params.id)
-    if (!cart) return next(new AppError('Cart no found !', 404));
-    await cart.destroy();
+    if (!nbUpdated === 1) return next(new AppError(404));
 
-    return responseReturn(res, 201, {message: "Cart deleted"});
+    responseReturn(res, carts[0]);
+});
+
+exports.delete = catchAsyncError(async( req, res, next) => {
+    const result = await Cart.destroy({
+        where: {
+            id: parseInt(req.params.id, 10),
+        },
+    });
+
+    if (!result) return next(new AppError(404));
+
+    res.status(204)
 });

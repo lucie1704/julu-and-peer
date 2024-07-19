@@ -3,39 +3,59 @@ const { Wishlist } = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 
-exports.createWishlist = catchAsyncError (async (req, res, next) => {
+exports.create = catchAsyncError (async (req, res, next) => {
   const { slug, productId } = req.body
   
   const wishlist = await Wishlist.findOne({ where: { slug, productId } });
 
-  if (wishlist) return next(new AppError('Product is already in Wishlist', 404));
+  if (wishlist) return next(new AppError(409));
 
   const createdWishlist = await Wishlist.create(req.body);
 
-  return responseReturn(res, 201, { message: "Wishlist created successfully", createdWishlist });
-
+  return responseReturn(res, createdWishlist, 201);
 });
 
-exports.getWishlist = catchAsyncError (async (req, res, next) => {
+exports.getAll = catchAsyncError (async (req, res, next) => {
 
   const wishlists = await Wishlist.findAll({ where: { customerId : req.params.id, } });;
 
-  if (!wishlists) return next(new AppError('Wishlists is not found', 404));
+  if (!wishlists) return next(new AppError(404));
 
-  responseReturn(res, 200, {
-    wishlistCount: wishlists.length,
-    wishlists
-  })
+  wishlists.wishlistCount = wishlists.length
+
+  responseReturn(res,  wishlists)
 });
 
-exports.deleteWishlist = catchAsyncError (async (req, res, next) => {
-
+exports.getById = catchAsyncError(async (req, res, next) => {
   const wishlist = await Wishlist.findByPk(req.params.id);
+  if (!wishlist) return next(new AppError(404));
+  
+  responseReturn(res, wishlist);
+});
 
-  if(!wishlist) return next(new AppError('Wishlist Item not found', 404));
+exports.update = catchAsyncError(async (req, res, next) => {
+  const [nbUpdated, wishlists] = await Wishlist.update(req.body, {
+      where: {
+          id: parseInt(req.params.id, 10),
+      },
+      returning: true,
+  });
 
-  await wishlist.destroy();
+  if (!nbUpdated === 1) return next(new AppError(404));
 
-  responseReturn(res,200,{message: "Wishlist removed successfully" })
+  responseReturn(res, wishlists[0]);
+});
+
+
+exports.delete = catchAsyncError (async (req, res, next) => {
+  const result = await Wishlist.destroy({
+    where: {
+        id: parseInt(req.params.id, 10),
+    },
+  });
+
+  if (!result) return next(new AppError(404));
+
+  res.status(204);
 });
 

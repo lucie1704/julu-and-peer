@@ -15,7 +15,9 @@ module.exports = {
           model: 'Customers',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       addressType: {
         type: Sequelize.STRING

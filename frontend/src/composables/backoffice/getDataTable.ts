@@ -14,7 +14,6 @@ const getSchema = (url: string): ZodSchema<any> => {
                 lastname: z.string(),
                 email: z.string().email(),
                 photo: z.string(),
-                role: z.string(),
                 createdAt: z.string().datetime(),
                 updatedAt: z.string().datetime(),
                 Customer: z.object({

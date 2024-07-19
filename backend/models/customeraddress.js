@@ -10,10 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      const cascadeOptions = { onDelete: 'CASCADE', onUpdate: 'CASCADE' };
+
       // define association here
-      CustomerAddress.belongsTo(models.Customer, { foreignKey: 'customerId' });
-      CustomerAddress.hasMany(models.PaymentMethod, { foreignKey: 'billingAddressId', onDelete: 'CASCADE' });
-      CustomerAddress.hasMany(models.Order);
+      CustomerAddress.belongsTo(models.Customer, { ...cascadeOptions });
+      CustomerAddress.hasMany(models.PaymentMethod, { ...cascadeOptions });
+      CustomerAddress.hasMany(models.Order, { ...cascadeOptions });
     }
   }
   CustomerAddress.init({

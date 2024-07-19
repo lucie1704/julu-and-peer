@@ -1,7 +1,7 @@
 import { setupLayouts } from 'virtual:generated-layouts';
 import { createRouter, createWebHistory } from 'vue-router';
 import { UserRole } from '~/dto';
-import { useAuth } from '~/stores';
+import { useAuth } from '~/stores/auth';
 import generatedRoutes from '~pages';
 
 const router = createRouter({

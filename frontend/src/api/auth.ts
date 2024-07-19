@@ -3,7 +3,6 @@ import {
   ConfirmEmail,
   ResetPassword,
   SignUp,
-  SignUpResponse,
   UpdatePassword,
   UserEmail,
   UserLogin
@@ -15,7 +14,7 @@ const USER_ROOT_URL = 'http://localhost:3000/api/v1/users';
 interface AuthAPI {
   login: (user: UserLogin) => Promise<string>;
   logout: () => Promise<string>;
-  signup: (user: SignUp) => Promise<SignUpResponse>;
+  signup: (user: SignUp) => Promise<string>;
   confirmEmail: (user: ConfirmEmail, emailToken: string) => Promise<string>;
   forgotPassword: (email: UserEmail) => Promise<string>;
   resetPassword: (user: ResetPassword, emailToken: string) => Promise<string>;
@@ -33,7 +32,7 @@ const authAPI: AuthAPI = {
           'Content-Type': 'application/json'
         }
       });
-      return response.data.token;
+      return response.data;
     } catch (error) {
       console.error('Error from backend API:', error);
       return null;
@@ -65,7 +64,7 @@ const authAPI: AuthAPI = {
           }
         }
       );
-      return response.data.token;
+      return response.data;
     } catch (error) {
       console.error('Error from backend API:', error);
       return null;
@@ -79,7 +78,7 @@ const authAPI: AuthAPI = {
           'Content-Type': 'application/json'
         }
       });
-      return res.data.status;
+      return res.data;
     } catch (error) {
       console.error('Logout error :', error);
       return null;
@@ -93,7 +92,7 @@ const authAPI: AuthAPI = {
           'Content-Type': 'application/json'
         }
       });
-      return res.data.status;
+      return res.data;
     } catch (error) {
       console.error('Reset password error error :', error);
       return null;
@@ -111,7 +110,7 @@ const authAPI: AuthAPI = {
           }
         }
       );
-      return response.data.token;
+      return response.data;
     } catch (error) {
       console.error('Error from backend API:', error);
       return null;
@@ -126,7 +125,7 @@ const authAPI: AuthAPI = {
           'Content-Type': 'application/json'
         }
       });
-      return res.data.token;
+      return res.data;
     } catch (error) {
       console.error('Update password error :', error);
       return null;
