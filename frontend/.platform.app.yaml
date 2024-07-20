@@ -1,0 +1,32 @@
+name: frontend
+
+type: "nodejs:20"
+
+mounts:
+  "web/uploads":
+    source: local
+    source_path: uploads
+
+disk: 1024
+
+variables:
+  env:
+    NODE_ENV: "production"
+    API_URL: "https://production-vohbr3y-yh4gjel2xatse.fr-4.platformsh.site/api"
+
+hooks:
+  build: |
+    npm run build
+web:
+  locations:
+    "/":
+      root: "dist"
+      index:
+        - index.html
+      allow: true
+      scripts: true
+    "/(.*)":
+      root: "dist"
+      index:
+        - index.html
+      allow: true

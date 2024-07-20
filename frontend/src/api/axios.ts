@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { headers } from '~/utils/headers';
 
-const ROOT_URL = 'http://localhost:3000/api/v1';
+const ROOT_URL = process.env.API_URL;
 
 const axiosInstance = axios.create({
   baseURL: ROOT_URL,

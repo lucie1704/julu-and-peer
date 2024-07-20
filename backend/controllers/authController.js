@@ -122,7 +122,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   }
 
 
-  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/updateMyPassword`;
+  const resetURL = `${req.protocol}://${req.get('host')}/api/users/updateMyPassword`;
   if (user.shouldRenewPassword()) await new Email(user, resetURL).renewPassword();
 
   user.failAccess = 0;

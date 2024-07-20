@@ -1,0 +1,34 @@
+name: backend
+
+type: "nodejs:20"
+
+mounts:
+  "web/uploads":
+    source: local
+    source_path: uploads
+
+disk: 2048
+
+variables:
+  env:
+    NODE_ENV: "production"
+    DATABASE_URL: "postgres://main:main@postgresql.internal:5432/main"
+    MONGO_URL: "mongodb://main:main@mongodb.internal:27017/main"
+
+relationships:
+  mongodb: "mongodb:mongodb"
+  postgresql: "postgresql:postgresql"
+
+hooks:
+  build: |
+    npm install -g sequelize sequelize-cli
+  deploy: |
+    echo "Running migrations..."
+    sequelize-cli db:migrate --env production
+    echo "Undoing all seeds..."
+    sequelize-cli db:seed:undo:all --env production
+    echo "Seeding the database..."
+    sequelize-cli db:seed:all --env production
+web:
+  commands:
+    start: "node server.js"
