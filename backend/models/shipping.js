@@ -1,29 +1,36 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Shipping extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      Shipping.hasOne(models.Order);
-      Shipping.hasMany(models.ShippingTrackerNotification);
+      // Define associations
+      Shipping.hasOne(models.Order, { foreignKey: 'shippingId', onDelete: 'SET NULL' });
+      Shipping.hasMany(models.ShippingTrackerNotification, { foreignKey: 'shippingId', onDelete: 'CASCADE' });
     }
   }
+
   Shipping.init({
-    trackNumber: DataTypes.STRING,
-    shippingDate: DataTypes.DATE,
-    receiptDate: DataTypes.DATE,
-    status : DataTypes.STRING,
+    trackNumber: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    shippingDate: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    receiptDate: {
+      type: DataTypes.DATE
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'Shipping',
     timestamps: true,
   });
+
   return Shipping;
 };

@@ -2,6 +2,9 @@ const { Product, ProductArtist } = require('../models');
 const AppError = require('../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 exports.getAll = catchAsyncError(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
@@ -34,7 +37,7 @@ exports.getById = catchAsyncError(async (req, res, next) => {
 
 exports.create = catchAsyncError(async (req, res) => {
 
-    const artist = await ProductArtist.create(req.body);
+    const artist = await ProductArtist.create({id, ...req.body});
     
     responseReturn(res, artist, 201);
 });

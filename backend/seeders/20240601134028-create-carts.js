@@ -1,36 +1,37 @@
 'use strict';
-const { Customer } = require('../models');
+
+const { uuidv7 } = require('uuidv7');
+const { Customer, Cart } = require('../models');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+    // Fetch all customers
+    const customers = await Customer.findAll({ attributes: ['id'] });
 
-    const [john, jane, alice] = await Promise.all([
-        Customer.findOne({ where: { firstName: 'John' } }),
-        Customer.findOne({ where: { firstName: 'Jane' } }),
-        Customer.findOne({ where: { firstName: 'Alice' } })
-    ]);
+    if (customers.length === 0) {
+      throw new Error('No customers found');
+    }
 
-    await queryInterface.bulkInsert('Carts', [
-      {
-        customerId: john.id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        customerId: jane.id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        customerId: alice.id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-    ], {});
+    // Generate cart records
+    const cartRecords = [];
+    for (const customer of customers) {
+      for (let i = 1; i <= 2; i++) {
+        cartRecords.push({
+          id: uuidv7(),
+          customerId: customer.id,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+    }
+
+    // Insert cart records into the database
+    await Cart.bulkCreate(cartRecords, { individualHooks: true });
   },
 
   down: async (queryInterface, Sequelize) => {
+    // Remove all entries from the Carts table
     await queryInterface.bulkDelete('Carts', null, {});
   }
 };

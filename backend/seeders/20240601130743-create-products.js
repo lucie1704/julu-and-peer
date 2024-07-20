@@ -1,54 +1,56 @@
 'use strict';
-const { Product, ProductGenre, ProductFormat, ProductArtist } = require('../models');
+
+const { uuidv7 } = require("uuidv7");
+const { ProductGenre, ProductFormat, ProductArtist, Product } = require('../models');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const [genre, format, artist] = await Promise.all([
-      ProductGenre.findOne({ where: { name: 'Rock' } }),
-      ProductFormat.findOne({ where: { name: 'Digital' } }),
-      ProductArtist.findOne({ where: { name: 'The Beatles' } })
-    ]);
+    // Retrieve genres, formats, and artists
+    const genres = await ProductGenre.findAll();
+    const formats = await ProductFormat.findAll({ limit: 5 });
+    const artists = await ProductArtist.findAll({ limit: 5 });
 
-    const productsData = [
-      {
-        name: 'Guitar',
-        description: 'A musical instrument typically made of wood with six strings and played with fingers or a plectrum.',
-        price: 499.99,
-        genreId: genre.id ,
-        formatId: format.id,
-        artistId: artist.id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        name: 'Piano',
-        description: 'A large keyboard musical instrument with a wooden case enclosing a soundboard and metal strings, which are struck by hammers when the keys are depressed.',
-        price: 1499.99,
-        genreId: genre.id,
-        formatId: format.id,
-        artistId: artist.id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        name: 'Electro',
-        description: 'A large keyboard musical instrument with a wooden case enclosing a soundboard and metal strings, which are struck by hammers when the keys are depressed.',
-        price: 1499.99,
-        genreId: genre.id,
-        formatId: format.id,
-        artistId: artist.id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ];
-
-    for (const productData of productsData) {
-      await Product.create(productData);
+    // Check that we have at least one format and one artist
+    if (formats.length === 0 || artists.length === 0) {
+      throw new Error('No formats or artists found');
     }
+
+    // Generate product data for each genre, format, and artist 
+    const productsData = [];
+
+    // Loop through each format
+    for (const format of formats) {
+      // Loop through each artist
+      for (const artist of artists) {
+        // Loop through each genre
+        for (const genre of genres) {
+          // Create 3 products for each genre-format-artist combination
+          for (let i = 0; i < 3; i++) {
+            productsData.push({
+              id: uuidv7(),
+              name: `${genre.name} Product ${i + 1}`,
+              description: `A ${genre.name} genre product, number ${i + 1}, by ${artist.name}, available in ${format.name}.`,
+              price: (Math.random() * 1000).toFixed(2),
+              genreId: genre.id,
+              formatId: format.id,
+              artistId: artist.id,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            });
+          }
+        }
+      }
+    }
+
+    // Insert products into the database using bulkCreate on the Product model
+    await Product.bulkCreate(productsData, {
+      individualHooks: true
+    });
   },
 
   down: async (queryInterface, Sequelize) => {
+    // Remove all entries from the Products table
     await queryInterface.bulkDelete('Products', null, {});
   }
 };

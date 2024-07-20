@@ -2,15 +2,12 @@
 const {
   Model
 } = require('sequelize');
+const denormalizeProduct = require("../dtos/denormalization/product");
+
+
 module.exports = (sequelize, DataTypes) => {
   class Image extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
       Image.belongsTo(models.Product, {
         foreignKey: 'productId',
         allowNull: true
@@ -20,10 +17,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true
       });
     }
+
     static addHooks(models) {
       Image.addHook('afterCreate', async (image, { fields }) => {
-          const product = models.Product.findByPk(image.productId);
+        const product = await models.Product.findByPk(image.productId);
+        if (product) {
           await denormalizeProduct(product, models);
+        }
       });
       Image.addHook('afterUpdate', async (image, { fields }) => {
         const product = await models.Product.findByPk(image.productId);
@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
+
   Image.init({
     width: DataTypes.INTEGER,
     height: DataTypes.INTEGER,
@@ -47,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     alt: DataTypes.TEXT,
     path: DataTypes.STRING,
     productId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       references: {
         model: 'Products',
         key: 'id'
@@ -55,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     artistId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       references: {
         model: 'ProductArtists',
         key: 'id'
@@ -65,7 +66,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Image',
-    timestamps: true,
+    timestamps: true
   });
+
   return Image;
 };

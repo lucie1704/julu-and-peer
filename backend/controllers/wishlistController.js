@@ -2,6 +2,9 @@ const {responseReturn} = require('../utils/response');
 const { Wishlist } = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 exports.create = catchAsyncError (async (req, res, next) => {
   const { slug, productId } = req.body
@@ -10,7 +13,7 @@ exports.create = catchAsyncError (async (req, res, next) => {
 
   if (wishlist) return next(new AppError(409));
 
-  const createdWishlist = await Wishlist.create(req.body);
+  const createdWishlist = await Wishlist.create({id, ...req.body});
 
   return responseReturn(res, createdWishlist, 201);
 });

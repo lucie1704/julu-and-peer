@@ -7,16 +7,15 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('CustomerOrders', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       products: {
-        type: Sequelize.ARRAY(DataTypes.STRING)
+        type: Sequelize.ARRAY(DataTypes.UUID),
       },
       price: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DECIMAL,
+        allowNull: false
       },
       paymentStatus: {
         type: Sequelize.STRING
@@ -40,11 +39,12 @@ module.exports = {
       },
       customerId: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Customers',
           key: 'id'
-        }
+        },
+        onDelete: 'CASCADE'
       }
     });
   },

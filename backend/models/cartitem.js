@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class CartItem extends Model {
     /**
@@ -10,14 +11,21 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      CartItem.belongsTo(models.Cart, { foreignKey: 'cartId', onDelete: 'CASCADE' });
-      CartItem.belongsTo(models.Product, { foreignKey: 'productId', onDelete: 'CASCADE' });
+      // Define associations here
+      CartItem.belongsTo(models.Cart, { 
+        foreignKey: 'cartId', 
+        onDelete: 'CASCADE' 
+      });
+      CartItem.belongsTo(models.Product, { 
+        foreignKey: 'productId', 
+        onDelete: 'CASCADE' 
+      });
     }
   }
+
   CartItem.init({
     productId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'Products',
@@ -25,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     cartId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'Carts',
@@ -50,5 +58,6 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'CartItem',
     timestamps: true,
   });
+
   return CartItem;
 };

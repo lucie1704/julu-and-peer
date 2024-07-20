@@ -1,13 +1,12 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('OrdersProducts', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -26,28 +25,31 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       order: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID, 
         references: {
           model: 'Orders',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'
       },
       product: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Products',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE' 
       },
       orderItemReturn: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID, 
         references: {
           model: 'OrderItemReturns',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'SET NULL'
       },
     });
   },

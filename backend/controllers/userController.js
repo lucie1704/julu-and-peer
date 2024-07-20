@@ -3,7 +3,9 @@ const AppError = require('../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const filterObject = require('../utils/filterObject');
 const { responseReturn } = require('../utils/response');
+const { uuidv7 } = require('uuidv7');
 
+const id = uuidv7();
 
 // Méthodes pour User role
 
@@ -87,6 +89,7 @@ exports.create = catchAsyncError(async ( req, res, next) => {
   const { firstname, lastname, email, password, passwordConfirmation } = req.body;
   
   const user = User.build({
+    id,
     firstname,
     lastname,
     email,

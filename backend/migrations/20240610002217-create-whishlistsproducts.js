@@ -2,13 +2,11 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('WishlistsProducts', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -19,31 +17,27 @@ module.exports = {
         type: Sequelize.DATE
       },
       wishlist: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID, 
         references: {
           model: 'Wishlists',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'
       },
       product: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID, 
         references: {
           model: 'Products',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'  
       }
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('WishlistsProducts');
   }
 };

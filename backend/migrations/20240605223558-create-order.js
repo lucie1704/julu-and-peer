@@ -5,16 +5,16 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Orders', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       paymentStatus: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       date: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull: true 
       },
       createdAt: {
         allowNull: false,
@@ -25,36 +25,40 @@ module.exports = {
         type: Sequelize.DATE
       },
       customerAddress: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'CustomerAddresses',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'
       },
       orderBilling: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID, 
         references: {
           model: 'OrderBillings',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'  
       },
       shipping: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Shippings',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'
       },
       customer: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Customers',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'
       },
     });
   },

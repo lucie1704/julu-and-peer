@@ -1,71 +1,50 @@
 'use strict';
-const {Product} = require('../models');
-const {ProductArtist} = require('../models');
+
+const { uuidv7 } = require('uuidv7');
+const { Product, ProductArtist, Image } = require('../models');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    const [guitar, piano, TheBeatles, TaylorSwift] = await Promise.all([
-      Product.findOne({ where: { name: 'Guitar' } }),
-      Product.findOne({ where: { name: 'Piano' } }),
-      ProductArtist.findOne({ where: { name: 'The Beatles' } }),
-      ProductArtist.findOne({ where: { name: 'Taylor Swift' } }),
-    ]);
+  async up(queryInterface, Sequelize) {
+    // Retrieve all products and artists
+    const products = await Product.findAll({limite: 5});
+    const artists = await ProductArtist.findAll({limite: 5});
 
-    const images = [
-      {
-        width: 60,
-        height: 60,
-        type: "jpg",
-        description: "ceci est la description 1",
-        alt: "ceci est la balise alt 1",
-        path: "../public/img/users/default.jpg",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        productId: guitar.id,
-        artistId: TheBeatles.id,
-      },
-      {
-        width: 240,
-        height: 240,
-        type: "jpg",
-        description: "ceci est la description 2",
-        alt: "ceci est la balise alt 2",
-        path: "../public/img/users/default.jpg",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        productId: piano.id,
-        artistId: TaylorSwift.id,
-      },
-      {
-        width: 1920,
-        height: 1080,
-        type: "jpg",
-        description: "ceci est la description 3",
-        alt: "ceci est la balise alt 3",
-        path: "../public/img/users/default.jpg",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        productId: piano.id,
-        artistId: null,
-      },
-      {
-        width: 1920,
-        height: 1080,
-        type: "jpg",
-        description: "ceci est la description 4",
-        alt: "ceci est la balise alt 4",
-        path: "../public/img/users/default.jpg",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        productId: null,
-        artistId: TaylorSwift.id,
-      },
-    ]
-    await queryInterface.bulkInsert('Images', images, {});
+    // Check that we have at least one product and one artist
+    if (products.length === 0 || artists.length === 0) {
+      throw new Error('No products or artists found');
+    }
+
+    // Create an array to store image records
+    const images = [];
+
+    // Loop through each product
+    for (const product of products) {
+      // Loop through each artist
+      for (const artist of artists) {
+        // Create 10 images for each product-artist combination
+          images.push({
+            id: uuidv7(),
+            width: 1920,
+            height: 1080,
+            type: 'jpg',
+            description: `Image for ${product.name} by ${artist.name}`,
+            alt: `Alt text for image ${product.name}`,
+            path: `../../public/product/${product.name.replace(/\s+/g, '-').toLowerCase()}-image${artist.name}.jpg`,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            productId: product.id,
+            artistId: artist.id,
+          });
+      }
+    }
+
+    // Insert image records into the database
+    await Image.bulkCreate(images,  { individualHooks: true });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
+    // Remove all entries from the Images table
     await queryInterface.bulkDelete('Images', null, {});
   }
 };

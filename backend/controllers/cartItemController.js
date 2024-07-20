@@ -2,6 +2,9 @@ const {responseReturn} = require('../utils/response');
 const { Product, CartItem} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 exports.add = catchAsyncError (async (req, res, next) => {
     const {productId, cartId, quantity } = req.body;
@@ -11,6 +14,7 @@ exports.add = catchAsyncError (async (req, res, next) => {
     if (!product) return next(new AppError(404));
 
     const cartItem = await CartItem.create({
+        id,
         productId,
         cartId,
         quantity,
