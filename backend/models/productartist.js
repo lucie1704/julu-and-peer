@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       ProductArtist.hasMany(models.Product, { foreignKey: 'artistId' });
+      ProductArtist.hasOne(models.Image, { foreignKey: 'artistId' });
     }
     static addHooks(models) {
       ProductArtist.addHook('afterUpdate', async (artist, { fields }) => {

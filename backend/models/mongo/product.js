@@ -5,9 +5,7 @@ const ProductMongoSchema = new connection.Schema({
     name: String,
     description: String,
     price: Number,
-    availableStock: Number,
-    imageSrc: String,
-    imageAlt: String,
+    quantity: Number,
     reviewCount: Number,
     ProductGenre: { 
         id: Number,
@@ -34,6 +32,18 @@ const ProductMongoSchema = new connection.Schema({
             lastName: String
         },
         updatedAt: Date
+    }],
+    Stock: [{
+        type: String,
+        quantity: Number
+    }],
+    Image: [{
+        width: Number,
+        height: Number,
+        type: String,
+        description: String,
+        alt: String,
+        path: String
     }]
 });
 

@@ -62,20 +62,6 @@ meta:
                   type="number"
                   prefix="%"
                 />
-                <v-text-field
-                  v-model="item.availableStock"
-                  label="Stock disponible"
-                  required
-                  type="number"
-                />
-                <v-text-field
-                  v-model="item.imageSrc"
-                  label="Image Source"
-                />
-                <v-text-field
-                  v-model="item.imageAlt"
-                  label="Image Alt Text"
-                />
                 <v-select
                   v-model="item.ProductGenre.id"
                   :items="options.genres"

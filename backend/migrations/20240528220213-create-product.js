@@ -17,6 +17,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      quantity: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
       price: {
         allowNull: false,
         type: Sequelize.DECIMAL
@@ -25,10 +30,6 @@ module.exports = {
         type: Sequelize.DECIMAL,
         allowNull: false,
         defaultValue: 0
-      },
-      availableStock: {
-        allowNull: false,
-        type: Sequelize.INTEGER
       },
       genreId: {
         allowNull: false,
@@ -61,14 +62,6 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      },
-      imageSrc: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      imageAlt: {
-        allowNull: true,
-        type: Sequelize.STRING
       },
       reviewCount: {
         allowNull: true,

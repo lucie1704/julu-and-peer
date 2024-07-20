@@ -8,13 +8,10 @@ module.exports = async function denormalizeProduct(product, models) {
             "name",
             "description",
             "price",
-            "availableStock", // TODO: Create new table Stock
-            "imageSrc", // TODO: Create new table Image
-            "imageAlt",
+            "quantity",
             "reviewCount"
         ],
         include: [
-            // TODO: Includes futur new table Stock & Image
             { 
                 model: models.ProductGenre, 
                 attributes: ["id", "name", "description"],
@@ -40,6 +37,16 @@ module.exports = async function denormalizeProduct(product, models) {
                         attributes: ['id', 'firstName', 'lastName']
                     }
                 ]
+            },
+            {
+                model: models.Stock,
+                attributes: ["type", "quantity"],
+                order: [["updatedAt", "DESC"]],
+            },
+            {
+                model: models.Image,
+                attributes: ["width", "height", "type", "description", "alt", "path"],
+                order: [["updatedAt", "DESC"]],
             }
         ],
     });

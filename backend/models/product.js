@@ -17,10 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       Product.hasMany(models.ProductCustomerEvaluation, { foreignKey: 'productId' });
       Product.belongsToMany(models.Order, { through: models.OrdersProducts })
       Product.belongsToMany(models.Wishlist, { through: 'WishlistsProducts' });
+      Product.hasMany(models.Stock, { foreignKey: 'productId' });
+      Product.hasMany(models.Image, { foreignKey: 'productId' });
     }
     static addHooks(models) {
       Product.addHook('afterCreate', async (product) => {
-        // TODO: Check for table associated doesn't appear on mongo.
         await denormalizeProduct(product, models)
       });
       Product.addHook('afterUpdate', async (product, { fields }) => {
@@ -41,24 +42,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
     price: {
       type: DataTypes.DECIMAL,
       allowNull: false
     },
     discount: {
       type: DataTypes.DECIMAL,
-    },
-    availableStock: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    imageSrc: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    imageAlt: {
-      type: DataTypes.STRING,
-      allowNull: true
     },
     reviewCount: {
       type: DataTypes.INTEGER,

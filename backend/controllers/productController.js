@@ -1,4 +1,4 @@
-const {Product, ProductGenre, ProductFormat, ProductArtist, ProductCustomerEvaluation } = require('../models');
+const { Product, ProductGenre, ProductFormat, ProductArtist, ProductCustomerEvaluation, Stock, Image } = require('../models');
 const ProductMongo = require("../models/mongo/product");
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
@@ -14,6 +14,8 @@ exports.create = catchAsyncError(async (req, res) => {
         genreId: ProductGenre.id,
         formatId: ProductFormat.id,
     };
+    // TODO: Add and use quantity in creation to make an stock(plus) and associate with product after create ?
+    // TODO: Image too ?
 
     const product = await Product.create(createData);
     responseReturn(res, product, 201);
@@ -31,7 +33,8 @@ exports.getAll = catchAsyncError(async (req, res) => {
             { model: ProductGenre },
             { model: ProductFormat },
             { model: ProductArtist },
-            { model: ProductCustomerEvaluation }
+            { model: ProductCustomerEvaluation },
+            { model: Image }
         ]
     });
     const totalPages = Math.ceil(count / limit);
@@ -71,7 +74,8 @@ exports.getById = catchAsyncError(async (req, res, next) => {
             { model: ProductGenre },
             { model: ProductFormat },
             { model: ProductArtist },
-            { model: ProductCustomerEvaluation }
+            { model: ProductCustomerEvaluation },
+            { model: Image }
         ]
     });
 
@@ -120,10 +124,6 @@ exports.options = catchAsyncError(async (req, res, next) => {
         name: '',
         description: '',
         price: 0,
-        availableStock: 0,
-        imageSrc: '',
-        imageAlt: '',
-        reviewCount: 0,
         discount: 0,
         ProductArtist: { 'id': null },
         ProductGenre: { 'id': null },

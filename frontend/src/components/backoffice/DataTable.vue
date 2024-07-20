@@ -97,7 +97,15 @@
 
     // This part is for cleaning value before show in DataTable
     const cleanDisplayValue = (value: any) => {
-      if (value && typeof value === 'object' && value.name) {
+      if (Array.isArray(value)) {
+        // Traitement spécifiques si on as des données dans un tableaux.
+        if (value.length > 0 && value[0].path) {
+          return value.map((img: any) => img.alt || 'No alt text').join(' ');
+        } else {
+          // Retourne une string vide si on as rien.
+          return '';
+        }
+      } else if (value && typeof value === 'object' && value.name) {
         return value.name;
       } else if (value && typeof value === 'object' && value.firstName && value.lastName) {
         return `${value.firstName} ${value.lastName}`;

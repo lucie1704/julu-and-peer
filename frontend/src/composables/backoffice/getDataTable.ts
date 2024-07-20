@@ -32,10 +32,8 @@ const getSchema = (url: string): ZodSchema<any> => {
                 id: z.number(),
                 name: z.string(),
                 description: z.string(),
+                quantity: z.number(),
                 price: z.string().regex(/^\d+(\.\d{2})?$/),
-                availableStock: z.number(),
-                imageSrc: z.string().nullable(),
-                imageAlt: z.string().nullable(),
                 reviewCount: z.number().nullable(),
                 ProductGenre: z.object({
                     id: z.number(),
@@ -52,6 +50,18 @@ const getSchema = (url: string): ZodSchema<any> => {
                     name: z.string(),
                     description: z.string()
                 }).nullable(),
+                Images: z.array(
+                  z.object({
+                    id: z.number(),
+                    width: z.number(),
+                    height: z.number(),
+                    type: z.string(),
+                    description: z.string().nullable(),
+                    alt: z.string(),
+                    path: z.string(),
+                    productId: z.number(),
+                  })
+                ).nullable()
             })
           );
         case 'productartists':
