@@ -90,7 +90,7 @@ const getSchema = (url: string): ZodSchema<any> => {
 export const getDataTable = (url: string) => {
     const data = ref(null);
     const loading = ref(true);
-    const error = ref(null);
+    const error = ref<string | null>(null);
     const currentPage = ref(1);
     const totalPages = ref(1);
 
@@ -114,7 +114,11 @@ export const getDataTable = (url: string) => {
             currentPage.value = page;
             totalPages.value = jsonData.totalPages;
         } catch (err) {
+          if (err instanceof Error) {
             error.value = err.message;
+          } else {
+            error.value = 'Une erreur innatendu est survenue.';
+          }
         } finally {
             loading.value = false;
         }

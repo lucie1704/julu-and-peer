@@ -1,11 +1,12 @@
 import { ref, onMounted } from 'vue';
+import { Options } from '~/dto/options';
 
 const baseURL = 'http://localhost:3000/api/v1/'; //TODO: Maybe use an ENV variable for prod or local
 
 export const getDataOptions = (url: string) => {
-  const options = ref({});
+  const options = ref<Options>({});
   const loading = ref(true);
-  const error = ref(null);
+  const error = ref<string | null>(null);
 
   const fetchOptions = async () => {
     loading.value = true;
@@ -18,7 +19,11 @@ export const getDataOptions = (url: string) => {
 
       options.value = jsonData;
     } catch (err) {
-      error.value = err.message;
+      if (err instanceof Error) {
+        error.value = err.message;
+      } else {
+        error.value = 'Une erreur innatendu est survenue.';
+      }
     } finally {
       loading.value = false;
     }

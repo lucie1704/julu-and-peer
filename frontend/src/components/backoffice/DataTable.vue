@@ -26,12 +26,12 @@
     const itemToDelete = ref();
     const isEditing = ref(false);
 
-    const deleteItem = item => {
+    const deleteItem = (item: Record<string, any>) => {
       itemToDelete.value = item;
       showDeleteItemDialog.value = true;
     };
 
-    const editItem = (item) => {
+    const editItem = (item: Record<string, any>) => {
       itemToEdit.value = { ...item };
       isEditing.value = true;
       showEditItemDialog.value = true;
@@ -66,13 +66,16 @@
       } catch (error) {
         showEditItemDialog.value = false;
         showErrorDialog.value = true;
-        errorMessage.value = error.response.data.message;
-        console.error('Error updating item:', error);
+        if (axios.isAxiosError(error) && error.response) {
+          errorMessage.value = error.response.data.message;
+        } else {
+          errorMessage.value = 'Une erreur innatendu est survenue.';
+        }
       }
     };
 
     // Submit logic for delete
-    const submitDeleteItem = async(item) => {
+    const submitDeleteItem = async(item: Record<string, any>) => {
       try {
         await axios.delete(`${base_url}/${item.id}`, {
           headers: {
@@ -84,13 +87,16 @@
       } catch (error) {
         showDeleteItemDialog.value = false;
         showErrorDialog.value = true;
-        errorMessage.value = error.response.data.message;
-        console.error('Error deleting item:', error);
+        if (axios.isAxiosError(error) && error.response) {
+          errorMessage.value = error.response.data.message;
+        } else {
+          errorMessage.value = 'Une erreur innatendu est survenue.';
+        }
       }
     };
 
     // This part is for cleaning value before show in DataTable
-    const cleanDisplayValue = (value) => {
+    const cleanDisplayValue = (value: any) => {
       if (value && typeof value === 'object' && value.name) {
         return value.name;
       } else if (value && typeof value === 'object' && value.firstName && value.lastName) {
@@ -149,7 +155,7 @@
         <thead class="bg-gray-50">
           <tr>
             <th
-              v-for="(value, key) in data[0]"
+              v-for="key in Object.keys(data[0])"
               :key="key"
               class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
             >
