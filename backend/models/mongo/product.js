@@ -1,33 +1,33 @@
 const connection = require("./db");
 
 const ProductMongoSchema = new connection.Schema({
-    _id: Number,
+    _id: String,
     name: String,
     description: String,
     price: Number,
     quantity: Number,
     reviewCount: Number,
     ProductGenre: { 
-        id: Number,
+        id: String,
         name: String,
         updatedAt: Date
     },
     ProductFormat: { 
-        id: Number,
+        id: String,
         name: String,
         updatedAt: Date
     },
     ProductArtist: { 
-        id: Number,
+        id: String,
         name: String,
         updatedAt: Date
     },
     ProductCustomerEvaluation: [{
-        _id: Number,
+        _id: String,
         rating: Number,
         comment: String,
         Customer: {
-            _id: Number,
+            _id: String,
             firstName: String,
             lastName: String
         },

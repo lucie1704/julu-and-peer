@@ -1,8 +1,10 @@
 const { Product, ProductGenre, ProductFormat, ProductArtist, ProductCustomerEvaluation, Stock, Image } = require('../models');
-const ProductMongo = require("../models/mongo/product");
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 exports.create = catchAsyncError(async (req, res) => {
     // Deconstruct body in order to get ID from objects.
@@ -17,7 +19,7 @@ exports.create = catchAsyncError(async (req, res) => {
     // TODO: Add and use quantity in creation to make an stock(plus) and associate with product after create ?
     // TODO: Image too ?
 
-    const product = await Product.create(createData);
+    const product = await Product.create({id, ...createData});
     responseReturn(res, product, 201);
 });
 

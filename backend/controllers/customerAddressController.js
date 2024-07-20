@@ -1,15 +1,16 @@
-const CustomerAddress = require('../models/customeraddress');
-const Customer = require('../models/customer');
+const {CustomerAddress, Customer} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('../utils/appError');
 const { responseReturn } = require('../utils/response');
+const { uuidv7 } = require('uuidv7');
 
+const id = uuidv7();
 
 exports.create = catchAsyncError (async (req, res, next) => {
     const customer = await Customer.findByPk(req.body.customerId);
     if (!customer)  return  next(new AppError(404));
 
-    const customerAddress = await CustomerAddress.create(req.body);
+    const customerAddress = await CustomerAddress.create({ id, ...req.body });
 
     return responseReturn(res, customerAddress);
 });

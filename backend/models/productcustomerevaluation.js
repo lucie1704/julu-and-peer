@@ -1,23 +1,17 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class ProductCustomerEvaluation extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
       ProductCustomerEvaluation.belongsTo(models.Product, { foreignKey: 'productId' });
       ProductCustomerEvaluation.belongsTo(models.Customer, { foreignKey: 'customerId' });
     }
   }
+
   ProductCustomerEvaluation.init({
     productId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       references: {
         model: 'Products',
         key: 'id'
@@ -25,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     customerId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       references: {
         model: 'Customers',
         key: 'id'
@@ -48,5 +42,6 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'ProductCustomerEvaluation',
     timestamps: true,
   });
+
   return ProductCustomerEvaluation;
 };

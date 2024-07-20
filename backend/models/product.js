@@ -4,32 +4,25 @@ const denormalizeProduct = require("../dtos/denormalization/product");
 
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
       Product.belongsTo(models.ProductGenre, { foreignKey: 'genreId' });
       Product.belongsTo(models.ProductFormat, { foreignKey: 'formatId' });
       Product.belongsTo(models.ProductArtist, { foreignKey: 'artistId' });
       Product.hasMany(models.ProductCustomerEvaluation, { foreignKey: 'productId' });
-      Product.belongsToMany(models.Order, { through: models.OrdersProducts })
+      Product.belongsToMany(models.Order, { through: models.OrdersProducts });
       Product.belongsToMany(models.Wishlist, { through: 'WishlistsProducts' });
       Product.hasMany(models.Stock, { foreignKey: 'productId' });
       Product.hasMany(models.Image, { foreignKey: 'productId' });
     }
     static addHooks(models) {
       Product.addHook('afterCreate', async (product) => {
-        await denormalizeProduct(product, models)
+        await denormalizeProduct(product, models);
       });
       Product.addHook('afterUpdate', async (product, { fields }) => {
-        // Maybe check fields in case.
-        await denormalizeProduct(product, models)
+        await denormalizeProduct(product, models);
       });
       // TODO: Delete Product document in Mongo.
-      // Product.addHook('afterDelete', async (product, { fields }) => {
+      // Product.addHook('afterDestroy', async (product, { fields }) => {
       // });
     }
   }
@@ -59,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     genreId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       references: {
         model: 'ProductGenres',
         key: 'id'
@@ -67,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     formatId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       references: {
         model: 'ProductFormats',
         key: 'id'
@@ -75,7 +68,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     artistId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       references: {
         model: 'ProductArtists',
         key: 'id'
@@ -86,15 +79,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Product',
     defaultScope: {
-      attributes: { exclude:
-        [
-        'genreId',
-        'formatId',
-        'artistId',
-        'createdAt',
-        'updatedAt',
-      ]
-      },
+      attributes: { exclude: ['genreId', 'formatId', 'artistId', 'createdAt', 'updatedAt'] },
     },
     timestamps: true,
   });

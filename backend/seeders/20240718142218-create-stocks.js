@@ -1,56 +1,54 @@
 'use strict';
-const {Product} = require('../models');
+
+const { uuidv7 } = require('uuidv7');
+const { Product, Stock } = require('../models');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    const [guitar, piano] = await Promise.all([
-      Product.findOne({ where: { name: 'Guitar' } }),
-      Product.findOne({ where: { name: 'Piano' } }),
+  up: async (queryInterface, Sequelize) => {
+    // Fetch all product IDs
+    const products = await Product.findAll({ attributes: ['id'] });
+
+    if (products.length === 0) {
+      throw new Error('No products found');
+    }
+
+    // Extract product IDs
+    const productIds = products.map(product => product.id);
+
+    // Generate stock records for each product ID
+    const stocks = productIds.flatMap(productId => [
+      {
+        id: uuidv7(),
+        productId,
+        type: 'plus',
+        quantity: 100,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: uuidv7(),
+        productId,
+        type: 'minus',
+        quantity: 5,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: uuidv7(),
+        productId,
+        type: 'minus',
+        quantity: 10,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
     ]);
 
-    const stocks = [
-      {
-        productId: guitar.id,
-        type: "plus",
-        quantity : 100,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        productId: guitar.id,
-        type: "minus",
-        quantity : 5,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        productId: guitar.id,
-        type: "minus",
-        quantity : 10,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        productId: piano.id,
-        type: "plus",
-        quantity : 50,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        productId: piano.id,
-        type: "minus",
-        quantity : 7,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-    ]
-
-    await queryInterface.bulkInsert('Stocks', stocks, {});
+    await Stock.bulkCreate(stocks,  { individualHooks: true });
   },
 
-  async down (queryInterface, Sequelize) {
-     await queryInterface.bulkDelete('Stocks', null, {});
+  down: async (queryInterface, Sequelize) => {
+    // Remove all entries from the Stock table
+    await queryInterface.bulkDelete('Stocks', null, {});
   }
 };

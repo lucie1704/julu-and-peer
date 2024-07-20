@@ -1,72 +1,80 @@
 'use strict';
-const { Product, Cart, Customer } = require('../models');
+
+const { uuidv7 } = require('uuidv7');
+const { Product, Cart, Customer, CartItem, ProductGenre } = require('../models');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const [guitar, piano, electro] = await Promise.all([
-      Product.findOne({ where: { name: 'Guitar' } }),
-      Product.findOne({ where: { name: 'Piano' } }),
-      Product.findOne({ where: { name: 'Electro' } })
-  ]);
+    // Fetch distinct genres by name
+    const genres = await ProductGenre.findAll({
+      attributes: ['name', 'id'],
+      group: ['name', 'id'],
+    });
 
-    const [john, jane, alice] = await Promise.all([
-      Customer.findOne({ where: { firstName: 'John' } }),
-      Customer.findOne({ where: { firstName: 'Jane' } }),
-      Customer.findOne({ where: { firstName: 'Alice' } })
-  ]);
+    if (genres.length === 0) {
+      throw new Error('No genres found');
+    }
 
-  const [johnCart, janeCart, alicecart] = await Promise.all([
-    Cart.findOne({ where: { customerId: john.id } }),
-    Cart.findOne({ where: { customerId: jane.id } }),
-    Cart.findOne({ where: { customerId: alice.id } })
-]);
+    // Assume you need the first 3 distinct genres for the rest of your logic
+    const [firstGenre, secondGenre, thirdGenre] = genres;
 
-    await queryInterface.bulkInsert('CartItems', [
-      {
-        productId: guitar.id,
-        cartId: johnCart.id,
-        quantity: 2,
-        isDeleted: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        productId: piano.id,
-        cartId: johnCart.id,
-        quantity: 1,
-        isDeleted: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        productId: electro.id,
-        cartId: janeCart.id,
-        quantity: 3,
-        isDeleted: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        productId: guitar.id,
-        cartId: janeCart.id,
-        quantity: 1,
-        isDeleted: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        productId: piano.id,
-        cartId: alicecart.id,
-        quantity: 3,
-        isDeleted: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-    ], {});
+    if (!firstGenre || !secondGenre || !thirdGenre) {
+      throw new Error('Not enough distinct genres found');
+    }
+
+    // Fetch products for each genre
+    const products = await Promise.all([
+      Product.findOne({ where: { genreId: firstGenre.id } }),
+      Product.findOne({ where: { genreId: secondGenre.id } }),
+      Product.findOne({ where: { genreId: thirdGenre.id } })
+    ]);
+
+    // Fetch 5 customers
+    const customers = await Customer.findAll({
+      limit: 5
+    });
+
+    if (customers.length < 5) {
+      throw new Error('Less than 5 customers found');
+    }
+
+    // Fetch carts for each customer
+    const carts = await Promise.all(customers.map(customer =>
+      Cart.findOne({ where: { customerId: customer.id } })
+    ));
+
+    // Check if all required records are found
+    if (products.some(p => !p) || customers.length < 5 || carts.some(c => !c)) {
+      throw new Error('One or more required records not found');
+    }
+
+    // Prepare cart items data
+    const cartItemsData = [
+      { productId: products[0].id, cartId: carts[0].id, quantity: 2 },
+      { productId: products[1].id, cartId: carts[0].id, quantity: 1 },
+      { productId: products[2].id, cartId: carts[1].id, quantity: 3 },
+      { productId: products[0].id, cartId: carts[1].id, quantity: 1 },
+      { productId: products[1].id, cartId: carts[2].id, quantity: 3 }
+    ];
+
+    // Map cart items data to include required fields
+    const cartItemsRecords = cartItemsData.map(item => ({
+      id: uuidv7(),
+      productId: item.productId,
+      cartId: item.cartId,
+      quantity: item.quantity,
+      isDeleted: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }));
+
+    // Use CartItems.bulkCreate to insert the cart items into the database
+    await CartItem.bulkCreate(cartItemsRecords, { individualHooks: true });
   },
 
   down: async (queryInterface, Sequelize) => {
+    // Remove all entries from the CartItems table
     await queryInterface.bulkDelete('CartItems', null, {});
   }
 };

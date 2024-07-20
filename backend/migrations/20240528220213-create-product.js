@@ -4,10 +4,8 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Products', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       name: {
         allowNull: false,
@@ -33,7 +31,7 @@ module.exports = {
       },
       genreId: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'ProductGenres',
           key: 'id'
@@ -41,7 +39,7 @@ module.exports = {
       },
       formatId: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'ProductFormats',
           key: 'id'
@@ -49,7 +47,7 @@ module.exports = {
       },
       artistId: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'ProductArtists',
           key: 'id'

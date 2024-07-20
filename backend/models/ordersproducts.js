@@ -2,20 +2,25 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class OrdersProducts extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      OrdersProducts.belongsTo(models.Order);
-      OrdersProducts.belongsTo(models.Product);
-      OrdersProducts.belongsTo(models.OrderItemReturn);
+      OrdersProducts.belongsTo(models.Order, { 
+        foreignKey: 'orderId',
+        onDelete: 'CASCADE'
+      });
+      OrdersProducts.belongsTo(models.Product, { 
+        foreignKey: 'productId',
+        onDelete: 'CASCADE'
+      });
+      OrdersProducts.belongsTo(models.OrderItemReturn, { 
+        foreignKey: 'orderItemReturnId',
+        allowNull: true
+      });
     }
   }
+
   OrdersProducts.init({
     priceWhenOrdering: {
       type: DataTypes.DECIMAL,
@@ -28,7 +33,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'OrdersProducts',
-    timestamps: true,
+    timestamps: true
   });
+
   return OrdersProducts;
 };
