@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL } from '~/constants';
 import { headers } from '~/utils/headers';
 
-const ROOT_URL = import.meta.env.VUE_APP_API_URL;
+const ROOT_URL = API_URL;
 
 const axiosInstance = axios.create({
   baseURL: ROOT_URL,

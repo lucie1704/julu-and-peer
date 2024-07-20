@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL } from '~/constants';
 import { Cart, CartItem, CartProduct, createCart } from '~/dto';
 
-const ROOT_URL = import.meta.env.VUE_APP_API_URL;
+const ROOT_URL = API_URL;
 
 // TODO: get jwt_token directly from store or cookies
 interface CartAPI {

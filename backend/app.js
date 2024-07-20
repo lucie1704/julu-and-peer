@@ -1,5 +1,5 @@
 const express = require('express');
-const okRouter = require('./routes/public/okRouter');
+const okRouter = require('./routes/public/okRoutes');
 const authRouter = require('./routes/public/authRoutes');
 const userRouter = require('./routes/private/userRoutes');
 const customerRouter = require('./routes/private/customerRoutes');
@@ -59,12 +59,14 @@ if (process.env.NODE_ENV === 'development') {
     app.use(cors());
 }
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://www.juluandpeer.store');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
+if (process.env.NODE_ENV !== 'development') {
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://www.juluandpeer.store');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
+}
 
 // Apply CSRF protection middleware
 // const csrfProtection = csurf({ cookie: true });

@@ -35,6 +35,6 @@ export default defineConfig({
     host: true
   },
   define: {
-    __API_URL: JSON.stringify(process.env.VITE_API_URL),
+    __API_URL: JSON.stringify(process.env.VUE_APP_API_URL),
   },
 });

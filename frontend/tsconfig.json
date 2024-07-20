@@ -31,13 +31,15 @@
       "node",
       "vite-plugin-vue-layouts/client",
       "vite-plugin-pages/client",
+      "vite/client"
     ],
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "src/shim.d.ts"
+    "src/shim.d.ts",
+    "src/env.d.ts"
   ],
   "references": [
     {
