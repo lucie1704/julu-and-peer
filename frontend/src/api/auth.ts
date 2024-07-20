@@ -8,8 +8,8 @@ import {
   UserLogin
 } from '~/dto';
 
-const ROOT_URL = `${process.env.API_URL}/auth`;
-const USER_ROOT_URL = `${process.env.API_URL}/users`;
+const ROOT_URL = `${process.env.VUE_APP_API_URL}/auth`;
+const USER_ROOT_URL = `${process.env.VUE_APP_API_URL}/users`;
 
 interface AuthAPI {
   login: (user: UserLogin) => Promise<string>;

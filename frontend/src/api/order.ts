@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Order, Orders, PlaceOrder } from '~/dto';
 
-const ROOT_URL = `${process.env.API_URL}/customerorder`;
+const ROOT_URL = `${process.env.VUE_APP_API_URL}/customerorder`;
 
 interface OrderAPI {
   orderConfirm: (jwt_token: string, orderId: string) => Promise<string | null>;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Product } from '~/dto';
 
-const ROOT_URL = `${process.env.API_URL}/products`;
+const ROOT_URL = `${process.env.VUE_APP_API_URL}/products`;
 
 interface ProductAPI {
   getAllProducts: (jwt_token: string, cancel?: boolean) => Promise<Array<Product>>;
