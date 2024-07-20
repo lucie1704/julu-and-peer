@@ -25,15 +25,15 @@ const truncateDescription = (description: string) => {
     :to="{ name: 'product', params: { id: product.id } }"
   >
     <div
-      class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80"
+      class="w-full overflow-hidden bg-gray-200 rounded-md aspect-h-1 aspect-w-1 lg:aspect-none group-hover:opacity-75 lg:h-80"
     >
       <img
         :src="product.imageSrc"
         :alt="product.imageAlt"
-        class="h-full w-full object-cover object-center lg:h-full lg:w-full"
+        class="object-cover object-center w-full h-full lg:h-full lg:w-full"
       >
     </div>
-    <div class="mt-4 flex justify-between">
+    <div class="flex justify-between mt-4">
       <div>
         <h3 class="text-sm text-gray-700">
           <a>
@@ -53,7 +53,7 @@ const truncateDescription = (description: string) => {
           <svg
             v-for="star in 5"
             :key="star"
-            class="h-5 w-5 text-yellow-400"
+            class="w-5 h-5 text-yellow-400"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -70,7 +70,7 @@ const truncateDescription = (description: string) => {
         <p class="text-sm font-medium text-gray-900">
           <span
             v-if="product.discount > 0"
-            class="line-through text-gray-500 mr-2"
+            class="mr-2 text-gray-500 line-through"
           >
             {{ product.price }}
           </span>
@@ -79,9 +79,9 @@ const truncateDescription = (description: string) => {
       </div>
     </div>
   </router-link>
-  <div class="mt-2 flex justify-center">
+  <div class="flex justify-center mt-2">
     <button
-      class="mt-2 w-full flex items-center justify-center rounded-md border border-transparent bg-gray-200 px-4 py-2 text-base font-medium text-black hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      class="flex items-center justify-center w-full px-4 py-2 mt-2 text-base font-medium text-black bg-gray-200 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
     >
       Ajouter au panier
     </button>

@@ -26,7 +26,7 @@ const productAPI: ProductAPI = {
         signal: controller.signal
       });
 
-      return res.data;
+      return res.data.data;
 
     } catch (error) {
       if (axios.isCancel(error)) {

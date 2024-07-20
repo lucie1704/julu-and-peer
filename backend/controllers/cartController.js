@@ -29,13 +29,13 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
 
     const availableProducts = cart.CartItems.filter(cartItem => {
         const product = cartItem.Product;
-        if (product.availableStock >= cartItem.quantity) {
-          totalPrice += product.price * cartItem.quantity;
-          totalDiscount += product.discount * cartItem.quantity;
-          return true;
+        if (product.quantity >= cartItem.quantity) {
+            totalPrice += product.price * cartItem.quantity;
+            totalDiscount += product.discount * cartItem.quantity;
+            return true;
         } else {
-          outOfStockProductIds.push(product.id);
-          return false;
+            outOfStockProducts.push(product.id);
+            return false;
         }
     });
 
