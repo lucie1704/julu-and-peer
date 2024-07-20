@@ -33,5 +33,8 @@ export default defineConfig({
   server: {
     port: 8080,
     host: true
-  }
+  },
+  define: {
+    __API_URL: JSON.stringify(process.env.VUE_APP_API_URL),
+  },
 });

@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL } from '~/constants';
 import { CustomerI, CustomerUpdateI } from '~/dto/customer';
 
-const ROOT_URL = 'http://localhost:3000/api/v1/customers';
+const ROOT_URL = `${API_URL}/customers`;
 
 interface CustomerAPI {
   getById: (

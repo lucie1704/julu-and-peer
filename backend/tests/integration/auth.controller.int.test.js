@@ -3,7 +3,7 @@ const app = require("../../app");
 const adminUser = require("../mock-data/new-user.json");
 const { describe, it, expect } = require("@jest/globals");
 
-const baseUrl = "/api/v1/auth";
+const baseUrl = "/api/auth";
 
 // Mock user model
 jest.mock('../../models', () => {

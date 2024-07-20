@@ -42,4 +42,12 @@ module.exports = {
       'no-lonely-if': 'error',
       'quotes': ['warn', 'single'],
     },
+    overrides: [
+      {
+        files: ['index.html'],
+        rules: {
+          'vue/comment-directive': 'off'
+        }
+      }
+    ]
   }

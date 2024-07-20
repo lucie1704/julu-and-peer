@@ -1,4 +1,5 @@
 const express = require('express');
+const okRouter = require('./routes/public/okRoutes');
 const authRouter = require('./routes/public/authRoutes');
 const userRouter = require('./routes/private/userRoutes');
 const customerRouter = require('./routes/private/customerRoutes');
@@ -58,20 +59,21 @@ if (process.env.NODE_ENV === 'development') {
     app.use(cors());
 }
 
+if (process.env.NODE_ENV !== 'development') {
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://www.juluandpeer.store');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
+}
+
 // Apply CSRF protection middleware
 // const csrfProtection = csurf({ cookie: true });
 // app.use(csrfProtection);
 
 // Protects against HTTP Parameter Pollution (HPP) attacks by removing duplicate query parameters
 app.use(hpp());
-
-// Limit requests from same API
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many requests from this IP, please try again in an hour!'
-});
-app.use('/api', limiter);
 
 // Set security HTTP headers
 app.use(helmet());
@@ -96,24 +98,23 @@ app.use('/helloworld', async (req, res, next) => {
 });
 
 // API Routes
-
-// Public
-app.use('/api/v1/auth', authRouter);
+app.use('/api', okRouter);
+app.use('/api/auth', authRouter);
 
 // Private
-app.use('/api/v1/users', userRouter);
-app.use('/api/v1/customers', customerRouter);
-app.use('/api/v1/customersaddress', customerAddressRouter);
-app.use('/api/v1/products', productRouter);
-app.use('/api/v1/productartists', productArtistRouter);
-app.use('/api/v1/productformats', productFormatRouter);
-app.use('/api/v1/productgenres', productGenreRouter);
-app.use('/api/v1/productcustomerevaluations', productCustomerEvaluationRouter);
-app.use('/api/v1/paymentmethods', paymentMethodRouter);
-app.use('/api/v1/carts', cartRouter);
-app.use('/api/v1/cartitem', cartItemRouter);
-app.use('/api/v1/wishlist', wishlistRouter);
-app.use('/api/v1/customerorders', orderRouter);
+app.use('/api/users', userRouter);
+app.use('/api/customers', customerRouter);
+app.use('/api/customersaddress', customerAddressRouter);
+app.use('/api/products', productRouter);
+app.use('/api/productartists', productArtistRouter);
+app.use('/api/productformats', productFormatRouter);
+app.use('/api/productgenres', productGenreRouter);
+app.use('/api/productcustomerevaluations', productCustomerEvaluationRouter);
+app.use('/api/paymentmethods', paymentMethodRouter);
+app.use('/api/carts', cartRouter);
+app.use('/api/cartitem', cartItemRouter);
+app.use('/api/wishlist', wishlistRouter);
+app.use('/api/customerorder', orderRouter);
 
 // Handle requests for routes that are not defined in the application.
 app.all('*', (req, res, next) => {
@@ -121,5 +122,16 @@ app.all('*', (req, res, next) => {
 });
 
 app.use(globalErrorHandler);
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  keyGenerator: (req) => {
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    return ip;
+  },
+});
+
+app.use(limiter);
 
 module.exports = app;
