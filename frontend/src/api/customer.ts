@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CustomerI, CustomerUpdateI } from '~/dto/customer';
 
-const ROOT_URL = `${process.env.VUE_APP_API_URL}/customers`;
+const ROOT_URL = `${import.meta.env.VUE_APP_API_URL}/customers`;
 
 interface CustomerAPI {
   getById: (
