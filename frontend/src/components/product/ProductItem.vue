@@ -82,33 +82,10 @@ const submitAddItemToCart = async () => {
     </div>
     <div class="mt-4">
       <v-row>
-        <v-col cols="8">
+        <v-col>
           <p class="text-lg">
             {{ product.name }}
           </p>
-        </v-col>
-        <v-col cols="4">
-          <div class="flex flex-col text-right">
-            <h3
-              v-if="product.discount"
-              class="font-bold text-xl"
-            >
-              {{ discountedPrice(product.price, product.discount) }}€
-            </h3>
-            <div
-              :class="product.discount ? 'text-red text-sm flex' : 'font-bold text-xl' "
-            >
-              <p
-                v-if="product.discount"
-                class="font-bold mr-1"
-              >
-                -{{ product.discount }}%
-              </p>
-              <p :class="product.discount ? 'line-through' : ''">
-                {{ product.price }}€
-              </p>
-            </div>
-          </div>
         </v-col>
       </v-row>
       <v-row no-gutters>
@@ -117,16 +94,36 @@ const submitAddItemToCart = async () => {
         </v-col>
       </v-row>
       <v-row no-gutters>
-        <v-col
-          cols="12"
-          class="space-x-3 my-2"
-        >
+        <v-col class="space-x-3 my-2">
           <v-chip color="orange">
             {{ product.ProductFormat.name }}
           </v-chip>
           <v-chip color="blue">
             {{ product.ProductGenre.name }}
           </v-chip>
+        </v-col>
+      </v-row>
+      <v-row no-gutters>
+        <v-col class="flex justify-end items-center">
+          <div class="flex items-center">
+            <div :class="product.discount ? 'text-red text-sm flex mr-3' : 'font-bold text-xl' ">
+              <h3 :class="product.discount ? 'line-through' : ''">
+                {{ product.price }}€
+              </h3>
+              <p
+                v-if="product.discount"
+                class="font-bold ml-1"
+              >
+                -{{ product.discount }}%
+              </p>
+            </div>
+            <h3
+              v-if="product.discount"
+              class="font-bold text-xl"
+            >
+              {{ discountedPrice(product.price, product.discount) }}€
+            </h3>
+          </div>
         </v-col>
       </v-row>
     </div>

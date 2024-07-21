@@ -68,7 +68,7 @@ const getCategoryCount = (category: string, name: string): number => {
             Promotions
             <v-badge
               color="grey lighten-3"
-              :content="productStore.paginatedProducts?.facets['discount'][0].count || 0"
+              :content="productStore.paginatedProducts?.facets['discount'][0] ? productStore.paginatedProducts?.facets['discount'][0].count :0"
               inline
             />
           </label>
