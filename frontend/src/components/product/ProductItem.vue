@@ -28,30 +28,50 @@ const discountedPrice = (price: number, discount: number) => {
     <div class="mt-4">
       <v-row>
         <v-col cols="8">
-          {{ product.name }}
+          <p class="text-lg">
+            {{ product.name }}
+          </p>
         </v-col>
         <v-col cols="4">
-          <div>
+          <div class="flex flex-col text-right">
             <h3
               v-if="product.discount"
-              class="line-through text-gray-500 mr-2"
+              class="font-bold text-xl"
             >
-              {{ discountedPrice(product.price, product.discount) }}
+              {{ discountedPrice(product.price, product.discount) }}€
             </h3>
-            <h3 v-else>
-              {{ product.price }} €
-            </h3>
+            <div
+              :class="product.discount ? 'text-red text-sm flex' : 'font-bold text-xl' "
+            >
+              <p
+                v-if="product.discount"
+                class="font-bold mr-1"
+              >
+                -{{ product.discount }}%
+              </p>
+              <p :class="product.discount ? 'line-through' : ''">
+                {{ product.price }}€
+              </p>
+            </div>
           </div>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row no-gutters>
+        <v-col>
+          {{ product.ProductArtist.name }}
+        </v-col>
+      </v-row>
+      <v-row no-gutters>
         <v-col
           cols="12"
-          class="space-x-3 mb-3"
+          class="space-x-3 my-2"
         >
-          <v-chip>{{ product.ProductArtist.name }}</v-chip>
-          <v-chip>{{ product.ProductFormat.name }}</v-chip>
-          <v-chip>{{ product.ProductGenre.name }}</v-chip>
+          <v-chip color="orange">
+            {{ product.ProductFormat.name }}
+          </v-chip>
+          <v-chip color="blue">
+            {{ product.ProductGenre.name }}
+          </v-chip>
         </v-col>
       </v-row>
     </div>

@@ -21,6 +21,12 @@ const vuetify = createVuetify({
     VSelect: {
       density: 'compact',
       variant: 'outlined'
+    },
+    VBtn: {
+      variant: 'flat',
+    },
+    VChip: {
+      variant: 'tonal',
     }
   },
   components,

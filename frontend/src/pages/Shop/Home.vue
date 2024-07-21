@@ -177,129 +177,126 @@ onMounted(async() => {
             Products
           </h2>
 
-          <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5 mt-10">
-            <form class="hidden lg:block">
-              <v-menu>
-                <template #activator="{ props }">
-                  <v-btn
-                    variant="outlined"
-                    v-bind="props"
-                    prepend-icon="fa-solid fa-filter"
-                    block
-                  >
-                    Trier par
-                  </v-btn>
-                </template>
-                <v-list>
-                  <v-list-item
-                    v-for="(option, index) in sortByOptions"
-                    :key="`sortByOption.${index}`"
-                    :value="option.value"
-                  >
-                    <v-list-item-title>{{ option.title }}</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+          <v-container class="my-3">
+            <v-row>
+              <v-col>
+                <div class="max-w-lg mx-auto mb-6">
+                  <div class="relative flex items-center border-2 border-gray-800 rounded-pill w-full h-12 rounded-lg bg-white overflow-hidden">
+                    <div class="ml-2 grid place-items-center h-full w-12 text-gray-800">
+                      <v-icon
+                        size="small"
+                        icon="fas fa-search"
+                      />
+                    </div>
 
-              <div class="border-b border-gray-200">
-                <!-- Filter by genre-->
-                <h3 class="font-weight-bold py-5">
-                  Genres
-                </h3>
-                <div class="space-y-4 pb-5">
-                  <div
-                    v-for="genre in genres"
-                    :key="`genre.${genre.name}`"
-                    class="flex items-center"
-                  >
                     <input
-                      id="filter-category-0"
-                      name="category[]"
-                      value="new-arrivals"
-                      type="checkbox"
-                      class="space-y-8 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      id="search"
+                      class="peer h-full w-full outline-none text-sm text-gray-700 pr-2"
+                      type="text"
+                      placeholder="Rechercher un vinyle..."
                     >
-                    <label
-                      for="filter-category-0"
-                      class="ml-3 text-sm text-gray-600"
-                    >{{ genre.name }}</label>
                   </div>
                 </div>
-              </div>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="2">
+                <form class="hidden lg:block">
+                  <v-menu>
+                    <template #activator="{ props }">
+                      <v-btn
+                        variant="outlined"
+                        v-bind="props"
+                        prepend-icon="fa-solid fa-filter"
+                        block
+                      >
+                        Trier par
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-for="(option, index) in sortByOptions"
+                        :key="`sortByOption.${index}`"
+                        :value="option.value"
+                      >
+                        <v-list-item-title>{{ option.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
 
-              <!-- Filter by format-->
-              <div class="border-b border-gray-200">
-                <h3 class="font-weight-bold py-5">
-                  Formats
-                </h3>
-                <div class="space-y-4 pb-5">
-                  <div
-                    v-for="format in formats"
-                    :key="`genre.${format.name}`"
-                    class="flex items-center"
-                  >
-                    <input
-                      id="filter-category-0"
-                      name="category[]"
-                      value="new-arrivals"
-                      type="checkbox"
-                      class="space-y-8 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    >
-                    <label
-                      for="filter-category-0"
-                      class="ml-3 text-sm text-gray-600"
-                    >{{ format.name }}</label>
+                  <div class="border-b border-gray-200">
+                    <!-- Filter by genre-->
+                    <h3 class="font-weight-bold py-5">
+                      Genres
+                    </h3>
+                    <div class="space-y-4 pb-5">
+                      <div
+                        v-for="genre in genres"
+                        :key="`genre.${genre.name}`"
+                        class="flex items-center"
+                      >
+                        <input
+                          id="filter-category-0"
+                          name="category[]"
+                          value="new-arrivals"
+                          type="checkbox"
+                          class="space-y-8 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        >
+                        <label
+                          for="filter-category-0"
+                          class="ml-3 text-sm text-gray-600"
+                        >{{ genre.name }}</label>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </form>
 
-            <!-- Product grid -->
-            <div class="lg:col-span-4">
-              <div class="flex justify-center items-center mb-16">
-                <div class="w-3/5 relative">
-                  <input
-                    type="text"
-                    placeholder="Chercher un vinyle"
-                    class="w-full px-4 py-2 outline outline-black focus:outline focus:outline-black rounded-full placeholder-gray-400 pr-10"
-                  >
-                </div>
-              </div>
-              <!-- <div class="flex justify-center items-center my-12">
-                <div class="w-3/5 relative">
-                  <input
-                    type="text"
-                    placeholder="Chercher un vinyle"
-                    class="w-full px-4 py-2 border border-black outline outline-black rounded-full focus:outline-none placeholder-gray-400 pr-10"
-                  >
-                  <v-icon
-                    icon="fas fa-search"
-                    class="absolute transform -translate-y-1/2 text-black"
-                  />
-                </div>
-              </div> -->
+                  <!-- Filter by format-->
+                  <div class="border-b border-gray-200">
+                    <h3 class="font-weight-bold py-5">
+                      Formats
+                    </h3>
+                    <div class="space-y-4 pb-5">
+                      <div
+                        v-for="format in formats"
+                        :key="`genre.${format.name}`"
+                        class="flex items-center"
+                      >
+                        <input
+                          id="filter-category-0"
+                          name="category[]"
+                          value="new-arrivals"
+                          type="checkbox"
+                          class="space-y-8 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        >
+                        <label
+                          for="filter-category-0"
+                          class="ml-3 text-sm text-gray-600"
+                        >{{ format.name }}</label>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </v-col>
 
-              <div
-                class="mx-auto max-w-2xl px-4 pb-16 sm:px-6 lg:max-w-7xl lg:px-8"
-              >
-                <div
-                  v-if="productStore.products"
-                  class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8"
-                >
-                  <div
+              <!-- Product grid -->
+              <v-col>
+                <v-row v-if="productStore.products">
+                  <v-col
                     v-for="product in productStore.products"
                     :key="`vinyle.${product._id}`"
-                    class="group relative"
+                    cols="4"
                   >
                     <product-item :product="product" />
-                  </div>
-                </div>
-                <div v-else>
-                  Aucun produit
-                </div>
-              </div>
-            </div>
-          </div>
+                  </v-col>
+                </v-row>
+                <v-row v-else>
+                  <v-col>
+                    Aucun produit
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-container>
         </section>
       </main>
     </div>

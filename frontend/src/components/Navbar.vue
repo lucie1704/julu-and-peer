@@ -61,7 +61,7 @@ const navigation = {
 </script>
 
 <template>
-  <div class="bg-white">
+  <div class="bg-white border-b-2 border-gray-800">
     <TransitionRoot
       as="template"
       :show="open"
@@ -114,7 +114,7 @@ const navigation = {
                 Promotions
               </router-link>
 
-              <div class="space-y-6 border-t border-gray-200 px-4 py-6">
+              <div class="space-y-6 px-4 py-6">
                 <div class="flow-root">
                   <a
                     href="#"
@@ -129,7 +129,7 @@ const navigation = {
                 </div>
               </div>
 
-              <div class="border-t border-gray-200 px-4 py-6">
+              <div class="px-4 py-6">
                 <a
                   href="#"
                   class="-m-2 flex items-center p-2"
@@ -154,8 +154,8 @@ const navigation = {
         aria-label="Top"
         class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
       >
-        <div class="border-b border-gray-200">
-          <div class="flex h-16 items-center">
+        <div class="">
+          <div class="flex h-16 py-4 items-center">
             <button
               type="button"
               class="relative rounded-md bg-white p-2 text-gray-400 lg:hidden"
@@ -254,37 +254,6 @@ const navigation = {
                                 </p>
                               </div>
                             </div>
-                            <div
-                              class="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm"
-                            >
-                              <div
-                                v-for="section in category.sections"
-                                :key="section.name"
-                              >
-                                <p
-                                  :id="`${section.name}-heading`"
-                                  class="font-medium text-gray-900"
-                                >
-                                  {{ section.name }}
-                                </p>
-                                <ul
-                                  role="list"
-                                  :aria-labelledby="`${section.name}-heading`"
-                                  class="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                                >
-                                  <li
-                                    v-for="item in section.items"
-                                    :key="item.name"
-                                    class="flex"
-                                  >
-                                    <a
-                                      :href="item.href"
-                                      class="hover:text-gray-800"
-                                    >{{ item.name }}</a>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -356,5 +325,4 @@ const navigation = {
       </nav>
     </header>
   </div>
-  <div class="bg-gray-800 text-white p-2" />
 </template>
