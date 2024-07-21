@@ -6,15 +6,14 @@ const Email = require('./../utils/email');
 const crypto = require('crypto');
 const { Sequelize } = require('sequelize');
 
-const signToken = id => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
+const signToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
   });
-
 };
 
 const createSendToken = (user, statusCode, req, res) => {
-  const token = signToken(user.id);
+  const token = signToken(user.id, user.role);
 
   const expires = new Date(Date.now() + 36000 * 1000);
 
@@ -67,7 +66,10 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
         emailConfirmExpires: {
           [Sequelize.Op.gt]: Sequelize.fn('NOW')
         }
-      } 
+      },
+      attributes: {
+        include: ['role']
+      }
     });
 
   if (!user) {
@@ -97,7 +99,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({
     where: { email },
     attributes: {
-      include: ['emailConfirmed', 'password']
+      include: ['emailConfirmed', 'password', 'role']
     }
   });
   

@@ -8,6 +8,8 @@ import {
   UserEmail,
   UserLogin
 } from '~/dto';
+import { headers } from '~/utils/headers';
+import { publicHeaders } from '~/utils/publicHeaders';
 
 const ROOT_URL = `${API_URL}/auth`;
 const USER_ROOT_URL = `${API_URL}/users`;
@@ -29,9 +31,7 @@ const authAPI: AuthAPI = {
   async login(user: UserLogin) {
     try {
       const response = await axios.post(`${ROOT_URL}/login`, user, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: publicHeaders()
       });
       return response.data;
     } catch (error) {
@@ -43,9 +43,7 @@ const authAPI: AuthAPI = {
   async signup(user: SignUp) {
     try {
       const response = await axios.post(`${ROOT_URL}/signup`, user, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: publicHeaders()
       });
       return response.data;
     } catch (error) {
@@ -60,9 +58,7 @@ const authAPI: AuthAPI = {
         `${ROOT_URL}/confirmEmail/${emailToken}`,
         user,
         {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: publicHeaders()
         }
       );
       return response.data;
@@ -75,9 +71,7 @@ const authAPI: AuthAPI = {
   async logout() {
     try {
       const res = await axios.get(`${ROOT_URL}/logout`, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: publicHeaders()
       });
       return res.data;
     } catch (error) {
@@ -89,9 +83,7 @@ const authAPI: AuthAPI = {
   async forgotPassword(email: UserEmail) {
     try {
       const res = await axios.post(`${ROOT_URL}/forgotPassword`, email, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: publicHeaders()
       });
       return res.data;
     } catch (error) {
@@ -106,9 +98,7 @@ const authAPI: AuthAPI = {
         `${ROOT_URL}/resetPassword/${emailToken}`,
         user,
         {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: publicHeaders()
         }
       );
       return response.data;
@@ -121,10 +111,7 @@ const authAPI: AuthAPI = {
   async updateMyPassword(user: UpdatePassword, jwt_token) {
     try {
       const res = await axios.patch(`${USER_ROOT_URL}/updateMyPassword`, user, {
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        }
+        headers: headers()
       });
       return res.data;
     } catch (error) {

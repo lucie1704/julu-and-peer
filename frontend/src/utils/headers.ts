@@ -1,7 +1,7 @@
 
-const  jwt_token = window.localStorage.getItem('jwt_token');
+const  token = window.localStorage.getItem('jwt_token');
 
 export const headers = () => ({
-  Authorization: `Bearer ${jwt_token}`,
+  Authorization: `Bearer ${token}`,
   'Content-Type': 'application/json'
 });

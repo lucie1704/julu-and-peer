@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import authAPI from '~/api/auth';
@@ -12,9 +13,15 @@ import {
 } from '~/dto';
 import router from '~/router/router';
 
+interface JwtPayload{
+  id: string
+  role: string
+}
+
 export const useAuth = defineStore('auth', () => {
   const jwtToken = ref<string | null>(window.localStorage.getItem('jwt_token'));
   const roles = ref<string | null>(window.localStorage.getItem('roles'));
+  const userId =  ref<string>("");
   const status = ref<string | null>();
   const username = ref<string | null>();
   const message = ref<string | null>();
@@ -27,6 +34,13 @@ export const useAuth = defineStore('auth', () => {
     if (token) {
       jwtToken.value = token;
         window.localStorage.setItem('jwt_token', token);
+
+        const decoded = jwtDecode<JwtPayload>(token);
+
+        window.localStorage.setItem('roles', decoded.role);
+
+        userId.value = decoded.id;
+
       router.push('/');
     } else {
       console.log('Invalid jwt_token');
@@ -52,6 +66,13 @@ export const useAuth = defineStore('auth', () => {
       jwtToken.value = token;
       message.value = 'Your account has been successfully created !.';
       window.localStorage.setItem('jwt_token', token);
+
+      const decoded = jwtDecode<JwtPayload>(token);
+
+      window.localStorage.setItem('roles', decoded.role);
+
+      userId.value = decoded.id;
+
       router.push('/');
     } else {
       console.log('Invalid jwt_token');
@@ -87,10 +108,18 @@ export const useAuth = defineStore('auth', () => {
   }) => {
     const token = await authAPI.resetPassword(payload.user, payload.emailToken);
     if (token) {
+      
       jwtToken.value = token;
       message.value
         = 'Welcome back! Your password has been successfully reset.';
       window.localStorage.setItem('jwt_token', token);
+
+      const decoded = jwtDecode<JwtPayload>(token);
+
+      window.localStorage.setItem('roles', decoded.role);
+
+      userId.value = decoded.id;
+
       router.push('/confirmModal');
     } else {
       console.log('Invalid jwt_token');
