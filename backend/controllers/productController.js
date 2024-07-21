@@ -3,6 +3,7 @@ const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
 const { uuidv7 } = require('uuidv7');
+const ProductMongo = require("../models/mongo/product");
 
 const id = uuidv7();
 
@@ -26,10 +27,12 @@ exports.create = catchAsyncError(async (req, res) => {
 exports.getAll = catchAsyncError(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
-    const offset = (page - 1) * limit;
-    const search = req.query.search || "";
-    const genres = req.query.genres ? req.query.genres.split(',') : [];
-    const formats = req.query.formats ? req.query.formats.split(',') : [];
+    const offset    = (page - 1) * limit;
+    const search    = req.query.search || "";
+    const genres    = req.query.genres ? req.query.genres.split(',') : [];
+    const formats   = req.query.formats ? req.query.formats.split(',') : [];
+    const sort      = req.query.sort || 'new';
+    const discount  = req.query.discount || false;
 
     let query = {};
     if (search) {
@@ -46,8 +49,28 @@ exports.getAll = catchAsyncError(async (req, res) => {
     if (formats.length > 0) {
         query['ProductFormat.name'] = { $in: formats };
     }
+    if (discount) {
+        query.discount = { $gt: 0 };
+    }
+
+    let sortOptions = {};
+    switch (sort) {
+        case 'asc':
+            sortOptions = { price: 1 };
+            break;
+        case 'desc':
+            sortOptions = { price: -1 };
+            break;
+        case 'new':
+            sortOptions = { createdAt: -1 };
+            break;
+        default:
+            sortOptions = { createdAt: -1 };
+            break;
+    }
 
     const products = await ProductMongo.find(query)
+        .sort(sortOptions)
         .skip(offset)
         .limit(limit)
         .exec();
@@ -60,8 +83,16 @@ exports.getAll = catchAsyncError(async (req, res) => {
         { $match: query },
         { $group: { _id: "$ProductFormat.name", count: { $sum: 1 } } },
     ]);
+    const discountFacet = await ProductMongo.aggregate([
+        {  $match: {
+                ...query,
+                discount: { $gt: 0 }
+            }
+        },
+        { $count: "count" }, 
+    ]);
 
-    const totalItems = await ProductMongo.countDocuments().exec();
+    const totalItems = await ProductMongo.find(query).countDocuments().exec();
     const totalPages = Math.ceil(totalItems / limit);
     if(!products) return next(new AppError('Error : fails to fetch products', 404));
 
@@ -74,6 +105,7 @@ exports.getAll = catchAsyncError(async (req, res) => {
         facets: {
             genres: genreFacet,
             formats: formatFacet,
+            discount: discountFacet,
         },
     };
 

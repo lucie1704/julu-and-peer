@@ -10,7 +10,8 @@ module.exports = async function denormalizeProduct(product, models) {
             "description",
             "price",
             "quantity",
-            "reviewCount"
+            "reviewCount",
+            "discount"
         ],
         include: [
             { 
