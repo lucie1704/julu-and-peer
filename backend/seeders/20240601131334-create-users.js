@@ -26,6 +26,8 @@ module.exports = {
       { firstname: 'Isabella', lastname: 'Garcia', email: 'isabella.garcia@example.com' },
       { firstname: 'Aiden', lastname: 'Rodriguez', email: 'aiden.rodriguez@example.com' },
       { firstname: 'Mia', lastname: 'Lewis', email: 'mia.lewis@example.com' },
+      // Add admin user
+      { firstname: 'Admin', lastname: 'Peer', email: 'admin@juluandpeer.com', role: 'admin' },
     ];
 
     // Common attributes
@@ -47,8 +49,8 @@ module.exports = {
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        photo: commonAttributes.photo,
-        role: commonAttributes.role,
+        photo: user.photo || commonAttributes.photo,
+        role: user.role || commonAttributes.role,
         emailConfirmed: commonAttributes.emailConfirmed,
         password: hashedPassword,
         passwordConfirmation: hashedPassword,

@@ -20,7 +20,7 @@ module.exports = {
     const artists = artistNames.map(name => ({
       id: uuidv7(),
       name,
-      description: `${name} is a well-known artist.`,
+      description: `${name} est un artiste bien connu.`,
       createdAt: new Date(),
       updatedAt: new Date()
     }));

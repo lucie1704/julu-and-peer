@@ -26,11 +26,11 @@ module.exports = {
         // Loop through each genre
         for (const genre of genres) {
           // Create 3 products for each genre-format-artist combination
-          for (let i = 0; i < 3; i++) {
+          for (let i = 0; i < 2; i++) {
             productsData.push({
               id: uuidv7(),
-              name: `${genre.name} Product ${i + 1}`,
-              description: `A ${genre.name} genre product, number ${i + 1}, by ${artist.name}, available in ${format.name}.`,
+              name: `Produit ${genre.name} ${i + 1}`,
+              description: `Un produit du genre ${genre.name}, numéro ${i + 1}, par ${artist.name}, disponible en ${format.name}.`,
               price: (Math.random() * 1000).toFixed(2),
               genreId: genre.id,
               formatId: format.id,
@@ -41,6 +41,59 @@ module.exports = {
           }
         }
       }
+    }
+
+    // Adding products with customized descriptions
+    productsData.push({
+      id: uuidv7(),
+      name: `Vinyl Collector Edition`,
+      description: `Un vinyl unique en édition collector, parfait pour les amateurs de musique. Ce produit offre une qualité sonore exceptionnelle et un packaging élégant. Disponible exclusivement en édition limitée.`,
+      price: (Math.random() * 1000).toFixed(2),
+      genreId: genres[0].id,
+      formatId: formats[0].id,
+      artistId: artists[0].id,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    productsData.push({
+      id: uuidv7(),
+      name: `CD de Compilation Jazz`,
+      description: `Ce CD de compilation réunit les meilleures performances de jazz de différents artistes. Une sélection soigneusement choisie pour offrir une expérience auditive enrichissante. Idéal pour les soirées détendues et les amateurs de jazz.`,
+      price: (Math.random() * 1000).toFixed(2),
+      genreId: genres[1].id,
+      formatId: formats[1].id,
+      artistId: artists[1].id,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    productsData.push({
+      id: uuidv7(),
+      name: `Album Pop Hit`,
+      description: `Découvrez les hits pop les plus populaires avec cet album incontournable. Chaque chanson est un succès garanti, offrant des mélodies accrocheuses et des rythmes entraînants. Un must-have pour tous les fans de musique pop.`,
+      price: (Math.random() * 1000).toFixed(2),
+      genreId: genres[2].id,
+      formatId: formats[2].id,
+      artistId: artists[2].id,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    // Adding products with discounts
+    for (let i = 0; i < 3; i++) {
+      productsData.push({
+        id: uuidv7(),
+        name: `Produit avec discount ${i + 1}`,
+        description: `Un produit disponible en vinyl 80.`,
+        price: (Math.random() * 1000).toFixed(2),
+        discount: 20.5,
+        genreId: genres[1].id,
+        formatId: formats[1].id,
+        artistId: artists[1].id,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
     }
 
     // Insert products into the database using bulkCreate on the Product model

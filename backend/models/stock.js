@@ -12,24 +12,24 @@ module.exports = (sequelize, DataTypes) => {
 
     static addHooks(models) {
       Stock.addHook('afterCreate', async (stock) => {
-        // const product = await models.Product.findByPk(stock.productId);
-        // if (product) {
-        //   await denormalizeProduct(product, models);
-        // }
+        const product = await models.Product.findByPk(stock.productId);
+        if (product) {
+          await denormalizeProduct(product, models);
+        }
       });
 
       Stock.addHook('afterUpdate', async (stock, { fields }) => {
-        // const product = await models.Product.findByPk(stock.productId);
-        // if (product) {
-        //   await denormalizeProduct(product, models);
-        // }
+        const product = await models.Product.findByPk(stock.productId);
+        if (product) {
+          await denormalizeProduct(product, models);
+        }
       });
 
       Stock.addHook('afterDestroy', async (stock) => {
-        // const product = await models.Product.findByPk(stock.productId);
-        // if (product) {
-        //   await denormalizeProduct(product, models);
-        // }
+        const product = await models.Product.findByPk(stock.productId);
+        if (product) {
+          await denormalizeProduct(product, models);
+        }
       });
     }
   }
