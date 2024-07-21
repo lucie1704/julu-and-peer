@@ -6,7 +6,8 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import debounce from 'lodash/debounce';
+import { onMounted, ref, watch } from 'vue';
 import formatAPI from '~/api/format';
 import genreAPI from '~/api/genre';
 import { ProductItem } from '~/components';
@@ -14,8 +15,15 @@ import { Category } from '~/dto';
 import { useProduct } from '~/stores/product';
 
 const productStore = useProduct();
-const genres = ref<Array<Category>>();
-const formats = ref<Array<Category>>();
+const genreItems = ref<Array<Category>>();
+const formatItems = ref<Array<Category>>();
+
+const urlParams = new URLSearchParams(window.location.search);
+
+const searchTerms = ref<string>(urlParams.get('search') || '');
+const searchGenres = ref<Array<string>>(urlParams.get('genres')?.split(',') || []);
+const searchFormats = ref<Array<string>>(urlParams.get('formats')?.split(',') || []);
+
 const sortByOptions = [{
     title: 'Nouveau',
     value: 'recent'
@@ -33,16 +41,57 @@ const sortByOptions = [{
 onMounted(async() => {
   try {
     const genresResponse = await genreAPI.getAllProductGenres();
-    genres.value = genresResponse.data;
+    genreItems.value = genresResponse.data;
     const formatsResponse = await formatAPI.getAllProductFormats();
-    formats.value = formatsResponse.data;
+    formatItems.value = formatsResponse.data;
 
   } catch (error) {
-    console.error('Error fetching product genres:', error);
+    console.error('Error fetching product genres and formats:', error);
   }
-  productStore.fetchAllProducts();
 });
 
+const fetchProducts = async (query?: string) => {
+  try {
+    if (query && query.length > 0) {
+      await productStore.fetchAllProducts(query);
+    } else {
+      await productStore.fetchAllProducts();
+    }
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  }
+};
+
+const buildSearchQuery = (): string | undefined => {
+  let concatQuery = [];
+
+  if (searchTerms.value) concatQuery.push(`search=${searchTerms.value}`);
+
+  if (searchGenres.value.length > 0) {
+    concatQuery.push(`genres=${searchGenres.value.join(',')}`);
+  }
+
+  if (searchFormats.value.length > 0) {
+    concatQuery.push(`formats=${searchFormats.value.join(',')}`);
+  }
+
+  return concatQuery.length > 0 ? ('?' + concatQuery.join('&')) : undefined;
+};
+
+const debouncedFetchProducts = debounce(fetchProducts, 300);
+
+const updateUrlWithQuery = (query: string) => {
+  window.history.pushState(null, '', query);
+};
+
+watch([searchTerms, searchGenres, searchFormats], () => {
+  const queryString = buildSearchQuery();
+  if (queryString) updateUrlWithQuery(queryString);
+  debouncedFetchProducts(queryString);
+});
+
+const initialQueryString = buildSearchQuery();
+fetchProducts(initialQueryString);
 </script>
 
 <template>
@@ -98,14 +147,14 @@ onMounted(async() => {
                 </h3>
                 <div class="space-y-4 py-5">
                   <div
-                    v-for="genre in genres"
+                    v-for="genre in genreItems"
                     :key="`genre.${genre.name}`"
                     class="flex items-center"
                   >
                     <input
-                      id="filter-category-0"
+                      v-model="searchGenres"
                       name="category[]"
-                      value="new-arrivals"
+                      :value="searchGenres[genre]"
                       type="checkbox"
                       class="space-y-8 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     >
@@ -124,12 +173,12 @@ onMounted(async() => {
                 </h3>
                 <div class="space-y-4 pb-5">
                   <div
-                    v-for="format in formats"
+                    v-for="format in formatItems"
                     :key="`genre.${format.name}`"
                     class="flex items-center"
                   >
                     <input
-                      id="filter-category-0"
+                      v-model="searchFormats"
                       name="category[]"
                       value="new-arrivals"
                       type="checkbox"
@@ -191,6 +240,7 @@ onMounted(async() => {
 
                     <input
                       id="search"
+                      v-model="searchTerms"
                       class="peer h-full w-full outline-none text-sm text-gray-700 pr-2"
                       type="text"
                       placeholder="Rechercher un vinyle..."
@@ -231,19 +281,19 @@ onMounted(async() => {
                     </h3>
                     <div class="space-y-4 pb-5">
                       <div
-                        v-for="genre in genres"
+                        v-for="genre in genreItems"
                         :key="`genre.${genre.name}`"
                         class="flex items-center"
                       >
                         <input
-                          id="filter-category-0"
-                          name="category[]"
-                          value="new-arrivals"
+                          :id="'filter-genre-' + genre.id"
+                          v-model="searchGenres"
+                          :value="genre.name"
                           type="checkbox"
                           class="space-y-8 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                         >
                         <label
-                          for="filter-category-0"
+                          :for="'filter-genre-' + genre.id"
                           class="ml-3 text-sm text-gray-600"
                         >{{ genre.name }}</label>
                       </div>
@@ -257,20 +307,20 @@ onMounted(async() => {
                     </h3>
                     <div class="space-y-4 pb-5">
                       <div
-                        v-for="format in formats"
+                        v-for="format in formatItems"
                         :key="`genre.${format.name}`"
                         class="flex items-center"
                       >
                         <input
-                          id="filter-category-0"
-                          name="category[]"
-                          value="new-arrivals"
+                          :id="'filter-format-' + format.id"
+                          v-model="searchFormats"
+                          :value="format.name"
                           type="checkbox"
                           class="space-y-8 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                         >
                         <label
-                          for="filter-category-0"
-                          class="ml-3 text-sm text-gray-600"
+                          :for="'filter-format-' + format.id"
+                          class="ml-3 text-sm text-gray-800"
                         >{{ format.name }}</label>
                       </div>
                     </div>

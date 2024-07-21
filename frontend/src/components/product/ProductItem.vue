@@ -1,12 +1,67 @@
 <script lang="ts" setup>
-import { Product } from '~/dto';
+import { onMounted, ref, toRefs } from 'vue';
+import { createCart, Product } from '~/dto';
+import { useCart } from '~/stores/cart';
+import { useCustomer } from '~/stores/customer';
+import { useProduct } from '~/stores/product';
 
-defineProps<{
+const productStore = useProduct();
+const cartStore = useCart();
+const customerStore = useCustomer();
+
+const props = defineProps<{
   product: Product
 }>();
 
+const { product } = toRefs(props);
+
+onMounted(async () => {
+  productStore.fetchProductById(product.value._id);
+  customerStore.fetchByUserId('3');
+  if (customerStore.customerId) {
+    try {
+      await cartStore.fetchCartByCustomerId(customerStore.customerId);
+
+      if (!cartStore.cart) {
+        try {
+          await cartStore.createCart(customerStore.customerId);
+        } catch (error) {
+          console.error('Error creating cart:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error getting customer cart:', error);
+    }
+  }
+});
+
 const discountedPrice = (price: number, discount: number) => {
   return (price - price * (discount / 100)).toFixed(2);
+};
+
+const quantity = ref<number>(1);
+
+const submitAddItemToCart = async () => {
+  if (!productStore.product
+    || !customerStore.customerId
+    || !cartStore.cart
+    || !quantity.value)
+    return console.error('Form validation failed!');
+
+  const productId = productStore.product._id;
+  const cartId = cartStore.cart.id as string;
+
+  const data: createCart = {
+    productId,
+    cartId,
+    quantity: quantity.value
+  };
+
+  try {
+    await cartStore.addCartItem(data);
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+  }
 };
 </script>
 
@@ -82,6 +137,7 @@ const discountedPrice = (price: number, discount: number) => {
       density="comfortable"
       class="py-5"
       block
+      @click="submitAddItemToCart"
     >
       Ajouter au panier
     </v-btn>
