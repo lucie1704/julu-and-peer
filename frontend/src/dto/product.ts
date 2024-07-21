@@ -1,5 +1,13 @@
+export interface PaginatedProducts {
+  page: 1,
+  limit: 20,
+  totalItems: 6,
+  totalPages: number,
+  data: Array<Product>
+}
+
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   price: number;
@@ -8,24 +16,20 @@ export interface Product {
   availableStock: number;
   imageSrc: string;
   imageAlt: string;
-  ProductGenre: ProductGenre;
-  ProductFormat: ProductFormat;
-  ProductArtist: ProductArtist;
+  ProductGenre: Category;
+  ProductFormat: Category;
+  ProductArtist: Category;
 }
 
-interface ProductGenre {
-  id: string;
-  name: string;
-  description: string;
+export interface PaginatedCategories {
+  page: 1,
+  limit: 20,
+  totalItems: 6,
+  totalPages: number,
+  data: Array<Category>
 }
 
-interface ProductFormat {
-  id: string;
-  name: string;
-  description: string;
-}
-
-interface ProductArtist {
+export interface Category {
   id: string;
   name: string;
   description: string;

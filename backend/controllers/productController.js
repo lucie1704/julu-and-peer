@@ -27,47 +27,58 @@ exports.getAll = catchAsyncError(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const offset = (page - 1) * limit;
+    const search = req.query.search || "";
+    const genres = req.query.genres ? req.query.genres.split(',') : [];
+    const formats = req.query.formats ? req.query.formats.split(',') : [];
 
-    const { count, rows } = await Product.findAndCountAll({
-        limit,
-        offset,
-        include: [
-            { model: ProductGenre },
-            { model: ProductFormat },
-            { model: ProductArtist },
-            { model: ProductCustomerEvaluation },
-            { model: Image }
-        ]
-    });
-    const totalPages = Math.ceil(count / limit);
+    let query = {};
+    if (search) {
+        query = {
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+                { "ProductArtist.name": { $regex: search, $options: "i" } }
+            ]
+        };
+    }
+    if (genres.length > 0) {
+        query['ProductGenre.name'] = { $in: genres };
+    }
+    if (formats.length > 0) {
+        query['ProductFormat.name'] = { $in: formats };
+    }
 
-    if(!rows) return next(new AppError('Error : fails to fetch products', 404));
+    const products = await ProductMongo.find(query)
+        .skip(offset)
+        .limit(limit)
+        .exec();
 
-    responseReturn(res, {
+    const genreFacet = await ProductMongo.aggregate([
+        { $match: query },
+        { $group: { _id: "$ProductGenre.name", count: { $sum: 1 } } },
+    ]);
+    const formatFacet = await ProductMongo.aggregate([
+        { $match: query },
+        { $group: { _id: "$ProductFormat.name", count: { $sum: 1 } } },
+    ]);
+
+    const totalItems = await ProductMongo.countDocuments().exec();
+    const totalPages = Math.ceil(totalItems / limit);
+    if(!products) return next(new AppError('Error : fails to fetch products', 404));
+
+    const response = {
         page,
         limit,
-        totalItems: count,
+        totalItems,
         totalPages,
-        data: rows
-    });
+        data: products,
+        facets: {
+            genres: genreFacet,
+            formats: formatFacet,
+        },
+    };
 
-    // TODO: Make This part work according to Zod schema.
-    // const products = await ProductMongo.find()
-    // .skip(offset)
-    // .limit(limit)
-    // .exec();
-    // const totalItems = await ProductMongo.countDocuments().exec();
-    // const totalPages = Math.ceil(totalItems / limit);
-
-    // if(!products) return next(new AppError('Error : fails to fetch products', 404));
-
-    // responseReturn(res, 200, {
-    //     page,
-    //     limit,
-    //     totalItems,
-    //     totalPages,
-    //     data: products,
-    // });
+    res.status(200).json(response);
 });
 
 exports.getById = catchAsyncError(async (req, res, next) => {

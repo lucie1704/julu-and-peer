@@ -55,82 +55,6 @@ const navigation = {
         }
       ],
       sections: []
-    },
-    {
-      id: 'genres',
-      name: 'Genres',
-      featured: [
-        {
-          name: 'New Arrivals',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
-          imageAlt:
-            'Drawstring top with elastic loop closure and textured interior padding.'
-        },
-        {
-          name: 'Artwork Tees',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
-          imageAlt:
-            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.'
-        }
-      ],
-      sections: [
-        { id: 'pop-americain', name: 'Pop Américain', items: [] },
-        { id: 'urban', name: 'Urban', items: [] },
-        { id: 'pop-francaise', name: 'Pop Française', items: [] },
-        { id: 'variete-francaise', name: 'Variété française', items: [] },
-        { id: 'rock', name: 'Rock', items: [] },
-        { id: 'metal', name: 'Métal', items: [] },
-        { id: 'soul', name: 'Soul', items: [] },
-        { id: 'rnb', name: 'RNB', items: [] },
-        { id: 'bandes-originales', name: 'Bandes Originales', items: [] },
-        { id: 'reggae', name: 'Reggae', items: [] },
-        { id: 'jazz', name: 'Jazz', items: [] },
-        { id: 'classique', name: 'Classique', items: [] },
-        { id: 'rumba', name: 'Rumba', items: [] },
-        { id: 'electrique', name: 'Électrique', items: [] }
-      ]
-    },
-    {
-      id: 'formats',
-      name: 'Formats',
-      featured: [
-        {
-          name: 'New Arrivals',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
-          imageAlt:
-            'Drawstring top with elastic loop closure and textured interior padding.'
-        },
-        {
-          name: 'Artwork Tees',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
-          imageAlt:
-            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.'
-        }
-      ],
-      sections: [
-        { id: 'picture', name: 'Picture', items: [] },
-        { id: 'couleurs', name: 'Couleurs', items: [] },
-        { id: 'collector', name: 'Collector', items: [] },
-        {
-          id: 'collections',
-          name: 'Collections',
-          items: [
-            { id: 'festivals', name: 'Festivals', href: '#' },
-            { id: 'classiques', name: 'Classiques', href: '#' },
-            { id: '90s', name: '90\'S', href: '#' },
-            { id: 'bons-affaires', name: 'Bons affaires', href: '#' },
-            { id: 'vinyles-rares', name: 'Vinyles-rares', href: '#' }
-          ]
-        }
-      ]
     }
   ]
 };
@@ -186,100 +110,9 @@ const navigation = {
                 </button>
               </div>
 
-              <TabGroup
-                as="div"
-                class="mt-2"
-              >
-                <div class="border-b border-gray-200">
-                  <TabList class="-mb-px flex space-x-8 px-4">
-                    <Tab
-                      v-for="category in navigation.categories"
-                      :key="category.name"
-                      v-slot="{ selected }"
-                      as="template"
-                    >
-                      <button
-                        :class="[
-                          selected
-                            ? 'border-indigo-600 text-indigo-600'
-                            : 'border-transparent text-gray-900',
-                          'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium'
-                        ]"
-                      >
-                        {{ category.name }}
-                      </button>
-                    </Tab>
-                  </TabList>
-                </div>
-                <TabPanels as="template">
-                  <TabPanel
-                    v-for="category in navigation.categories"
-                    :key="category.name"
-                    class="space-y-10 px-4 pb-8 pt-10"
-                  >
-                    <div class="grid grid-cols-2 gap-x-4">
-                      <div
-                        v-for="item in category.featured"
-                        :key="item.name"
-                        class="group relative text-sm"
-                      >
-                        <div
-                          class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75"
-                        >
-                          <img
-                            :src="item.imageSrc"
-                            :alt="item.imageAlt"
-                            class="object-cover object-center"
-                          >
-                        </div>
-                        <a
-                          :href="item.href"
-                          class="mt-6 block font-medium text-gray-900"
-                        >
-                          <span
-                            class="absolute inset-0 z-10"
-                            aria-hidden="true"
-                          />
-                          {{ item.name }}
-                        </a>
-                        <p
-                          aria-hidden="true"
-                          class="mt-1"
-                        >
-                          Shop now
-                        </p>
-                      </div>
-                    </div>
-                    <div
-                      v-for="section in category.sections"
-                      :key="section.name"
-                    >
-                      <p
-                        :id="`${category.id}-${section.id}-heading-mobile`"
-                        class="font-medium text-gray-900"
-                      >
-                        {{ section.name }}
-                      </p>
-                      <ul
-                        role="list"
-                        :aria-labelledby="`${category.id}-${section.id}-heading-mobile`"
-                        class="mt-6 flex flex-col space-y-6"
-                      >
-                        <li
-                          v-for="item in section.items"
-                          :key="item.name"
-                          class="flow-root"
-                        >
-                          <a
-                            :href="item.href"
-                            class="-m-2 block p-2 text-gray-500"
-                          >{{ item.name }}</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </TabPanel>
-                </TabPanels>
-              </TabGroup>
+              <router-link to="/promotions">
+                Promotions
+              </router-link>
 
               <div class="space-y-6 border-t border-gray-200 px-4 py-6">
                 <div class="flow-root">
@@ -339,7 +172,7 @@ const navigation = {
             <div class="ml-4 flex lg:ml-0">
               <a href="#">
                 <span class="sr-only">Julu&Peer</span>
-                <router-link to="/products">
+                <router-link to="/">
                   <img
                     class="h-16 w-auto"
                     src="../../public/logo-julu-and-peer.png"
@@ -460,35 +293,6 @@ const navigation = {
                 </Popover>
               </div>
             </PopoverGroup>
-
-            <div class="flex-grow flex justify-center">
-              <div class="relative">
-                <input
-                  id="search"
-                  name="search"
-                  class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400"
-                  placeholder="Search"
-                  type="search"
-                >
-                <div
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="w-5 h-5 text-gray-400"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
 
             <div class="ml-auto flex items-center">
               <div
