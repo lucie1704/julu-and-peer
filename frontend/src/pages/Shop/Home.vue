@@ -106,6 +106,14 @@ const updatePage = () => {
   debouncedFetchProducts(queryString);
 };
 
+const resetSearch = () => {
+  fetchProducts();
+  searchTerms.value = '';
+  searchGenres.value = [];
+  searchFormats.value = [];
+  searchDiscount.value = false;
+};
+
 watch([searchTerms, searchGenres, searchFormats, selectedSort, searchDiscount], () => {
   const queryString = buildSearchQuery();
   if (queryString) updateUrlWithQuery(queryString);
@@ -137,6 +145,13 @@ fetchProducts(initialQueryString);
                 type="text"
                 placeholder="Rechercher un vinyle..."
               >
+              <v-btn
+                v-if="searchTerms.length > 0 || searchGenres.length > 0 || searchFormats.length > 0 || searchDiscount "
+                size="small"
+                class="mr-2"
+                icon="fas fa-circle-xmark"
+                @click="resetSearch"
+              />
             </div>
           </div>
         </v-col>
