@@ -36,7 +36,6 @@ exports.getAll = catchAsyncError(async (req, res) => {
         query = {
             $or: [
                 { name: { $regex: search, $options: "i" } },
-                { description: { $regex: search, $options: "i" } },
                 { "ProductArtist.name": { $regex: search, $options: "i" } }
             ]
         };

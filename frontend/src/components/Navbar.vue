@@ -155,7 +155,7 @@ const navigation = {
         class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
       >
         <div class="">
-          <div class="flex h-16 py-4 items-center">
+          <div class="flex h-16 items-center">
             <button
               type="button"
               class="relative rounded-md bg-white p-2 text-gray-400 lg:hidden"

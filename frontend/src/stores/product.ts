@@ -8,16 +8,16 @@ export const useProduct = defineStore('product', () => {
   const products = ref<Array<Product>>();
   const product = ref<Product>();
 
-  const fetchAllProducts = async() => {
-  const jwt_token = ''; // Replace with actual logic to get the JWT token
+  const fetchAllProducts = async(query?: string) => {
+    const jwt_token = ''; // Replace with actual logic to get the JWT token
 
-  paginatedProduct.value = await productAPI.getAllProducts(jwt_token);
+    paginatedProduct.value = await productAPI.getAllProducts(jwt_token, query);
 
-  if (paginatedProduct.value) {
-    products.value = paginatedProduct.value.data;
-  } else {
-    console.log('Error fail to fetch products');
-  }
+    if (paginatedProduct.value) {
+      products.value = paginatedProduct.value.data;
+    } else {
+      console.log('Error fail to fetch products');
+    }
   };
 
   const fetchProductById = async(id: string) => {
