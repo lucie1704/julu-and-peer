@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   class Shipping extends Model {
     static associate(models) {
       // Define associations
-      Shipping.hasOne(models.Order, { foreignKey: 'shippingId', onDelete: 'SET NULL' });
+      Shipping.hasOne(models.CustomerOrder, { foreignKey: 'shippingId', onDelete: 'SET NULL' });
       Shipping.hasMany(models.ShippingTrackerNotification, { foreignKey: 'shippingId', onDelete: 'CASCADE' });
     }
   }

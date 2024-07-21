@@ -9,10 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       Product.belongsTo(models.ProductFormat, { foreignKey: 'formatId' });
       Product.belongsTo(models.ProductArtist, { foreignKey: 'artistId' });
       Product.hasMany(models.ProductCustomerEvaluation, { foreignKey: 'productId' });
-      Product.belongsToMany(models.Order, { through: models.OrdersProducts });
       Product.belongsToMany(models.Wishlist, { through: 'WishlistsProducts' });
       Product.hasMany(models.Stock, { foreignKey: 'productId' });
       Product.hasMany(models.Image, { foreignKey: 'productId' });
+      Product.hasMany(models.OrderItemReturn, { foreignKey: 'productId' });
     }
     static addHooks(models) {
       Product.addHook('afterCreate', async (product) => {
