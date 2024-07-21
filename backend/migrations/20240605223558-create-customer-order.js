@@ -11,23 +11,28 @@ module.exports = {
         primaryKey: true,
       },
       products: {
-        type: Sequelize.ARRAY(DataTypes.UUID),
+        type: Sequelize.ARRAY(DataTypes.JSON),
       },
       price: {
         type: Sequelize.DECIMAL,
         allowNull: false
       },
       paymentStatus: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       shippingInfo: {
+        type: Sequelize.JSON
+      },
+      billingInfo: {
         type: Sequelize.JSON
       },
       deliveryStatus: {
         type: Sequelize.STRING
       },
       date: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,
@@ -38,14 +43,41 @@ module.exports = {
         type: Sequelize.DATE
       },
       customerId: {
-        allowNull: false,
         type: Sequelize.UUID,
         references: {
           model: 'Customers',
           key: 'id'
         },
+        allowNull: false,
         onDelete: 'CASCADE'
-      }
+      },
+      customerAddressId: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'CustomerAddresses',
+          key: 'id'
+        },
+        allowNull: false,
+        onDelete: 'CASCADE'
+      },
+      orderBillingId: {
+        type: Sequelize.UUID, 
+        references: {
+          model: 'OrderBillings',
+          key: 'id'
+        },
+        allowNull: false,
+        onDelete: 'CASCADE'  
+      },
+      shippingId: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'Shippings',
+          key: 'id'
+        },
+        allowNull: false,
+        onDelete: 'CASCADE'
+      },
     });
   },
   async down(queryInterface, Sequelize) {

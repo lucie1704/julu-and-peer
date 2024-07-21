@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       OrderBilling.belongsTo(models.PaymentMethod, { 
         foreignKey: 'paymentMethodId' 
       });
-      OrderBilling.hasOne(models.Order, { 
+      OrderBilling.hasOne(models.CustomerOrder, { 
         foreignKey: 'orderBillingId' 
       });
     }
