@@ -6,30 +6,40 @@ const denormalizeProduct = require('../dtos/denormalization/product');
 module.exports = (sequelize, DataTypes) => {
   class Stock extends Model {
     static associate(models) {
-      // Define association
       Stock.belongsTo(models.Product, { foreignKey: 'productId', onDelete: 'CASCADE' });
     }
 
     static addHooks(models) {
-      Stock.addHook('afterCreate', async (stock) => {
-        const product = await models.Product.findByPk(stock.productId);
+      const updateProductQuantity = async (productId) => {
+        const product = await models.Product.findByPk(productId);
         if (product) {
+          const stocks = await Stock.findAll({ where: { productId } });
+          let totalQuantity = 0;
+          
+          for (const stock of stocks) {
+            if (stock.type === 'plus') {
+              totalQuantity += stock.quantity;
+            } else if (stock.type === 'minus') {
+              totalQuantity -= stock.quantity;
+            }
+          }
+
+          product.quantity = Math.max(0, totalQuantity);
+          await product.save();
           await denormalizeProduct(product, models);
         }
+      };
+
+      Stock.addHook('afterCreate', async (stock) => {
+        await updateProductQuantity(stock.productId);
       });
 
-      Stock.addHook('afterUpdate', async (stock, { fields }) => {
-        const product = await models.Product.findByPk(stock.productId);
-        if (product) {
-          await denormalizeProduct(product, models);
-        }
+      Stock.addHook('afterUpdate', async (stock) => {
+        await updateProductQuantity(stock.productId);
       });
 
       Stock.addHook('afterDestroy', async (stock) => {
-        const product = await models.Product.findByPk(stock.productId);
-        if (product) {
-          await denormalizeProduct(product, models);
-        }
+        await updateProductQuantity(stock.productId);
       });
     }
   }
@@ -37,11 +47,17 @@ module.exports = (sequelize, DataTypes) => {
   Stock.init({
     type: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isIn: [['plus', 'minus']]
+      }
     },
     quantity: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        min: 0
+      }
     },
     productId: {
       type: DataTypes.UUID,
