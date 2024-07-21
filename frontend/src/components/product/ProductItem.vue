@@ -71,13 +71,13 @@ const submitAddItemToCart = async () => {
     :to="{ name: 'product', params: { id: product._id } }"
   >
     <div
-      class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75"
+      class="overflow-hidden"
     >
       <v-img
         :aspect-ratio="1"
         :src="product.imageSrc"
         :alt="product.imageAlt"
-        class="bg-pink h-full w-full object-center"
+        class="bg-pink h-full w-full object-center rounded-md"
       />
     </div>
     <div class="mt-4">
