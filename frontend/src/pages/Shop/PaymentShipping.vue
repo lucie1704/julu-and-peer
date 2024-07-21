@@ -78,7 +78,7 @@ const submitForm = async () => {
     const orderData: PlaceOrder = {
     shippingFee: 20.0,
     products: cartStore.cartProducts.availableProducts.map((cartItem) => ({
-      id: Number(cartItem.Product?.id),
+      id: Number(cartItem.Product?._id),
       name: cartItem.Product?.name,
       description: cartItem.Product?.description,
       price: cartItem.Product?.price,

@@ -4,6 +4,7 @@ export interface PaginatedProducts {
   totalItems: 6,
   totalPages: number,
   data: Array<Product>
+  facets: Record<string, Array<FacetItem>>
 }
 
 export interface Product {
@@ -34,3 +35,8 @@ export interface Category {
   name: string;
   description: string;
 }
+
+type FacetItem = {
+  _id: string;
+  count: number;
+};

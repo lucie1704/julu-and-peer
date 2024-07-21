@@ -7,6 +7,7 @@ const ProductMongoSchema = new connection.Schema({
     price: Number,
     quantity: Number,
     reviewCount: Number,
+    discount: Number,
     ProductGenre: { 
         id: String,
         name: String,

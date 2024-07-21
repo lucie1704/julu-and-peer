@@ -29,7 +29,7 @@ module.exports = {
           for (let i = 0; i < 2; i++) {
             productsData.push({
               id: uuidv7(),
-              name: `Produit ${genre.name} ${i + 1}`,
+              name: `Vinyle ${genre.name} ${i + 1}`,
               description: `Un produit du genre ${genre.name}, numéro ${i + 1}, par ${artist.name}, disponible en ${format.name}.`,
               price: (Math.random() * 1000).toFixed(2),
               genreId: genre.id,
@@ -47,7 +47,7 @@ module.exports = {
     productsData.push({
       id: uuidv7(),
       name: `Vinyl Collector Edition`,
-      description: `Un vinyl unique en édition collector, parfait pour les amateurs de musique. Ce produit offre une qualité sonore exceptionnelle et un packaging élégant. Disponible exclusivement en édition limitée.`,
+      description: `Un vinyle unique en édition collector, parfait pour les amateurs de musique. Ce produit offre une qualité sonore exceptionnelle et un packaging élégant. Disponible exclusivement en édition limitée.`,
       price: (Math.random() * 1000).toFixed(2),
       genreId: genres[0].id,
       formatId: formats[0].id,
@@ -73,6 +73,7 @@ module.exports = {
       name: `Album Pop Hit`,
       description: `Découvrez les hits pop les plus populaires avec cet album incontournable. Chaque chanson est un succès garanti, offrant des mélodies accrocheuses et des rythmes entraînants. Un must-have pour tous les fans de musique pop.`,
       price: (Math.random() * 1000).toFixed(2),
+      discount: 12,
       genreId: genres[2].id,
       formatId: formats[2].id,
       artistId: artists[2].id,

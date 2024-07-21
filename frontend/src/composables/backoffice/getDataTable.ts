@@ -1,5 +1,5 @@
-import { ref, onMounted } from "vue";
-import { ZodSchema, z } from "zod";
+import { onMounted, ref } from 'vue';
+import { z, ZodSchema } from 'zod';
 
 const baseURL = 'http://localhost:3000/api/v1/'; //TODO: Maybe use an ENV variable for prod or local
 
@@ -35,6 +35,7 @@ const getSchema = (url: string): ZodSchema<any> => {
                 quantity: z.number(),
                 price: z.string().regex(/^\d+(\.\d{2})?$/),
                 reviewCount: z.number().nullable(),
+                discount: z.number().nullable(),
                 ProductGenre: z.object({
                     id: z.number(),
                     name: z.string(),

@@ -4,17 +4,21 @@ import productAPI from '~/api/product';
 import { PaginatedProducts, Product } from '~/dto';
 
 export const useProduct = defineStore('product', () => {
-  const paginatedProduct = ref<PaginatedProducts>();
+  const paginatedProducts = ref<PaginatedProducts>();
   const products = ref<Array<Product>>();
   const product = ref<Product>();
 
   const fetchAllProducts = async(query?: string) => {
     const jwt_token = ''; // Replace with actual logic to get the JWT token
 
-    paginatedProduct.value = await productAPI.getAllProducts(jwt_token, query);
+    try {
+      paginatedProducts.value = await productAPI.getAllProducts(jwt_token, query);
+    } catch {
+      console.log('Error fail to fetch product paginated');
+    }
 
-    if (paginatedProduct.value) {
-      products.value = paginatedProduct.value.data;
+    if (paginatedProducts.value) {
+      products.value = paginatedProducts.value.data;
     } else {
       console.log('Error fail to fetch products');
     }
@@ -34,7 +38,7 @@ export const useProduct = defineStore('product', () => {
   };
 
   return {
-    paginatedProduct,
+    paginatedProducts,
     products,
     product,
     fetchAllProducts,
