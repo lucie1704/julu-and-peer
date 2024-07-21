@@ -121,7 +121,7 @@ fetchProducts(initialQueryString);
     <v-container class="my-3">
       <v-row>
         <v-col offset-md="3">
-          <div class="max-w-lg mt-3 ml-6">
+          <div class="max-w-lg mt-3 lg:ml-6">
             <div class="relative flex items-center border-2 border-gray-800 rounded-pill w-full h-12 rounded-lg bg-white overflow-hidden">
               <div class="ml-2 grid place-items-center h-full w-12 text-gray-800">
                 <v-icon
