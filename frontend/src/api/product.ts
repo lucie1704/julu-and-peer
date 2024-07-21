@@ -1,23 +1,19 @@
 import axios from 'axios';
 import { API_URL } from '~/constants';
-import { Product } from '~/dto';
+import { PaginatedProducts, Product } from '~/dto';
 
 const ROOT_URL = `${API_URL}/products`;
 
 interface ProductAPI {
-  getAllProducts: (jwt_token: string, cancel?: boolean) => Promise<Array<Product>>;
+  getAllProducts: (jwt_token: string, cancel?: boolean) => Promise<PaginatedProducts>;
   getProductById: (id: string, jwt_token: string, cancel?: boolean) => Promise<Product>;
 }
 const controller = new AbortController();
 
 const productAPI: ProductAPI = {
-
-  async getAllProducts(jwt_token: string, cancel:  boolean = false) {
-
+  async getAllProducts(jwt_token: string, cancel: boolean = false) {
     try {
-      if (cancel) {
-        controller.abort();
-      }
+      if (cancel) controller.abort();
 
       const res = await axios.get(`${ROOT_URL}`, {
         headers: {
@@ -41,9 +37,7 @@ const productAPI: ProductAPI = {
 
   async getProductById(id: string, jwt_token: string, cancel: boolean = false) {
     try {
-      if (cancel) {
-        controller.abort();
-      }
+      if (cancel) controller.abort();
 
       const res = await axios.get(`${ROOT_URL}/${id}`, {
         headers: {

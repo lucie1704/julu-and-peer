@@ -98,7 +98,7 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                             <router-link
                               class="btn"
                               :to="{
-                                name: 'product',
+                                name: 'home',
                                 params: { id: cartProduct.productId }
                               }"
                             >

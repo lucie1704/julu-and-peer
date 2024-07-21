@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
+const logger = require('../utils/logger');
 const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
@@ -19,9 +20,9 @@ if (config.use_env_variable) {
 (async () => {
   try {
     await sequelize.authenticate();
-    console.log('PostgreSQL connection successful!');
+    logger.info('PostgreSQL connection successful!')
   } catch (error) {
-    console.error('Unable to connect to the PostgreSQL database:', error);
+    logger.error('Unable to connect to the PostgreSQL database:', error);
   }
 })();
 
