@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static addHooks(models) {
       ProductArtist.addHook('afterUpdate', async (artist, { fields }) => {
         if (fields.includes('name') || fields.includes('description')) {
+           // On récupère tout les produits lié a l'artiste.
           const products = await models.Product.findAll({ where: { artistId: artist.id } });
           for (const product of products) {
             await denormalizeProduct(product, models);
