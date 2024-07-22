@@ -8,6 +8,7 @@ meta:
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { test_uid } from '~/constants';
 import { createCart } from '~/dto';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
@@ -27,7 +28,7 @@ const quantity = ref<number>(1);
 onMounted(async () => {
   await getProductDetail();
 
-  await customerStore.fetchByUserId('0190db89-b796-7f2b-a725-c8a3eefdef21');
+  await customerStore.fetchByUserId(test_uid);
 
   if (customerStore.customerId) return await getCustomerCart(customerStore.customerId);
 });

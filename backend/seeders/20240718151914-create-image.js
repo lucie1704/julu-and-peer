@@ -7,7 +7,7 @@ const { Product, ProductArtist, Image } = require('../models');
 module.exports = {
   async up(queryInterface, Sequelize) {
     // Retrieve all products and artist
-    const products = await Product.findAll({limit: 5});
+    const products = await Product.findAll();
     const artist = await ProductArtist.findOne({ limit: 1 });
 
     // Check that we have at least one product and one artist
@@ -20,7 +20,7 @@ module.exports = {
 
     // Loop through each product
     for (const product of products) {
-      // Loop through each artist
+      // Loop through each product
           images.push({
             id: uuidv7(),
             width: 1920,
@@ -28,7 +28,7 @@ module.exports = {
             type: 'jpg',
             description: `Image for ${product.name} by ${artist.name}`,
             alt: `Alt text for image ${product.name}`,
-            path: `../../public/product/${product.name.replace(/\s+/g, '-').toLowerCase()}-image${artist.name}.jpg`,
+            path: `~/public/product/${product.name.replace(/\s+/g, '-').toLowerCase()}-image${artist.name}.jpg`,
             createdAt: new Date(),
             updatedAt: new Date(),
             productId: product.id,

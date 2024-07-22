@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref, toRefs } from 'vue';
+import { test_uid } from '~/constants';
 import { createCart, Product } from '~/dto';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
@@ -17,7 +18,7 @@ const { product } = toRefs(props);
 
 onMounted(async () => {
   productStore.fetchProductById(product.value._id);
-  customerStore.fetchByUserId('0190db89-b796-7f2b-a725-c8a3eefdef21');
+  customerStore.fetchByUserId(test_uid);
   if (customerStore.customerId) {
     try {
       await cartStore.fetchCartByCustomerId(customerStore.customerId);
