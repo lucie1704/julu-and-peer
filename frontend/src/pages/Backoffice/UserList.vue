@@ -51,10 +51,6 @@ meta:
                   required
                   type="email"
                 />
-                <v-text-field
-                  v-model="item.photo"
-                  label="Photo"
-                />
                 <v-select
                   v-model="item.role"
                   :items="['user', 'admin']"

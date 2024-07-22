@@ -1,10 +1,12 @@
+import { Customer } from '~/dto/customer';
+
 export interface PaginatedProducts {
-  page: 1,
-  limit: 20,
-  totalItems: 6,
-  totalPages: number,
-  data: Array<Product>
-  facets: Record<string, Array<FacetItem>>
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+  data: Array<Product>;
+  facets: Record<string, Array<FacetItem>>;
 }
 
 export interface Product {
@@ -12,20 +14,21 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  discount: number;
+  quantity: number;
   reviewCount?: number;
-  availableStock: number;
-  imageSrc: string;
-  imageAlt: string;
+  discount: number;
   ProductGenre: Category;
   ProductFormat: Category;
   ProductArtist: Category;
+  ProductCustomerEvaluation: Array<CustomerEvaluation>;
+  Stock: Array<Stock>;
+  Image: Array<Image>;
 }
 
 export interface PaginatedCategories {
-  page: 1,
-  limit: 20,
-  totalItems: 6,
+  page: number,
+  limit: number,
+  totalItems: number,
   totalPages: number,
   data: Array<Category>
 }
@@ -39,4 +42,26 @@ export interface Category {
 type FacetItem = {
   _id: string;
   count: number;
+};
+
+type Image = {
+  width: number,
+  height: number,
+  type: string,
+  description: string,
+  alt: string,
+  path: string
+};
+
+type Stock = {
+  type: string,
+  quantity: number
+};
+
+type CustomerEvaluation = {
+  _id: string,
+  rating: number,
+  comment: string,
+  Customer: Customer,
+  updatedAt: Date
 };
