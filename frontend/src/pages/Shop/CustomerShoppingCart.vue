@@ -28,7 +28,7 @@ const deleteCartAfterTimeout = async () => {
 };
 
 onMounted(async () => {
-  await customerStore.fetchByUserId('3');
+  await customerStore.fetchByUserId('0190db89-b796-7f2b-a725-c8a3eefdef21');
   await cartStore.fetchCartProducts(customerStore.customerId as string);
 
   if (cartStore.cartProducts?.cart) {

@@ -135,13 +135,16 @@
 </script>
 
 <template>
-  <button
-    type="button"
-    class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
-    @click="createNewItem"
-  >
-    Nouveau
-  </button>
+  <div class="text-right">
+    <button
+      type="button"
+      class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
+      @click="createNewItem"
+    >
+      Nouveau
+    </button>
+  </div>
+
   <div class="container p-4 mx-auto">
     <div
       v-if="loading"
@@ -190,16 +193,16 @@
             </td>
             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
               <button
-                class="mr-2 text-indigo-600 hover:text-indigo-900"
+                class="mr-2 text-indigo-600 hover:bg-gray-100 rounded-full"
                 @click="editItem(item)"
               >
-                Modifier
+                <i class="fa-regular fa-edit text-xl py-2 px-3" />
               </button>
               <button
-                class="text-red-600 hover:text-red-900"
+                class="text-red-600 hover:bg-gray-100 rounded-full"
                 @click="deleteItem(item)"
               >
-                Supprimer
+                <i class="fa-regular fa-trash-can text-xl py-2 px-3" />
               </button>
             </td>
           </tr>

@@ -47,7 +47,6 @@ export const getDataTable = (url: string) => {
             }
 
             const jsonData = await response.json();
-            console.log(jsonData.data);
 
             // Ici on vas valider le schema avec Zod
             const schema = getSchema(url);

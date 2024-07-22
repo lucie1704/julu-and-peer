@@ -17,7 +17,7 @@ const { product } = toRefs(props);
 
 onMounted(async () => {
   productStore.fetchProductById(product.value._id);
-  customerStore.fetchByUserId('3');
+  customerStore.fetchByUserId('0190db89-b796-7f2b-a725-c8a3eefdef21');
   if (customerStore.customerId) {
     try {
       await cartStore.fetchCartByCustomerId(customerStore.customerId);
