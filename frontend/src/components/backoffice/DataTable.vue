@@ -1,136 +1,136 @@
 <script lang="ts" setup>
-    import axios from 'axios';
-    import { ref, computed } from 'vue';
+  import axios from 'axios';
+  import { computed, ref } from 'vue';
+  import { API_URL } from '~/constants';
 
-    const props = defineProps<{
-      data: Array<Record<string, any>> | null;
-      loading: boolean;
-      error: string | null;
-      url: string;
-      newItem: object | undefined;
-      currentPage: number,
-      totalPages: number,
-      setPage: (page: number) => void
-      refresh: () => void
-    }>();
+  const props = defineProps<{
+    data: Array<Record<string, any>> | null;
+    loading: boolean;
+    error: string | null;
+    url: string;
+    newItem: object | undefined;
+    currentPage: number,
+    totalPages: number,
+    setPage: (page: number) => void
+    refresh: () => void
+  }>();
 
-    // TODO: Use ENV variable for URL.
-    const base_url = `http://localhost:3000/api/v1/${props.url}`;
+  const base_url = `${API_URL}/${props.url}`;
 
-    const showEditItemDialog = ref(false);
-    const showDeleteItemDialog = ref(false);
-    const showErrorDialog = ref(false);
-    const errorMessage = ref('');
+  const showEditItemDialog = ref(false);
+  const showDeleteItemDialog = ref(false);
+  const showErrorDialog = ref(false);
+  const errorMessage = ref('');
 
-    const itemToEdit = ref();
-    const itemToDelete = ref();
-    const isEditing = ref(false);
+  const itemToEdit = ref();
+  const itemToDelete = ref();
+  const isEditing = ref(false);
 
-    const deleteItem = (item: Record<string, any>) => {
-      itemToDelete.value = item;
-      showDeleteItemDialog.value = true;
-    };
+  const deleteItem = (item: Record<string, any>) => {
+    itemToDelete.value = item;
+    showDeleteItemDialog.value = true;
+  };
 
-    const editItem = (item: Record<string, any>) => {
-      itemToEdit.value = { ...item };
-      isEditing.value = true;
-      showEditItemDialog.value = true;
-    };
+  const editItem = (item: Record<string, any>) => {
+    itemToEdit.value = { ...item };
+    isEditing.value = true;
+    showEditItemDialog.value = true;
+  };
 
-    const createNewItem = () => {
-      itemToEdit.value = { ...props.newItem };
-      isEditing.value = false;
-      showEditItemDialog.value = true;
-    };
+  const createNewItem = () => {
+    itemToEdit.value = { ...props.newItem };
+    isEditing.value = false;
+    showEditItemDialog.value = true;
+  };
 
-    // Submit logic for create and edit
-    const submitEditItem = async() => {
-      // Deconstruct id in order to not have it in req.body
-      const { id, ...data } = itemToEdit.value;
-      try {
-        if (isEditing.value) {
-          await axios.patch(`${base_url}/${id}`, data, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-        } else {
-          await axios.post(base_url, data, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-        }
-        showEditItemDialog.value = false;
-        props.refresh();
-      } catch (error) {
-        showEditItemDialog.value = false;
-        showErrorDialog.value = true;
-        if (axios.isAxiosError(error) && error.response) {
-          errorMessage.value = error.response.data.message;
-        } else {
-          errorMessage.value = 'Une erreur innatendu est survenue.';
-        }
-      }
-    };
-
-    // Submit logic for delete
-    const submitDeleteItem = async(item: Record<string, any>) => {
-      try {
-        await axios.delete(`${base_url}/${item.id}`, {
+  // Submit logic for create and edit
+  const submitEditItem = async() => {
+    // Deconstruct id in order to not have it in req.body
+    const { id, ...data } = itemToEdit.value;
+    try {
+      if (isEditing.value) {
+        await axios.patch(`${base_url}/${id}`, data, {
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
-        showDeleteItemDialog.value = false;
-        props.refresh();
-      } catch (error) {
-        showDeleteItemDialog.value = false;
-        showErrorDialog.value = true;
-        if (axios.isAxiosError(error) && error.response) {
-          errorMessage.value = error.response.data.message;
-        } else {
-          errorMessage.value = 'Une erreur innatendu est survenue.';
+      } else {
+        await axios.post(base_url, data, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+      showEditItemDialog.value = false;
+      props.refresh();
+    } catch (error) {
+      showEditItemDialog.value = false;
+      showErrorDialog.value = true;
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage.value = error.response.data.message;
+      } else {
+        errorMessage.value = 'Une erreur innatendu est survenue.';
+      }
+    }
+  };
+
+  // Submit logic for delete
+  const submitDeleteItem = async(item: Record<string, any>) => {
+    try {
+      await axios.delete(`${base_url}/${item.id}`, {
+        headers: {
+          'Content-Type': 'application/json'
         }
+      });
+      showDeleteItemDialog.value = false;
+      props.refresh();
+    } catch (error) {
+      showDeleteItemDialog.value = false;
+      showErrorDialog.value = true;
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage.value = error.response.data.message;
+      } else {
+        errorMessage.value = 'Une erreur innatendu est survenue.';
       }
-    };
+    }
+  };
 
-    // This part is for cleaning value before show in DataTable
-    const cleanDisplayValue = (value: any) => {
-      if (Array.isArray(value)) {
-        // Traitement spécifiques si on as des données dans un tableaux.
-        if (value.length > 0 && value[0].path) {
-          return value.map((img: any) => img.alt || 'No alt text').join(' ');
-        } else {
-          // Retourne une string vide si on as rien.
-          return '';
-        }
-      } else if (value && typeof value === 'object' && value.name) {
-        return value.name;
-      } else if (value && typeof value === 'object' && value.firstName && value.lastName) {
-        return `${value.firstName} ${value.lastName}`;
+  // This part is for cleaning value before show in DataTable
+  const cleanDisplayValue = (value: any) => {
+    if (Array.isArray(value)) {
+      // Traitement spécifiques si on as des données dans un tableaux.
+      if (value.length > 0 && value[0].path) {
+        return value.map((img: any) => img.alt || 'No alt text').join(' ');
+      } else {
+        // Retourne une string vide si on as rien.
+        return '';
       }
-      return value;
-    };
+    } else if (value && typeof value === 'object' && value.name) {
+      return value.name;
+    } else if (value && typeof value === 'object' && value.firstName && value.lastName) {
+      return `${value.firstName} ${value.lastName}`;
+    }
+    return value;
+  };
 
-    // This part is for pagination logic
-    const maxPagesToShow = 3;
-    const pagesToShow = computed(() => {
-      const pages = [];
-      let startPage = Math.max(1, props.currentPage - Math.floor(maxPagesToShow / 2));
-      let endPage = startPage + maxPagesToShow - 1;
+  // This part is for pagination logic
+  const maxPagesToShow = 3;
+  const pagesToShow = computed(() => {
+    const pages = [];
+    let startPage = Math.max(1, props.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = startPage + maxPagesToShow - 1;
 
-      if (endPage > props.totalPages) {
-        endPage = props.totalPages;
-        startPage = Math.max(1, endPage - maxPagesToShow + 1);
-      }
+    if (endPage > props.totalPages) {
+      endPage = props.totalPages;
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
 
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
 
-      return pages;
-    });
+    return pages;
+  });
 
 </script>
 

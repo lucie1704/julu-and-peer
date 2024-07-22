@@ -21,7 +21,7 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
     );
   }
 
-  const filteredBody = filterObject(req.body, 'firstname', 'lastname', 'photo');
+  const filteredBody = filterObject(req.body, 'firstname', 'lastname');
 
   const [nbUpdated, users] = await User.update(filteredBody, {
     where: {
@@ -32,8 +32,8 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
 
     if (!nbUpdated === 1) return next(new AppError(404));
 
-    const { id, firstname, lastname, email, photo } = users[0];
-    const user = { id, firstname, lastname, email, photo };
+    const { id, firstname, lastname, email } = users[0];
+    const user = { id, firstname, lastname, email };
 
     responseReturn(res, user);
 });
@@ -124,7 +124,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
     );
   }
 
-  const filteredBody = filterObject(req.body, 'firstname', 'lastname', 'email', 'photo');
+  const filteredBody = filterObject(req.body, 'firstname', 'lastname', 'email');
 
   const [nbUpdated, users] = await User.update(filteredBody, {
     where: {
@@ -135,7 +135,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 
     if (!nbUpdated === 1) return next(new AppError(404));
 
-    const { id, firstname, lastname, email, photo } = users[0];
-    const user = { id, firstname, lastname, email, photo };
+    const { id, firstname, lastname, email } = users[0];
+    const user = { id, firstname, lastname, email };
     responseReturn(res, user);
 });

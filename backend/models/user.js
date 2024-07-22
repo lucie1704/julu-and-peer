@@ -183,10 +183,6 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
-    photo: {
-      type: DataTypes.STRING(300),
-      defaultValue: 'default.jpg',
-    },
     role: {
       type: DataTypes.ENUM,
       values: ['user', 'admin'],

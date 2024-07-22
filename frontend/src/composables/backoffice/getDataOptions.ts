@@ -1,7 +1,8 @@
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+import { API_URL } from '~/constants';
 import { Options } from '~/dto/options';
 
-const baseURL = 'http://localhost:3000/api/v1/'; //TODO: Maybe use an ENV variable for prod or local
+const baseURL = API_URL + '/';
 
 export const getDataOptions = (url: string) => {
   const options = ref<Options>({});
