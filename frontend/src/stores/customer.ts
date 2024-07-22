@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import customerAPI from '~/api/customer';
-import { CustomerI, CustomerUpdateI } from '~/dto/customer';
+import { Customer, CustomerUpdateI } from '~/dto/customer';
 import router from '~/router/router';
 
 export const useCustomer = defineStore('customer', () => {
-  const customer = ref<CustomerI | null>(null);
+  const customer = ref<Customer | null>(null);
   const customerId = ref<string>();
   const message = ref<string | null>(null);
 

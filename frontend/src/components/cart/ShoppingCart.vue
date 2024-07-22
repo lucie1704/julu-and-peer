@@ -106,8 +106,8 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                                 class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
                               >
                                 <img
-                                  :src="cartProduct.Product.imageSrc"
-                                  :alt="cartProduct.Product.imageAlt"
+                                  :src="cartProduct.Product.Image[0].path"
+                                  :alt="cartProduct.Product.Image[0].alt"
                                   class="h-full w-full object-cover object-center"
                                 >
                               </div>

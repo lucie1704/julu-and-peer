@@ -3,19 +3,18 @@ export interface UserI {
   firstname: string;
   lastname: string;
   email: string;
-  photo: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
   deletedAt: string | null;
 }
 
-export interface CustomerI {
+export interface Customer {
   id: string;
   userId: string;
   firstName: string;
   lastName: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
   User: UserI;
 }
 

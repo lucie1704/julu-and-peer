@@ -31,7 +31,6 @@ module.exports = {
 
     // Common attributes
     const commonAttributes = {
-      photo: 'default.jpg',
       role: 'user',
       emailConfirmed: true,
       passwordChangedAt: new Date(),
@@ -47,7 +46,6 @@ module.exports = {
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        photo: user.photo || commonAttributes.photo,
         role: user.role || commonAttributes.role,
         emailConfirmed: commonAttributes.emailConfirmed,
         password: "Password123@",

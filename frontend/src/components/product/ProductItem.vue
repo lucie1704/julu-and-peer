@@ -72,13 +72,11 @@ const submitAddItemToCart = async () => {
     class="btn"
     :to="{ name: 'product', params: { id: product._id } }"
   >
-    <div
-      class="overflow-hidden"
-    >
+    <div class="overflow-hidden">
       <v-img
         :aspect-ratio="1"
-        :src="product.imageSrc"
-        :alt="product.imageAlt"
+        :src="product.Image[0] ? product.Image[0].path : '#'"
+        :alt="product.Image[0] ? product.Image[0].alt : ''"
         class="bg-pink h-full w-full object-center rounded-md"
       />
     </div>

@@ -60,6 +60,6 @@ export interface Order {
   billingInfo: BillingInfo;
   deliveryStatus: string;
   date: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 }
