@@ -5,12 +5,10 @@ const autorizationMiddleware = require('../../middleware/autorizationMiddleware'
 const router = express.Router();
 
 
-// router.use(authMiddleware);
-// router.use(autorizationMiddleware('admin'));
+router.use(authMiddleware);
 
 router
     .route('/')
-    .post(productFormatController.create)
     .get(productFormatController.getAll);
 
 router
@@ -20,6 +18,15 @@ router
 router
     .route('/:id')
     .get(productFormatController.getById)
+
+router.use(autorizationMiddleware('admin'));
+    
+router
+    .route('/')
+    .post(productFormatController.create)
+
+router
+    .route('/:id')
     .patch(productFormatController.update)
     .delete(productFormatController.delete);
 

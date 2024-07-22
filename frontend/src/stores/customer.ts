@@ -4,52 +4,53 @@ import customerAPI from '~/api/customer';
 import { CustomerI, CustomerUpdateI } from '~/dto/customer';
 import router from '~/router/router';
 
-const handleAsyncAction = async <T>(action: () => Promise<T>): Promise<T | null> => {
-  try {
-    return await action();
-  } catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
-};
-
 export const useCustomer = defineStore('customer', () => {
   const customer = ref<CustomerI | null>(null);
   const customerId = ref<string>();
+  const message = ref<string | null>(null);
 
-  const fetchById = async (customerId: string) => {
-    const jwt_token = '';
-    const response = await handleAsyncAction(() => customerAPI.getById(customerId, jwt_token));
-    customer.value = response;
+  const fetchById = async (id: string) => {
+    try {
+      const response = await customerAPI.getById(id);
+      customer.value = response;
+    } catch (error) {
+      message.value = `Échec de la récupération du client par ID : ${error}`;
+    }
   };
 
   const fetchByUserId = async (userId: string) => {
-    const jwt_token = '';
-    const response = await handleAsyncAction(() => customerAPI.getByUserId(userId, jwt_token));
-    customer.value = response;
-    customerId.value =  response?.id;
-  };
-
-  const update = async (customerId: string, customerData: CustomerUpdateI) => {
-    const jwt_token = '';
-    const response = await handleAsyncAction(() => customerAPI.update(customerId, customerData, jwt_token));
-    customer.value = response;
-  };
-
-  const remove = async (customerId: string) => {
-    const jwt_token = '';
-    const response = await handleAsyncAction(() => customerAPI.delete(customerId, jwt_token));
-    if (response === null) {
-      console.error('Failed to delete customer');
-      return;
+    try {
+      const response = await customerAPI.getByUserId(userId);
+      customer.value = response;
+      customerId.value = response?.id;
+    } catch (error) {
+      message.value = `Échec de la récupération du client par User ID : ${error}`;
     }
-    customer.value = null;
-    router.push({ name: 'home' });
+  };
+
+  const update = async (id: string, customerData: CustomerUpdateI) => {
+    try {
+      const response = await customerAPI.update(id, customerData);
+      customer.value = response;
+    } catch (error) {
+      message.value = `Échec de la mise à jour du client : ${error}`;
+    }
+  };
+
+  const remove = async (id: string) => {
+    try {
+      await customerAPI.delete(id);
+      customer.value = null;
+      router.push({ name: 'home' });
+    } catch (error) {
+      message.value = `Échec de la suppression du client : ${error}`;
+    }
   };
 
   return {
     customer,
     customerId,
+    message,
     fetchById,
     fetchByUserId,
     update,

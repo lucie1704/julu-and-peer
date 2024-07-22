@@ -30,8 +30,6 @@
     
     await customerStore.fetchByUserId(getUserId());
 
-    console.log("customerStore.customerId", customerStore.customerId,);
-
     if (customerStore.customerId) return await getCustomerCart(customerStore.customerId);
   });
   

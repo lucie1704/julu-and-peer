@@ -1,22 +1,23 @@
 import axios from 'axios';
 import { API_URL } from '~/constants';
 import { Order, Orders, PlaceOrder } from '~/dto';
+import { headers } from '~/utils/headers';
 
 const ROOT_URL = `${API_URL}/customerorder`;
 
 interface OrderAPI {
-  orderConfirm: (jwt_token: string, orderId: string) => Promise<string | null>;
+  orderConfirm: (orderId: string) => Promise<string | null>;
+
   placeOrder: (
-    jwt_token: string,
     data: PlaceOrder
   ) => Promise<{ message: string, orderId: string } | null>;
+
   getOrders: (
-    jwt_token: string,
     customerId: string,
     status: string
   ) => Promise<Orders | null>;
+
   getOrderDetails: (
-    jwt_token: string,
     orderId: string
   ) => Promise<Order | null>;
 }
@@ -27,53 +28,46 @@ const createHeaders = (jwt_token: string) => ({
 });
 
 const orderAPI: OrderAPI = {
-  async orderConfirm(jwt_token: string, orderId: string) {
+  async orderConfirm(orderId: string) {
     try {
       const res = await axios.get(`${ROOT_URL}/confirm-order/${orderId}`, {
-        headers: createHeaders(jwt_token)
+        headers: headers()
       });
       return res.data;
     } catch (error) {
-      console.error(`Error confirming order with ID ${orderId}:`, error);
       return null;
     }
   },
-  async placeOrder(jwt_token: string, data: PlaceOrder) {
+  async placeOrder(data: PlaceOrder) {
     try {
       const res = await axios.post(`${ROOT_URL}/place-order`, data, {
-        headers: createHeaders(jwt_token)
+        headers: headers()
       });
       return res.data;
     } catch (error) {
-      console.error('Error placing order:', error);
       return null;
     }
   },
-  async getOrders(jwt_token: string, customerId: string, status: string) {
+  async getOrders(customerId: string, status: string) {
     try {
       const res = await axios.get(
         `${ROOT_URL}/get-orders/${customerId}/${status}`,
         {
-          headers: createHeaders(jwt_token)
+          headers: headers()
         }
       );
       return res.data;
     } catch (error) {
-      console.error(
-        `Error getting orders for customer ID ${customerId} with status ${status}:`,
-        error
-      );
       return null;
     }
   },
-  async getOrderDetails(jwt_token: string, orderId: string) {
+  async getOrderDetails(orderId: string) {
     try {
       const res = await axios.get(`${ROOT_URL}/get-order-details/${orderId}`, {
-        headers: createHeaders(jwt_token)
+        headers:headers()
       });
       return res.data;
     } catch (error) {
-      console.error(`Error getting details for order ID ${orderId}:`, error);
       return null;
     }
   }

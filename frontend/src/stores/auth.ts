@@ -55,7 +55,6 @@ export const useAuth = defineStore('auth', () => {
     try {
       const response = await authAPI.signup(user);
       if (response) {
-        console.log("sign up ok");
         msg.value = 'Nous vous avons envoyé un email pour valider votre compte.';
         router.push('/confirmModal');
       } else {
@@ -83,16 +82,14 @@ export const useAuth = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      const newStatus = await authAPI.logout();
-      if (newStatus) {
-        jwtToken.value = null;
-        window.localStorage.removeItem('jwt_token');
-        router.push('/');
-      } else {
-        throw new Error('Échec de la déconnexion');
-      }
+      await authAPI.logout();
+      window.localStorage.removeItem('jwt_token');
+      window.localStorage.removeItem('roles');
+      jwtToken.value = null;
+      roles.value = null;
+      router.push('/');
     } catch (error) {
-      msg.value = 'Échec de la déconnexion : Impossible de traiter la demande.';
+      msg.value = 'Erreur lors de la déconnexion : Impossible de déconnecter.';
     }
   };
 

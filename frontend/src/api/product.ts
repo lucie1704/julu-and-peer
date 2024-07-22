@@ -1,69 +1,51 @@
 import axios from 'axios';
 import { API_URL } from '~/constants';
 import { PaginatedProducts, Product } from '~/dto';
+import { headers } from '~/utils/headers';
 
 const ROOT_URL = `${API_URL}/products`;
 
 interface ProductAPI {
-  getAllProducts: (jwt_token: string, query?: string, cancel?: boolean) => Promise<PaginatedProducts>;
-  getProductById: (id: string, jwt_token: string, cancel?: boolean) => Promise<Product>;
+  getAllProducts: (query?: string, cancel?: boolean) => Promise<PaginatedProducts>;
+  getProductById: (id: string, cancel?: boolean) => Promise<Product>;
 }
 const controller = new AbortController();
 
 const productAPI: ProductAPI = {
-  async getAllProducts(jwt_token: string, query?: string, cancel: boolean = false) {
+  async getAllProducts(query?: string, cancel: boolean = false) {
     try {
       if (cancel) controller.abort();
 
       if (query) {
         const res = await axios.get(`${ROOT_URL}${query}`, {
-          headers: {
-            Authorization: `Bearer ${jwt_token}`,
-            'Content-Type': 'application/json'
-          },
+          headers: headers(),
           signal: controller.signal
         });
         return res.data;
       } else {
         const res = await axios.get(`${ROOT_URL}`, {
-          headers: {
-            Authorization: `Bearer ${jwt_token}`,
-            'Content-Type': 'application/json'
-          },
+          headers: headers(),
           signal: controller.signal
         });
         return res.data;
       }
     } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log('Request canceled', error.message);
-      } else {
-        console.error('Error. Fails to get all products:', error);
-      }
       return null;
     }
   },
 
-  async getProductById(id: string, jwt_token: string, cancel: boolean = false) {
+  async getProductById(id: string, cancel: boolean = false) {
     try {
       if (cancel) controller.abort();
 
       const res = await axios.get(`${ROOT_URL}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: headers(),
         signal: controller.signal
       });
 
       return res.data;
 
     } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log('Request canceled', error.message);
-      } else {
-        console.error('Error. Fails to get product:', error);
-      }
       return null;
     }
   }

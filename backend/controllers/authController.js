@@ -53,7 +53,7 @@ exports.signup = catchAsyncError(async (req, res) => {
   await newUser.save();
 
   // Respond with success
-  res.status(202);
+  res.status(202).send();
 });
 
 exports.emailConfirm = catchAsyncError(async (req, res, next) => {
@@ -143,7 +143,7 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true
   });
-  res.status(204);
+  res.status(204).send();
 };
 
 exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
@@ -161,7 +161,7 @@ exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
 
     await new Email(user, resetPasswordtURL).sendPasswordReset();
 
-    res.status(202);
+    res.status(202).send();
     
   } catch (err) {
     user.passwordResetToken = undefined;

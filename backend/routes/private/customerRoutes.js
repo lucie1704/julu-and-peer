@@ -4,7 +4,7 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 router
     .route('/:id')
@@ -16,7 +16,7 @@ router
     .route('/user/:id')
     .get(customerController.getByUserId)
 
-// router.use(autorizationMiddleware('admin'));
+router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')

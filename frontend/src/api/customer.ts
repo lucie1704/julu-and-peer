@@ -1,116 +1,84 @@
 import axios from 'axios';
 import { API_URL } from '~/constants';
 import { CustomerI, CustomerUpdateI } from '~/dto/customer';
+import { headers } from '~/utils/headers';
 
 const ROOT_URL = `${API_URL}/customers`;
 
 interface CustomerAPI {
   getById: (
     id: string,
-    jwt_token: string,
     cancel?: boolean
   ) => Promise<CustomerI>;
 
   getByUserId: (
     id: string,
-    jwt_token: string,
     cancel?: boolean
   ) => Promise<CustomerI>;
 
   update: (
     id: string,
     customerData: CustomerUpdateI,
-    jwt_token: string
   ) => Promise<CustomerI>;
 
-  delete: (
-    id: string,
-    jwt_token: string
-  ) => Promise<void>;
+  delete: ( id: string,) => Promise<void>;
 }
 
 const controller = new AbortController();
 
 const customerAPI: CustomerAPI = {
 
-  async getById(id: string, jwt_token: string, cancel: boolean = false) {
+  async getById(id: string, cancel: boolean = false) {
     try {
       if (cancel) {
         controller.abort();
       }
 
       const res = await axios.get(`${ROOT_URL}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: headers(),
         signal: controller.signal
       });
 
       return res.data;
     } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log('Request canceled', error.message);
-      } else {
-        console.error('Error. Fails to get customer:', error);
-      }
       return null;
     }
   },
 
-  async getByUserId(id: string, jwt_token: string, cancel: boolean = false) {
+  async getByUserId(id: string, cancel: boolean = false) {
     try {
       if (cancel) {
         controller.abort();
       }
 
       const res = await axios.get(`${ROOT_URL}/user/${id}`, {
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: headers(),
         signal: controller.signal
       });
 
       return res.data;
     } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log('Request canceled', error.message);
-      } else {
-        console.error('Error. Fails to get customer:', error);
-      }
       return null;
     }
   },
 
-  async update(id: string, customerData: CustomerUpdateI, jwt_token: string) {
+  async update(id: string, customerData: CustomerUpdateI) {
     try {
       const res = await axios.put(`${ROOT_URL}/${id}`, customerData, {
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        }
+        headers: headers()
       });
 
       return res.data;
 
     } catch (error) {
-      console.error('Error. Fails to update customer:', error);
       return null;
     }
   },
 
-  async delete(id: string, jwt_token: string) {
-    try {
-      await axios.delete(`${ROOT_URL}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        }
+  async delete(id: string) {
+      return await axios.delete(`${ROOT_URL}/${id}`, {
+        headers: headers()
       });
-    } catch (error) {
-      console.error('Error. Fails to delete customer:', error);
-    }
   }
 };
 

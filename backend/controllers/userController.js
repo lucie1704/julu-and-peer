@@ -48,7 +48,7 @@ exports.deleteMe = catchAsyncError(async (req, res, next) => {
 
   if (!result) return next(new AppError(404));
 
-  res.status(204);
+  res.status(204).send();
 });
 
 // Méthodes pour Admin role
