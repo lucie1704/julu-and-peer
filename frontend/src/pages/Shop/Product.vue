@@ -90,8 +90,8 @@ const submitForm = async () => {
   >
     <v-img
       height="250"
-      :src="productStore.product.imageSrc"
-      :alt="productStore.product.imageAlt"
+      :src="productStore.product.Image[0].path"
+      :alt="productStore.product.Image[0].alt"
       cover
     />
 

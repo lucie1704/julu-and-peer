@@ -27,7 +27,7 @@ export const useCustomer = defineStore('customer', () => {
     const jwt_token = '';
     const response = await handleAsyncAction(() => customerAPI.getByUserId(userId, jwt_token));
     customer.value = response;
-    customerId.value = response?.id ? String(response.id) : null;
+    customerId.value = response?._id ? response._id : null;
   };
 
   const update = async (customerId: string, customerData: CustomerUpdateI) => {
