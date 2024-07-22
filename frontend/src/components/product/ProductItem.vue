@@ -73,10 +73,11 @@ const submitAddItemToCart = async () => {
     <div
       class="overflow-hidden"
     >
+      <!-- @TODO slider pour les images -->
       <v-img
         :aspect-ratio="1"
-        :src="product.imageSrc"
-        :alt="product.imageAlt"
+        :src="product.Image[0].path"
+        :alt="product.Image[0].alt"
         class="bg-pink h-full w-full object-center rounded-md"
       />
     </div>
