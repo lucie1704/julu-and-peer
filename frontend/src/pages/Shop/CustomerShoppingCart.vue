@@ -59,14 +59,14 @@
   };
   </script>
   
-  <template>
-    <shopping-cart
-      v-if="cartStore.cartProducts"
-      :cart-items="cartStore.cartProducts"
-      @update-quantity="updateQuantity"
-      @remove-item="removeItem"
-    />
-    <div v-else>
-      Pas encore de produits dans le panier
-    </div>
-  </template>
+<template>
+  <shopping-cart
+    v-if="cartStore.cartProducts"
+    :cart-items="cartStore.cartProducts"
+    @update-quantity="updateQuantity"
+    @remove-item="removeItem"
+  />
+  <div v-else>
+    Pas encore de produits dans le panier
+  </div>
+</template>

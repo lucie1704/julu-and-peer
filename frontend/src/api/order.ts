@@ -22,11 +22,6 @@ interface OrderAPI {
   ) => Promise<Order | null>;
 }
 
-const createHeaders = (jwt_token: string) => ({
-  Authorization: `Bearer ${jwt_token}`,
-  'Content-Type': 'application/json'
-});
-
 const orderAPI: OrderAPI = {
   async orderConfirm(orderId: string) {
     try {

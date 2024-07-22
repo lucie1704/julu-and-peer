@@ -5,8 +5,8 @@ import { Customer, CustomerUpdateI } from '~/dto/customer';
 import router from '~/router/router';
 
 export const useCustomer = defineStore('customer', () => {
-  const customer = ref<Customer | null>(null);
-  const customerId = ref<string>();
+  const customer = ref<Customer>();
+  const customerId = ref<string>('');
   const message = ref<string | null>(null);
 
   const fetchById = async (id: string) => {
@@ -40,7 +40,6 @@ export const useCustomer = defineStore('customer', () => {
   const remove = async (id: string) => {
     try {
       await customerAPI.delete(id);
-      customer.value = null;
       router.push({ name: 'home' });
     } catch (error) {
       message.value = `Échec de la suppression du client : ${error}`;

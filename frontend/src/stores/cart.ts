@@ -9,7 +9,7 @@ export const useCart = defineStore('cart', () => {
   const cartProducts = ref<CartProduct>();
   const cartItem = ref<CartItem>();
   const quantity = ref<number>();
-  const message = ref<string | null>(null);
+  const message = ref<string>();
 
   const fetchCartByCustomerId = async (customerId: string) => {
     try {
