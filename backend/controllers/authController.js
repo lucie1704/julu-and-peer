@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { User} = require('../models');
+const { User, Customer} = require('../models');
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const Email = require('./../utils/email');
@@ -85,8 +85,8 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
   user.emailConfirmed = true
   await user.save();
 
-  // Automatically login the user in after email confirmation
-  req.body.email = user.email;
+  const {id:userId, firstName, lastName}= user
+  await Customer.create({ userId, firstName, lastName });
 
   createSendToken(user, 200, req, res);
 });

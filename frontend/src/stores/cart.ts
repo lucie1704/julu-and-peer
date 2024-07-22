@@ -10,6 +10,8 @@ export const useCart = defineStore('cart', () => {
   const cartItem = ref<CartItem>();
   const quantity = ref<number>();
 
+  // const isCartExist = !!jwtToken.value
+
   const fetchCartByCustomerId = async (customerId: string) => {
     const jwt_token = '';
     try {

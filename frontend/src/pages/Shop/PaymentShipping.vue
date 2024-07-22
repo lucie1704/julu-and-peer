@@ -12,6 +12,7 @@ import router from '~/router/router.ts';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
 import { useOrder } from '~/stores/order';
+import { getUserId } from '~/utils/authUtils';
 
 const cartStore = useCart();
 const orderStore = useOrder();
@@ -34,7 +35,7 @@ const shippingInfo = ref({
 });
 
 onMounted(async() => {
-  await customerStore.fetchByUserId('3');
+  await customerStore.fetchByUserId(getUserId());
 
   await cartStore.fetchCartProducts(customerStore.customerId as string);
 });

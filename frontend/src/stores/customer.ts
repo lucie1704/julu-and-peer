@@ -15,7 +15,7 @@ const handleAsyncAction = async <T>(action: () => Promise<T>): Promise<T | null>
 
 export const useCustomer = defineStore('customer', () => {
   const customer = ref<CustomerI | null>(null);
-  const customerId = ref<string | null>(null);
+  const customerId = ref<string>();
 
   const fetchById = async (customerId: string) => {
     const jwt_token = '';
@@ -27,7 +27,7 @@ export const useCustomer = defineStore('customer', () => {
     const jwt_token = '';
     const response = await handleAsyncAction(() => customerAPI.getByUserId(userId, jwt_token));
     customer.value = response;
-    customerId.value = response?.id ? String(response.id) : null;
+    customerId.value =  String(response?.id);
   };
 
   const update = async (customerId: string, customerData: CustomerUpdateI) => {

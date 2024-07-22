@@ -10,6 +10,7 @@ import { onMounted } from 'vue';
 import { ShoppingCart } from '~/components';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
+import { getUserId } from '~/utils/authUtils';
 
 const cartStore = useCart();
 const customerStore = useCustomer();
@@ -28,7 +29,7 @@ const deleteCartAfterTimeout = async () => {
 };
 
 onMounted(async () => {
-  await customerStore.fetchByUserId('3');
+  await customerStore.fetchByUserId(getUserId());
   await cartStore.fetchCartProducts(customerStore.customerId as string);
 
   if (cartStore.cartProducts?.cart) {
