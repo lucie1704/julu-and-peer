@@ -141,7 +141,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 
     const [nbUpdated, products] = await Product.update(updatedData, {
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id,
         },
         returning: true,
     });
@@ -154,7 +154,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await Product.destroy({
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id,
         },
     });
 
