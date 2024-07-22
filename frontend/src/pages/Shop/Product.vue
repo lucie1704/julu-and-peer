@@ -65,7 +65,7 @@
       || !quantity.value)
       return console.error('Form validation failed!');
   
-    const productId = productStore.product.id;
+    const productId = productStore.product._id;
     const cartId = cartStore.cart.id as string;
   
     const data: createCart = {

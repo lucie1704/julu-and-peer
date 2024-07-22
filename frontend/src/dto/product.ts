@@ -8,7 +8,7 @@ export interface PaginatedProducts {
 }
 
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   price: number;
