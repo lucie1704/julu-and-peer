@@ -33,6 +33,19 @@ const shippingInfo = ref({
   phone: '',
 });
 
+const billingInfo = ref({
+  firstName: '',
+  lastName: '',
+  company: '',
+  address: '',
+  apartment: '',
+  city: '',
+  country: 'France',
+  state: '',
+  postalCode: '',
+  phone: '',
+});
+
 onMounted(async() => {
   await customerStore.fetchByUserId('3');
 
@@ -78,13 +91,14 @@ const submitForm = async () => {
     const orderData: PlaceOrder = {
     shippingFee: 20.0,
     products: cartStore.cartProducts.availableProducts.map((cartItem) => ({
-      id: Number(cartItem.Product?._id),
+      id: cartItem.Product?._id,
       name: cartItem.Product?.name,
       description: cartItem.Product?.description,
       price: cartItem.Product?.price,
       quantity: cartItem.quantity
     })),
     shippingInfo: shippingInfo.value,
+    billingInfo: billingInfo.value,
     email: email.value,
     customerId: customerStore.customerId as string
   };
