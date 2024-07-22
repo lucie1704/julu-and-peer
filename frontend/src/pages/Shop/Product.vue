@@ -88,7 +88,9 @@ const submitForm = async () => {
     class="mx-auto my-12"
     max-width="374"
   >
+    <!-- @TODO slider pour les images -->
     <v-img
+      v-if="productStore.product.Image[0]"
       height="250"
       :src="productStore.product.Image[0].path"
       :alt="productStore.product.Image[0].alt"
