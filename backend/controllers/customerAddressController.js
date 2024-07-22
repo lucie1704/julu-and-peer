@@ -30,7 +30,7 @@ exports.getById = catchAsyncError (async (req, res, next) => {
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, customerAddresses] = await CustomerAddress.update(req.body, {
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id,
         },
         returning: true,
     });
@@ -43,7 +43,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await CustomerAddress.destroy({
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id,
         },
     });
 

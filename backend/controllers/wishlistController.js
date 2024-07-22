@@ -39,7 +39,7 @@ exports.getById = catchAsyncError(async (req, res, next) => {
 exports.update = catchAsyncError(async (req, res, next) => {
   const [nbUpdated, wishlists] = await Wishlist.update(req.body, {
       where: {
-          id: parseInt(req.params.id, 10),
+          id: req.params.id,
       },
       returning: true,
   });
@@ -53,7 +53,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError (async (req, res, next) => {
   const result = await Wishlist.destroy({
     where: {
-        id: parseInt(req.params.id, 10),
+        id: req.params.id,
     },
   });
 
