@@ -1,5 +1,14 @@
+export interface PaginatedProducts {
+  page: 1,
+  limit: 20,
+  totalItems: 6,
+  totalPages: number,
+  data: Array<Product>
+  facets: Record<string, Array<FacetItem>>
+}
+
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   price: number;
@@ -8,25 +17,26 @@ export interface Product {
   availableStock: number;
   imageSrc: string;
   imageAlt: string;
-  ProductGenre: ProductGenre;
-  ProductFormat: ProductFormat;
-  ProductArtist: ProductArtist;
+  ProductGenre: Category;
+  ProductFormat: Category;
+  ProductArtist: Category;
 }
 
-interface ProductGenre {
+export interface PaginatedCategories {
+  page: 1,
+  limit: 20,
+  totalItems: 6,
+  totalPages: number,
+  data: Array<Category>
+}
+
+export interface Category {
   id: string;
   name: string;
   description: string;
 }
 
-interface ProductFormat {
-  id: string;
-  name: string;
-  description: string;
-}
-
-interface ProductArtist {
-  id: string;
-  name: string;
-  description: string;
-}
+type FacetItem = {
+  _id: string;
+  count: number;
+};

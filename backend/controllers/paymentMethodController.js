@@ -1,4 +1,4 @@
-const {PaymentMethod} = require('../models');
+const { PaymentMethod } = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
 const AppError = require('./../utils/appError');

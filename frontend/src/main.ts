@@ -17,6 +17,16 @@ const vuetify = createVuetify({
     VTextField: {
       density: 'comfortable',
       variant: 'outlined'
+    },
+    VSelect: {
+      density: 'compact',
+      variant: 'outlined'
+    },
+    VBtn: {
+      variant: 'flat',
+    },
+    VChip: {
+      variant: 'tonal',
     }
   },
   components,

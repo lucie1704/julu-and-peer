@@ -8,7 +8,7 @@ import { Navbar } from '~/components';
     <router-view />
   </v-main>
   <v-footer
-    color="blue"
+    color="black"
     class="d-flex flex-column"
   >
     <div class="text-center w-full">

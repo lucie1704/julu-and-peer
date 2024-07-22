@@ -1,34 +1,39 @@
 import axios from 'axios';
 import { API_URL } from '~/constants';
-import { Product } from '~/dto';
+import { PaginatedProducts, Product } from '~/dto';
 
 const ROOT_URL = `${API_URL}/products`;
 
 interface ProductAPI {
-  getAllProducts: (jwt_token: string, cancel?: boolean) => Promise<Array<Product>>;
+  getAllProducts: (jwt_token: string, query?: string, cancel?: boolean) => Promise<PaginatedProducts>;
   getProductById: (id: string, jwt_token: string, cancel?: boolean) => Promise<Product>;
 }
 const controller = new AbortController();
 
 const productAPI: ProductAPI = {
-
-  async getAllProducts(jwt_token: string, cancel:  boolean = false) {
-
+  async getAllProducts(jwt_token: string, query?: string, cancel: boolean = false) {
     try {
-      if (cancel) {
-        controller.abort();
+      if (cancel) controller.abort();
+
+      if (query) {
+        const res = await axios.get(`${ROOT_URL}${query}`, {
+          headers: {
+            Authorization: `Bearer ${jwt_token}`,
+            'Content-Type': 'application/json'
+          },
+          signal: controller.signal
+        });
+        return res.data;
+      } else {
+        const res = await axios.get(`${ROOT_URL}`, {
+          headers: {
+            Authorization: `Bearer ${jwt_token}`,
+            'Content-Type': 'application/json'
+          },
+          signal: controller.signal
+        });
+        return res.data;
       }
-
-      const res = await axios.get(`${ROOT_URL}`, {
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        },
-        signal: controller.signal
-      });
-
-      return res.data.data;
-
     } catch (error) {
       if (axios.isCancel(error)) {
         console.log('Request canceled', error.message);
@@ -41,9 +46,7 @@ const productAPI: ProductAPI = {
 
   async getProductById(id: string, jwt_token: string, cancel: boolean = false) {
     try {
-      if (cancel) {
-        controller.abort();
-      }
+      if (cancel) controller.abort();
 
       const res = await axios.get(`${ROOT_URL}/${id}`, {
         headers: {
