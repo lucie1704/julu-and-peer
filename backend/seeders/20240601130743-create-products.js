@@ -25,12 +25,10 @@ module.exports = {
       for (const artist of artists) {
         // Loop through each genre
         for (const genre of genres) {
-          // Create 3 products for each genre-format-artist combination
-          for (let i = 0; i < 2; i++) {
             productsData.push({
               id: uuidv7(),
-              name: `Vinyle ${genre.name} ${i + 1}`,
-              description: `Un produit du genre ${genre.name}, numéro ${i + 1}, par ${artist.name}, disponible en ${format.name}.`,
+              name: `Vinyle ${genre.name} ${artist.name}`,
+              description: `Un produit du genre ${genre.name}, par ${artist.name}, disponible en ${format.name}.`,
               price: (Math.random() * 1000).toFixed(2),
               genreId: genre.id,
               formatId: format.id,
@@ -38,7 +36,6 @@ module.exports = {
               createdAt: new Date(),
               updatedAt: new Date()
             });
-          }
         }
       }
     }

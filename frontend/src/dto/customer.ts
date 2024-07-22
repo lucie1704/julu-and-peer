@@ -1,5 +1,5 @@
 export interface UserI {
-  id: number;
+  id: string;
   firstname: string;
   lastname: string;
   email: string;
@@ -10,7 +10,7 @@ export interface UserI {
 }
 
 export interface CustomerI {
-  id: number;
+  id: string;
   userId: number;
   firstName: string;
   lastName: string;
@@ -20,7 +20,7 @@ export interface CustomerI {
 }
 
 export interface CustomerUpdateI {
-  userId: number;
+  userId: string;
   firstName: string;
   lastName: string;
 }

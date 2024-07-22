@@ -36,7 +36,7 @@ exports.getById = catchAsyncError(async (req, res, next) => {
 
 exports.getByUserId = catchAsyncError(async (req, res, next) => {
     const customer = await Customer.findOne({
-        where: {userId: parseInt(req.params.id, 10) },
+        where: {userId: req.params.id },
         include: {
             model: User,
         },
@@ -51,7 +51,7 @@ exports.getByUserId = catchAsyncError(async (req, res, next) => {
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, customers] = await Customer.update(req.body, {
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id
         },
         returning: true
     });
@@ -59,7 +59,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
     if (!nbUpdated === 1) return next(new AppError(404));
 
     const updatedCustomer = await Customer.findOne({
-        where: {id: parseInt(req.params.id, 10) },
+        where: {id: req.params.id},
         include: {
             model: User,
         },
@@ -71,7 +71,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await Customer.destroy({
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id
         },
     });
 

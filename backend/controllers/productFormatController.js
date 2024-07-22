@@ -42,7 +42,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 
     const [nbUpdated, formats] = await ProductFormat.update(req.body, {
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id
         },
         returning: true,
     });

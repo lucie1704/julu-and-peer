@@ -25,7 +25,7 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
 
   const [nbUpdated, users] = await User.update(filteredBody, {
     where: {
-        id: parseInt(req.user.id, 10),
+        id: req.user.id
     },
         returning: true,
     });
@@ -42,7 +42,7 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
 exports.deleteMe = catchAsyncError(async (req, res, next) => {
   const result = await User.destroy({
     where: {
-        id: parseInt(req.user.id, 10),
+        id: req.user.id
     },
   });
 
@@ -105,7 +105,7 @@ exports.create = catchAsyncError(async ( req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({
     where: {
-      id: parseInt(req.params.id, 10),
+      id: req.params.id
     },
   });
 
@@ -128,7 +128,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 
   const [nbUpdated, users] = await User.update(filteredBody, {
     where: {
-        id: parseInt(req.params.id, 10),
+        id: req.params.id
     },
         returning: true,
     });

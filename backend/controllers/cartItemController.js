@@ -44,7 +44,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await CartItem.destroy({
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id
         },
     });
 

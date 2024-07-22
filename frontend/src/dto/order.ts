@@ -20,14 +20,14 @@ export interface ShippingInfo {
 }
 
 export interface OrderSeller {
-  id: number;
+  id: string;
   products: Array<OrderProduct>;
   price: number;
   sellerId?: number;
 }
 
 export interface OrderProduct {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -39,8 +39,8 @@ export interface Orders {
 }
 
 export interface Order {
-  id: number;
-  customerId: number;
+  id: string;
+  customerId: string;
   products: Array<OrderProduct>;
   price: number;
   paymentStatus: string;

@@ -35,7 +35,6 @@ const authAPI: AuthAPI = {
       });
       return response.data;
     } catch (error) {
-      console.error('Error from backend API:', error);
       return null;
     }
   },
