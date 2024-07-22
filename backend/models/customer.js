@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Customer.hasMany(models.ProductCustomerEvaluation, { foreignKey: 'customerId', ...cascadeOptions });
       Customer.hasMany(models.Promotion, { foreignKey: 'customerId', ...cascadeOptions });
       Customer.hasMany(models.Wishlist, { foreignKey: 'customerId', ...cascadeOptions });
-      Customer.hasMany(models.Order, { foreignKey: 'customerId', ...cascadeOptions });
+      Customer.hasMany(models.CustomerOrder, { foreignKey: 'customerId', ...cascadeOptions });
     }
   }
 

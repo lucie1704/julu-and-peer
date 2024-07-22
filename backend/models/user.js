@@ -2,6 +2,7 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const AppError = require('../utils/appError');
+const { uuidv7 } = require('uuidv7');
 const { createMongoUser, updateMongoUser } = require("../dtos/denormalization/userMongo");
 
 const {
@@ -29,10 +30,35 @@ module.exports = (sequelize, DataTypes) => {
 
       User.addHook('beforeUpdate', async (user, { fields }) => {
         if (fields.includes("password")) {
-          console.log('beforeUpdate has been called on User Model');
           const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(12));
           user.passwordConfirmation = undefined;
           user.password = hash;
+        }
+      });
+
+      User.addHook('afterUpdate', async (user) => {
+        const existingCustomer = await models.Customer.findOne({ where: { userId: user.id } });
+        
+        if (!existingCustomer) {
+          await models.Customer.create({
+            id: uuidv7(),
+            userId: user.id,
+            firstName: user.firstname,
+            lastName: user.lastname,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            active: true,
+            deletedAt: null,
+          });
+        } else {
+          await existingCustomer.update({
+            userId: user.id,
+            firstName: user.firstname,
+            lastName: user.lastname,
+            updatedAt: new Date(),
+            active: user.active,
+            deletedAt: user.deletedAt
+          });
         }
       });
     }

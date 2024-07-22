@@ -23,7 +23,23 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
+      orderId: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'CustomerOrders',
+          key: 'id'
+        },
+        allowNull: false
+      },
+      productId: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'Products',
+          key: 'id'
+        },
+        allowNull: false
+      },
     });
   },
   async down(queryInterface, Sequelize) {

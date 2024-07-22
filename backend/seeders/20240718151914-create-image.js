@@ -7,7 +7,7 @@ const { Product, ProductArtist, Image } = require('../models');
 module.exports = {
   async up(queryInterface, Sequelize) {
     // Retrieve all products and artist
-    const products = await Product.findAll({limite: 5});
+    const products = await Product.findAll({limit: 5});
     const artist = await ProductArtist.findOne({ limit: 1 });
 
     // Check that we have at least one product and one artist

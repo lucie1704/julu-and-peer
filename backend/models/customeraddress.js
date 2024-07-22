@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
 
       CustomerAddress.belongsTo(models.Customer, { foreignKey: 'customerId', ...cascadeOptions });
       CustomerAddress.hasMany(models.PaymentMethod, { foreignKey: 'billingAddressId', ...cascadeOptions });
-      CustomerAddress.hasMany(models.Order, { foreignKey: 'customerAddress', ...cascadeOptions });
+      CustomerAddress.hasMany(models.CustomerOrder, { foreignKey: 'customerAddressId', ...cascadeOptions });
     }
   }
 

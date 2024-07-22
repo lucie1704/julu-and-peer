@@ -11,7 +11,7 @@ export interface UserI {
 
 export interface CustomerI {
   id: string;
-  userId: number;
+  userId: string;
   firstName: string;
   lastName: string;
   createdAt: string;

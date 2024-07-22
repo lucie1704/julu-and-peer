@@ -1,55 +1,54 @@
 <route lang="yaml">
-  path: /customer/payment/shipping
-  name: customer-payment-shipping
-  meta:
-    layout: AppLayout
-  </route>
-  
-  <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
-  import { PlaceOrder } from '~/dto';
-  import router from '~/router/router.ts';
-  import { useCart } from '~/stores/cart';
-  import { useCustomer } from '~/stores/customer';
-  import { useOrder } from '~/stores/order';
-  import { getUserId } from '~/utils/authUtils';
-  
-  const cartStore = useCart();
-  const orderStore = useOrder();
-  const customerStore = useCustomer();
-  
-  //TODO: Put email in shippingInfo
-  
-  const email = ref('');
-  const shippingInfo = ref({
-    firstName: '',
-    lastName: '',
-    company: '',
-    address: '',
-    apartment: '',
-    city: '',
-    country: 'France',
-    state: '',
-    postalCode: '',
-    phone: '',
-  });
-  
-  onMounted(async() => {
-    await customerStore.fetchByUserId(getUserId());
-  
+path: /customer/payment/shipping
+name: customer-payment-shipping
+meta:
+  layout: AppLayout
+</route>
+
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import { PlaceOrder } from '~/dto';
+import router from '~/router/router.ts';
+import { useCart } from '~/stores/cart';
+import { useCustomer } from '~/stores/customer';
+import { useOrder } from '~/stores/order';
+
+const cartStore = useCart();
+const orderStore = useOrder();
+const customerStore = useCustomer();
+
+//TODO: Put email in shippingInfo
+
+const email = ref('');
+const shippingInfo = ref({
+  firstName: '',
+  lastName: '',
+  company: '',
+  address: '',
+  apartment: '',
+  city: '',
+  country: 'France',
+  state: '',
+  postalCode: '',
+  phone: '',
+});
+
+onMounted(async() => {
+  await customerStore.fetchByUserId('3');
+
+  await cartStore.fetchCartProducts(customerStore.customerId as string);
+});
+
+const removeItem = async (cartItemId: string) => {
+  try {
+    await cartStore.deleteCartItem(cartItemId);
     await cartStore.fetchCartProducts(customerStore.customerId as string);
-  });
-  
-  const removeItem = async (cartItemId: string) => {
-    try {
-      await cartStore.deleteCartItem(cartItemId);
-      await cartStore.fetchCartProducts(customerStore.customerId as string);
-    } catch (error) {
-      console.error('Error removing cart item:', error);
-    }
-  };
-  
-  const updateQuantity = async (cartItemId: string, newQuantity: number) => {
+  } catch (error) {
+    console.error('Error removing cart item:', error);
+  }
+};
+
+const updateQuantity = async (cartItemId: string, newQuantity: number) => {
     try {
       await cartStore.cartItemQuantityUpdate({
         cartItemId,
@@ -59,9 +58,9 @@
     } catch (error) {
       console.error('Error updating cart item quantity:', error);
     }
-  };
+};
   
-  const calculateTotal = (
+const calculateTotal = (
     totalPrice: number,
     totalDiscount: number,
     shippingFee: number
@@ -69,9 +68,9 @@
     return computed(() => {
       return totalPrice + shippingFee - totalDiscount;
     });
-  };
+};
   
-  const submitForm = async () => {
+const submitForm = async () => {
     // @TODO: Implémenter le paiement
     if (!email.value || !shippingInfo.value || !cartStore.cartProducts)
       return console.error('Form validation failed!');
@@ -79,11 +78,11 @@
       const orderData: PlaceOrder = {
       shippingFee: 20.0,
       products: cartStore.cartProducts.availableProducts.map((cartItem) => ({
-        id: Number(cartItem.Product?.id),
+        id: cartItem.Product?.id,
         name: cartItem.Product?.name,
         description: cartItem.Product?.description,
         price: cartItem.Product?.price,
-        quantity: cartItem.quantity
+        quantity: cartItem.quantity,
       })),
       shippingInfo: shippingInfo.value,
       email: email.value,
