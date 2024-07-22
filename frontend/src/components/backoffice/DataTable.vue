@@ -1,6 +1,7 @@
 <script lang="ts" setup>
     import axios from 'axios';
     import { ref, computed } from 'vue';
+    import { API_URL } from '~/constants';
 
     const props = defineProps<{
       data: Array<Record<string, any>> | null;
@@ -15,7 +16,7 @@
     }>();
 
     // TODO: Use ENV variable for URL.
-    const base_url = `http://localhost:3000/api/v1/${props.url}`;
+    const base_url = `${API_URL}/${props.url}`;
 
     const showEditItemDialog = ref(false);
     const showDeleteItemDialog = ref(false);

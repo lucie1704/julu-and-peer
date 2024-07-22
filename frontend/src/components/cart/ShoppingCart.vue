@@ -45,14 +45,14 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
         leave-to="opacity-0"
       >
         <div
-          class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
         />
       </TransitionChild>
 
       <div class="fixed inset-0 overflow-hidden">
         <div class="absolute inset-0 overflow-hidden">
           <div
-            class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10"
+            class="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none"
           >
             <TransitionChild
               as="template"
@@ -63,23 +63,23 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
               leave-from="translate-x-0"
               leave-to="translate-x-full"
             >
-              <DialogPanel class="pointer-events-auto w-screen max-w-md">
+              <DialogPanel class="w-screen max-w-md pointer-events-auto">
                 <div
-                  class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl"
+                  class="flex flex-col h-full overflow-y-scroll bg-white shadow-xl"
                 >
-                  <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                  <div class="flex-1 px-4 py-6 overflow-y-auto sm:px-6">
                     <div class="flex items-start justify-between">
                       <DialogTitle class="text-lg font-medium text-gray-900">
-                        Shopping cart
+                        Votre panier
                       </DialogTitle>
-                      <div class="ml-3 flex h-7 items-center">
+                      <div class="flex items-center ml-3 h-7">
                         <button
                           type="button"
-                          class="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
+                          class="relative p-2 -m-2 text-gray-400 hover:text-gray-500"
                           @click="open = false"
                         >
                           <span class="absolute -inset-0.5" />
-                          <span class="sr-only">Close panel</span>
+                          <span class="sr-only">Fermer</span>
                           <v-icon icon="fa-solid fa-xmark" />
                         </button>
                       </div>
@@ -103,16 +103,16 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                               }"
                             >
                               <div
-                                class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
+                                class="flex-shrink-0 w-24 h-24 overflow-hidden border border-gray-200 rounded-md"
                               >
                                 <img
                                   :src="cartProduct.Product.imageSrc"
                                   :alt="cartProduct.Product.imageAlt"
-                                  class="h-full w-full object-cover object-center"
+                                  class="object-cover object-center w-full h-full"
                                 >
                               </div>
                             </router-link>
-                            <div class="ml-4 flex flex-1 flex-col">
+                            <div class="flex flex-col flex-1 ml-4">
                               <div>
                                 <div
                                   class="flex justify-between text-base font-medium text-gray-900"
@@ -129,11 +129,11 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                                 </p>
                               </div>
                               <div
-                                class="flex flex-1 items-end justify-between text-sm"
+                                class="flex items-end justify-between flex-1 text-sm"
                               >
                                 <select
                                   v-model="cartProduct.quantity"
-                                  class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                  class="block p-1 m-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                   @change="cartProduct.id && emitUpdateQuantity(cartProduct.id, cartProduct.quantity )"
                                 >
                                   <option
@@ -150,7 +150,7 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                                     class="font-medium text-indigo-600 hover:text-indigo-500"
                                     @click="cartProduct.id && emitRemoveItem(cartProduct.id)"
                                   >
-                                    Remove
+                                    Supprimer
                                   </button>
                                 </div>
                               </div>
@@ -163,48 +163,48 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
 
                   <div
                     v-if="cartItems"
-                    class="border-t border-gray-200 px-4 py-6 sm:px-6"
+                    class="px-4 py-6 border-t border-gray-200 sm:px-6"
                   >
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
-                      <p>Subtotal</p>
+                      <p>Sous-total</p>
                       <p>{{ cartItems.totalPrice }}</p>
                     </div>
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
-                      <p>Total Discount</p>
+                      <p>Remise Totale</p>
                       <p>{{ cartItems.totalDiscount }}</p>
                     </div>
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
-                      <p>Total Products</p>
+                      <p>Total Produits</p>
                       <p>{{ cartItems.cartTotalProductCount }}</p>
                     </div>
                     <p class="mt-0.5 text-sm text-gray-500">
-                      Shipping and taxes calculated at checkout.
+                      Frais de port et taxes calculés avant le paiement.
                     </p>
                     <div class="mt-6">
                       <router-link
-                        class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                        class="flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700"
                         to="/customer/payment/shipping"
                       >
-                        Checkout
+                        Passer la commande
                       </router-link>
                     </div>
                     <div
-                      class="mt-6 flex justify-center text-center text-sm text-gray-500"
+                      class="flex justify-center mt-6 text-sm text-center text-gray-500"
                     >
                       <p>
-                        or
+                        ou
                         <button
                           type="button"
                           class="font-medium text-indigo-600 hover:text-indigo-500"
                           @click="open = false"
                         >
-                          Continue Shopping
+                          Continuer vos achats
                           <span aria-hidden="true"> &rarr;</span>
                         </button>
                       </p>

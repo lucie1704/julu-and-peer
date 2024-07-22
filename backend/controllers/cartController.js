@@ -39,6 +39,8 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
         }
     });
 
+    totalPrice = parseFloat(totalPrice.toFixed(2));
+
     const cartTotalProductCount = cart.CartItems.length;
     const shippingFee = 50;
 

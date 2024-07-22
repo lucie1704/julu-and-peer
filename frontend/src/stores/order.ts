@@ -22,6 +22,7 @@ export const useOrder = defineStore('order', () => {
   const placeOrder = async (orderData: PlaceOrder) => {
     const jwt_token = '';
     try {
+      // TODO: maybe override this part for stripe.
       const response = await orderAPI.placeOrder(jwt_token, orderData);
       if (response) {
         orderId.value = response.orderId;

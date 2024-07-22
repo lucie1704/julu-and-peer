@@ -41,6 +41,7 @@ module.exports = {
       'brace-style': ['error', '1tbs', { allowSingleLine: true }],
       'no-lonely-if': 'error',
       'quotes': ['warn', 'single'],
+      'no-explicit-any': 'off',
     },
     overrides: [
       {

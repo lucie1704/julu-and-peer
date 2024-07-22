@@ -10,6 +10,8 @@ const productFormatRouter = require('./routes/private/productFormatRoutes');
 const productGenreRouter = require('./routes/private/productGenreRoutes');
 const productCustomerEvaluationRouter = require('./routes/private/productCustomerEvaluationRoutes');
 const paymentMethodRouter = require('./routes/private/paymentMethodRoutes');
+const stripeRouter = require('./routes/private/stripeRoutes');
+const webhookRouter = require('./routes/private/webhookRoutes');
 const cartRouter = require('./routes/private/cartRoutes');
 const cartItemRouter = require('./routes/private/cartItemRoutes');
 const wishlistRouter = require('./routes/private/wishlistRoutes');
@@ -27,6 +29,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const logger = require('./utils/logger');
+const initDeliveryCronJob = require("./cron/delivery");
 
 require("./models/mongo/db");
 
@@ -111,6 +114,8 @@ app.use('/api/productformats', productFormatRouter);
 app.use('/api/productgenres', productGenreRouter);
 app.use('/api/productcustomerevaluations', productCustomerEvaluationRouter);
 app.use('/api/paymentmethods', paymentMethodRouter);
+app.use('/api/stripe', stripeRouter);
+app.use('/api/webhook', webhookRouter);
 app.use('/api/carts', cartRouter);
 app.use('/api/cartitem', cartItemRouter);
 app.use('/api/wishlist', wishlistRouter);
@@ -133,5 +138,8 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+
+// Init the cron job for delivery
+initDeliveryCronJob();
 
 module.exports = app;

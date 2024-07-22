@@ -9,7 +9,6 @@ export interface PlaceOrder {
 export interface ShippingInfo {
   firstName: string;
   lastName: string;
-  company: string;
   address: string;
   apartment: string;
   city: string;

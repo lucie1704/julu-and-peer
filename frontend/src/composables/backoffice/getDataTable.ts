@@ -1,7 +1,6 @@
 import { ref, onMounted } from "vue";
 import { ZodSchema, z } from "zod";
-
-const baseURL = 'http://localhost:3000/api/v1/'; //TODO: Maybe use an ENV variable for prod or local
+import { API_URL } from '~/constants';
 
 // On défini des schémas Zod dynamique pour toutes les données
 const getSchema = (url: string): ZodSchema<any> => {
@@ -110,7 +109,7 @@ export const getDataTable = (url: string) => {
         error.value = null;
 
         try {
-            const response = await fetch(`${baseURL}${url}?page=${page}`);
+            const response = await fetch(`${API_URL}/${url}?page=${page}`);
             if (!response.ok) {
                 throw new Error('Une erreur est survenue lors de la récupération des données.');
             }

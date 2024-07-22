@@ -1,7 +1,6 @@
 import { ref, onMounted } from 'vue';
 import { Options } from '~/dto/options';
-
-const baseURL = 'http://localhost:3000/api/v1/'; //TODO: Maybe use an ENV variable for prod or local
+import { API_URL } from '~/constants';
 
 export const getDataOptions = (url: string) => {
   const options = ref<Options>({});
@@ -13,7 +12,7 @@ export const getDataOptions = (url: string) => {
     error.value = null;
 
     try {
-      const response = await fetch(`${baseURL}${url}/options`);
+      const response = await fetch(`${API_URL}/${url}/options`);
 
       const jsonData = await response.json();
 
