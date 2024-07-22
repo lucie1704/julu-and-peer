@@ -11,6 +11,10 @@ router
     .get(orderController.getAll);
 
 router
+    .route('/options')
+    .get(orderController.options);
+
+router
     .route('/:id')
     .get(orderController.getById)
 

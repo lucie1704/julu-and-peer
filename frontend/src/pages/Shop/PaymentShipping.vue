@@ -7,22 +7,24 @@ meta:
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { PlaceOrder } from '~/dto';
+import { PlaceOrder, ShippingInfo, BillingInfo } from '~/dto';
 import router from '~/router/router.ts';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
 import { useOrder } from '~/stores/order';
 import { loadStripe } from '@stripe/stripe-js';
 import { API_URL, STRIPE_PUBLIC_KEY } from '~/constants';
+// import { getDataOptions } from '~/composables/backoffice/getDataOptions';
 
-// TODO: Rajouter une liste d'adresses de l'utilisateur pour préremplir les formulaires.
+// TODO: Rajouter une liste d'adresses de l'utilisateur pour préremplir les formulaires que l'on récupères des options.
+// const { options } = getDataOptions('customerorder');
 
 const cartStore = useCart();
 const orderStore = useOrder();
 const customerStore = useCustomer();
 
 const email = ref('');
-const shippingInfo = ref({
+const shippingInfo = ref<ShippingInfo>({
   firstName: '',
   lastName: '',
   address: '',
@@ -34,7 +36,7 @@ const shippingInfo = ref({
   phone: '',
 });
 
-const billingInfo = ref({
+const billingInfo = ref<BillingInfo>({
   firstName: '',
   lastName: '',
   address: '',
@@ -46,7 +48,7 @@ const billingInfo = ref({
   phone: ''
 });
 
-const shippingErrors = ref({
+const shippingErrors = ref<Record<keyof ShippingInfo, boolean>>({
   firstName: false,
   lastName: false,
   address: false,
@@ -58,7 +60,7 @@ const shippingErrors = ref({
   phone: false,
 });
 
-const billingErrors = ref({
+const billingErrors = ref<Record<keyof BillingInfo, boolean>>({
   firstName: false,
   lastName: false,
   address: false,
@@ -82,20 +84,22 @@ const validateForm = (): boolean => {
   let isValid = true;
 
   Object.keys(shippingErrors.value).forEach(key => {
-    if (shippingInfo.value[key].trim() === '') {
-      shippingErrors.value[key] = true;
+    const typedKey = key as keyof ShippingInfo;
+    if (shippingInfo.value[typedKey].trim() === '') {
+      shippingErrors.value[typedKey] = true;
       isValid = false;
     } else {
-      shippingErrors.value[key] = false;
+      shippingErrors.value[typedKey] = false;
     }
   });
 
   Object.keys(billingErrors.value).forEach(key => {
-    if (billingInfo.value[key].trim() === '') {
-      billingErrors.value[key] = true;
+    const typedKey = key as keyof BillingInfo;
+    if (billingInfo.value[typedKey].trim() === '') {
+      billingErrors.value[typedKey] = true;
       isValid = false;
     } else {
-      billingErrors.value[key] = false;
+      billingErrors.value[typedKey] = false;
     }
   });
 

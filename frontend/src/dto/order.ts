@@ -18,6 +18,18 @@ export interface ShippingInfo {
   phone: string;
 }
 
+export interface BillingInfo {
+  firstName: string;
+  lastName: string;
+  address: string;
+  apartment: string;
+  city: string;
+  country: string;
+  state: string;
+  postalCode: string;
+  phone: string;
+}
+
 export interface OrderSeller {
   id: number;
   products: Array<OrderProduct>;

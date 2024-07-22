@@ -6,16 +6,16 @@ const catchAsyncError = require('../utils/catchAsyncError');
 
 
 exports.stripe = catchAsyncError(async (req, res, next) => {
+    // TODO : Rajouter les events sur le vrai webhook api.
     // TODO : Handle Event Webhook Stripe
     const event = req.body;
 
-  // Handle the event
+    // checkout.session.completed
+
+    // Handle the event
     switch (event.type) {
-        case 'payment_intent.canceled':
-            const paymentIntentCanceled = event.data.object;
-            break;
-        case 'payment_intent.succeeded':
-            const paymentIntentSucceeded = event.data.object;
+        case 'checkout.session.completed':
+            const checkoutSessionCompleted = event.data.object;
             break;
         // TODO: Save Payment Method ?
         // case 'payment_method.attached':
@@ -23,7 +23,7 @@ exports.stripe = catchAsyncError(async (req, res, next) => {
         //     break;
         // ... handle other event types
         default:
-            console.log(`Unhandled event type ${event.type}`);
+            console.log(`Unhandled stripe webhook event type ${event.type}`);
     }
 
     // Return received True for Stripe.
