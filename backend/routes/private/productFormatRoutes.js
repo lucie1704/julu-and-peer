@@ -1,12 +1,9 @@
 const express = require('express');
 const productFormatController = require('../../controllers/productFormatController');
-const authMiddleware = require('../../middleware/authMiddleware');
-const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
+const checkAdmin = require('../../middleware/checkAdmin');
 
-
-router.use(authMiddleware);
-
+// Public
 router
     .route('/')
     .get(productFormatController.getAll);
@@ -19,7 +16,9 @@ router
     .route('/:id')
     .get(productFormatController.getById)
 
-router.use(autorizationMiddleware('admin'));
+
+// Only authentified admin user
+router.use(checkAdmin);
     
 router
     .route('/')

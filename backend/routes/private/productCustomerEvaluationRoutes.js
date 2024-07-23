@@ -4,7 +4,7 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
-
+// Private
 router.use(authMiddleware);
 
 router
@@ -17,6 +17,7 @@ router
     .patch(productCustomerEvaluationController.update)
     .delete(productCustomerEvaluationController.delete);
 
+// Admin
 router.use(autorizationMiddleware('admin'));
 
 router

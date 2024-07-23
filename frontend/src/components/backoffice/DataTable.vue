@@ -3,6 +3,7 @@
   import { computed, ref } from 'vue';
   import { DeleteButton } from '~/components';
   import { API_URL } from '~/constants';
+  import { headers } from '~/utils/headers';
 
   const props = defineProps<{
     data: Array<Record<string, any>> | null;
@@ -49,15 +50,11 @@
     try {
       if (isEditing.value) {
         await axios.patch(`${base_url}/${id}`, data, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: headers(),
         });
       } else {
         await axios.post(base_url, data, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: headers(),
         });
       }
       showEditItemDialog.value = false;

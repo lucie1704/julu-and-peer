@@ -87,16 +87,15 @@ exports.get = catchAsyncError(async ( req, res, next) => {
 
 exports.create = catchAsyncError(async ( req, res, next) => {
   const { firstname, lastname, email, password, passwordConfirmation } = req.body;
-  
-  const user = User.build({
+  const user = await User.create({
     id,
     firstname,
     lastname,
     email,
     password,
     passwordConfirmation,
-  });
-  await user.save();
+    emailConfirmed: true,
+  });  
 
   responseReturn(res, user);
 });
