@@ -110,6 +110,27 @@
     return pages;
   });
 
+  const deleteButtonText = computed(() => {
+  switch (props.url) {
+    case 'products':
+      return 'ce produit';
+    case 'categories':
+      return 'cette catégorie';
+    case 'orders':
+      return 'cette commande';
+    case 'users':
+      return 'cet utilisateur';
+    case 'productartists':
+      return 'cet artiste';
+    case 'productgenres':
+      return 'ce genre';
+    case 'productformats':
+      return 'ce format';
+    default:
+      return 'cet élément';
+  }
+});
+
 </script>
 
 <template>
@@ -179,7 +200,7 @@
                 </button>
                 <delete-button
                   :item-id="item.id ? item.id : item._id"
-                  text="ce produit"
+                  :text="deleteButtonText"
                   :delete-url="url"
                   @click="updateDeleteItem(item)"
                   @item-deleted="props.refresh();"
