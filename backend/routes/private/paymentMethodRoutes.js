@@ -4,13 +4,19 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
+
 router
     .route('/')
     .post(paymentMethodController.create)
 
+router
+    .route('/:id')
+    .get(paymentMethodController.getById)
+    .patch(paymentMethodController.update)
 
-// router.use(autorizationMiddleware('admin'));
+
+router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')
@@ -18,8 +24,6 @@ router
 
 router
     .route('/:id')
-    .get(paymentMethodController.getById)
-    .patch(paymentMethodController.update)
     .delete(paymentMethodController.delete);
 
 module.exports = router;

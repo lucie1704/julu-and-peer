@@ -1,8 +1,8 @@
 <route lang="yaml">
-path: /product/:id
-name: product
-meta:
-  layout: AppLayout
+  path: /product/:id
+  name: product
+  meta:
+    layout: AppLayout
 </route>
 
 <script lang="ts" setup>
@@ -41,6 +41,7 @@ const getProductDetail = async () => {
     console.error('Error getting product details:', error);
   }
 };
+
 const getCustomerCart = async (customerId: string) => {
   // Get customer cart
   try {
@@ -91,10 +92,10 @@ const submitForm = async () => {
   >
     <!-- @TODO slider pour les images -->
     <v-img
-      v-if="productStore.product.Image[0]"
+      v-if="productStore.product.Images[0]"
       height="250"
-      :src="productStore.product.Image[0].path"
-      :alt="productStore.product.Image[0].alt"
+      :src="productStore.product.Images[0].path"
+      :alt="productStore.product.Images[0].alt"
       cover
     />
 

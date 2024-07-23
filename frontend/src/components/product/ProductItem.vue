@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { onMounted, ref, toRefs } from 'vue';
-import { test_uid } from '~/constants';
 import { createCart, Product } from '~/dto';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
 import { useProduct } from '~/stores/product';
+import { getUserId } from '~/utils/authUtils';
 
 const productStore = useProduct();
 const cartStore = useCart();
@@ -18,7 +18,8 @@ const { product } = toRefs(props);
 
 onMounted(async () => {
   productStore.fetchProductById(product.value._id);
-  customerStore.fetchByUserId(test_uid);
+  await customerStore.fetchByUserId(getUserId());
+
   if (customerStore.customerId) {
     try {
       await cartStore.fetchCartByCustomerId(customerStore.customerId);
@@ -74,9 +75,9 @@ const submitAddItemToCart = async () => {
     <div class="overflow-hidden">
       <v-img
         :aspect-ratio="1"
-        :src="product.Image[0] ? product.Image[0].path : '#'"
-        :alt="product.Image[0] ? product.Image[0].alt : ''"
-        class="bg-pink h-full w-full object-center rounded-md"
+        :src="product.Images[0] ? product.Images[0].path : '#'"
+        :alt="product.Images[0] ? product.Images[0].alt : ''"
+        class="object-center w-full h-full rounded-md bg-pink"
       />
     </div>
     <div class="mt-4">
@@ -93,7 +94,7 @@ const submitAddItemToCart = async () => {
         </v-col>
       </v-row>
       <v-row no-gutters>
-        <v-col class="space-x-3 my-2">
+        <v-col class="my-2 space-x-3">
           <v-chip color="orange">
             {{ product.ProductFormat.name }}
           </v-chip>
@@ -103,7 +104,7 @@ const submitAddItemToCart = async () => {
         </v-col>
       </v-row>
       <v-row no-gutters>
-        <v-col class="flex justify-end items-center">
+        <v-col class="flex items-center justify-end">
           <div class="flex items-center">
             <div :class="product.discount ? 'text-red text-sm flex mr-3' : 'font-bold text-xl' ">
               <h3 :class="product.discount ? 'line-through' : ''">
@@ -111,14 +112,14 @@ const submitAddItemToCart = async () => {
               </h3>
               <p
                 v-if="product.discount"
-                class="font-bold ml-1"
+                class="ml-1 font-bold"
               >
                 -{{ product.discount }}%
               </p>
             </div>
             <h3
               v-if="product.discount"
-              class="font-bold text-xl"
+              class="text-xl font-bold"
             >
               {{ discountedPrice(product.price, product.discount) }}€
             </h3>
@@ -127,7 +128,7 @@ const submitAddItemToCart = async () => {
       </v-row>
     </div>
   </router-link>
-  <div class="mt-2 flex justify-center">
+  <div class="flex justify-center mt-2">
     <v-btn
       variant="outlined"
       density="comfortable"

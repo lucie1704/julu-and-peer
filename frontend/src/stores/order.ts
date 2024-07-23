@@ -10,58 +10,49 @@ export const useOrder = defineStore('order', () => {
   const orderId = ref<string>();
 
   const orderConfirm = async (orderId: string) => {
-    const jwt_token = '';
     try {
-      const response = await orderAPI.orderConfirm(jwt_token, orderId);
+      const response = await orderAPI.orderConfirm(orderId);
       message.value = response;
     } catch (error) {
-      console.error('Confirm order fails:', error);
+      message.value = `Échec de la confirmation de la commande : ${error}`;
     }
   };
 
   const placeOrder = async (orderData: PlaceOrder) => {
-    const jwt_token = '';
     try {
-      const response = await orderAPI.placeOrder(jwt_token, orderData);
+      const response = await orderAPI.placeOrder(orderData);
       if (response) {
         orderId.value = response.orderId;
         message.value = response.message;
       } else {
-        console.error('Error placing order: Received null response');
+        message.value = "Erreur lors de la passation de la commande : Réponse nulle reçue";
       }
     } catch (error) {
-      console.error('Error placing order:', error);
+      message.value = `Erreur lors de la passation de la commande : ${error}`;
     }
   };
 
   const fetchOrders = async (payload: {
-    jwt_token: string,
     customerId: string,
     status: string
   }) => {
-    const jwt_token = '';
     try {
       const response = await orderAPI.getOrders(
-        jwt_token,
         payload.customerId,
         payload.status
       );
       orders.value = response;
     } catch (error) {
-      console.error(
-        `Error getting orders for customer ID ${payload.customerId} with status ${payload.status}:`,
-        error
-      );
+      message.value = `Erreur lors de la récupération des commandes pour l'ID client ${payload.customerId} avec le statut ${payload.status} : ${error}`;
     }
   };
 
   const fetchOrderDetails = async (orderId: string) => {
-    const jwt_token = '';
     try {
-      const response = await orderAPI.getOrderDetails(jwt_token, orderId);
+      const response = await orderAPI.getOrderDetails(orderId);
       order.value = response;
     } catch (error) {
-      console.error(`Error getting details for order ID ${orderId}:`, error);
+      message.value = `Erreur lors de la récupération des détails pour l'ID de commande ${orderId} : ${error}`;
     }
   };
 

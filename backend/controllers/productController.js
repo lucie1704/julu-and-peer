@@ -25,7 +25,7 @@ exports.create = catchAsyncError(async (req, res) => {
 });
 
 exports.getAll = catchAsyncError(async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
+    const page = req.query.page || 1;
     const limit = 20;
     const offset    = (page - 1) * limit;
     const search    = req.query.search || "";
@@ -141,9 +141,10 @@ exports.update = catchAsyncError(async (req, res, next) => {
 
     const [nbUpdated, products] = await Product.update(updatedData, {
         where: {
-            id: req.params.id,
+            id: req.params.id
         },
         returning: true,
+        individualHooks: true,
     });
 
     if (!nbUpdated === 1) return next(new AppError(404));

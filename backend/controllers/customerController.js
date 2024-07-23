@@ -51,7 +51,7 @@ exports.getByUserId = catchAsyncError(async (req, res, next) => {
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, customers] = await Customer.update(req.body, {
         where: {
-            id: req.params.id,
+            id: req.params.id
         },
         returning: true
     });
@@ -71,11 +71,11 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await Customer.destroy({
         where: {
-            id: req.params.id,
+            id: req.params.id
         },
     });
 
     if (!result) return next(new AppError(404));
 
-    res.status(204);
+    res.status(204).send();
 });

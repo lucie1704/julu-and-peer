@@ -182,7 +182,7 @@ const submitForm = async () => {
     >
       <v-card
         :title="`hey ${firstname}`"
-        text="Nous t'avons envoyé un email pour valider ton compte."
+        :text="authStore.message"
       >
         <template #actions>
           <v-spacer />

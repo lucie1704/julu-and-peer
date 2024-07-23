@@ -9,82 +9,74 @@ export const useCart = defineStore('cart', () => {
   const cartProducts = ref<CartProduct>();
   const cartItem = ref<CartItem>();
   const quantity = ref<number>();
+  const message = ref<string>();
 
   const fetchCartByCustomerId = async (customerId: string) => {
-    const jwt_token = '';
     try {
-      const response = await cartAPI.getCartByCustomerId(jwt_token, customerId);
+      const response = await cartAPI.getCartByCustomerId(customerId);
       cart.value = response;
     } catch (error) {
-      console.error('Cart no found :', error);
+      message.value = `Panier non trouvé : ${error}`;
     }
   };
 
   const createCart = async (customerId: string) => {
-    const jwt_token = '';
     try {
-      const response = await cartAPI.createCart(jwt_token, customerId);
+      const response = await cartAPI.createCart(customerId);
       cart.value = response;
     } catch (error) {
-      console.error('Failed to create cart :', error);
+      message.value = `Échec de la création du panier : ${error}`;
     }
   };
 
   const addCartItem = async (data: createCart) => {
-    // Retrieve JWT token from auth module (placeholder)
-    const jwt_token = '';
     try {
-      const response = await cartAPI.addToCartItem(jwt_token, data);
+      const response = await cartAPI.addToCartItem(data);
       cartItem.value = response;
       router.push({ name: 'customer-shopping-cart' });
     } catch (error) {
-      console.error('Failed to add CartItem : ', error);
+      message.value = `Échec de l'ajout de l'article au panier : ${error}`;
     }
   };
 
   const fetchCartProducts = async (customerId: string) => {
-    // Retrieve JWT token from auth module (placeholder)
-    const jwt_token = '';
-      const response = await cartAPI.getCartsProducts(jwt_token, customerId);
-      if (response) return cartProducts.value = response;
+    try {
+      const response = await cartAPI.getCartsProducts(customerId);
+      cartProducts.value = response;
+    } catch (error) {
+      message.value = `Échec de la récupération des produits du panier : ${error}`;
+    }
   };
 
   const cartItemQuantityUpdate = async (payload: {
     cartItemId: string,
     newQuantity: number
   }) => {
-    // Retrieve JWT token from auth module (placeholder)
-    const jwt_token = '';
     try {
       const newQuantity = await cartAPI.cartItemQuantityUpdate(
-        jwt_token,
         payload.cartItemId,
         payload.newQuantity
       );
       quantity.value = newQuantity;
     } catch (error) {
-      console.error('Failed to update cartItem quantity:', error);
+      message.value = `Échec de la mise à jour de la quantité de l'article du panier : ${error}`;
     }
   };
 
   const deleteCartItem = async (id: string) => {
-    // Retrieve JWT token from auth module (placeholder)
-    const jwt_token = '';
     try {
-      await cartAPI.deleteCartItem(jwt_token, id);
+      await cartAPI.deleteCartItem(id);
     } catch (error) {
-      console.error('Failed to delete CartItem:', error);
+      message.value = `Échec de la suppression de l'article du panier : ${error}`;
     }
   };
 
   const deleteCart = async (id: string) => {
-    // Retrieve JWT token from auth module (placeholder)
-    const jwt_token = '';
     try {
-      await cartAPI.deleteCart(jwt_token, id);
+      await cartAPI.deleteCart(id);
       cartProducts.value = undefined;
     } catch (error) {
-      console.error('Failed to delete Cart:', error);
+      message.value = `Échec de la suppression du panier : ${error}`;
     }
   };
 
@@ -99,6 +91,7 @@ export const useCart = defineStore('cart', () => {
     fetchCartProducts,
     cartItemQuantityUpdate,
     deleteCartItem,
-    deleteCart
+    deleteCart,
+    message
   };
 });

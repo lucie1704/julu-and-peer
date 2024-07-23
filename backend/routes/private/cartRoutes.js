@@ -4,7 +4,7 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 router
     .route('/')
@@ -15,7 +15,7 @@ router
     .delete(cartController.delete);
 
 
-// router.use(autorizationMiddleware('admin'));
+router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')
