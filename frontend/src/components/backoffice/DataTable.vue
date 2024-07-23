@@ -1,8 +1,8 @@
 <script lang="ts" setup>
   import axios from 'axios';
   import { computed, ref } from 'vue';
+  import { DeleteButton } from '~/components';
   import { API_URL } from '~/constants';
-  import DeleteButton from '../DeleteButton.vue';
 
   const props = defineProps<{
     data: Array<Record<string, any>> | null;
