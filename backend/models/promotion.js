@@ -1,28 +1,41 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Promotion extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      Promotion.belongsTo(models.Customer);
+      // Define associations
+      Promotion.belongsTo(models.Customer, { foreignKey: 'customerId' });
     }
   }
+
   Promotion.init({
-    startDate: DataTypes.DATE,
-    endDate: DataTypes.DATE,
-    pourcentageOff: DataTypes.INTEGER,
-    code: DataTypes.STRING
+    startDate: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    endDate: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    percentageOff: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        min: 0,
+        max: 100
+      }
+    },
+    code: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    }
   }, {
     sequelize,
     modelName: 'Promotion',
     timestamps: true,
   });
+
   return Promotion;
 };

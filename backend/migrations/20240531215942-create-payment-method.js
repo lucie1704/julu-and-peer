@@ -4,10 +4,8 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('PaymentMethods', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       type: {
         type: Sequelize.ENUM('credit_card', 'debit_card', 'paypal', 'stripe'),
@@ -22,15 +20,15 @@ module.exports = {
         allowNull: false
       },
       cardNumber: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false
       },
       cvv: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false
       },
       billingAddressId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'CustomerAddresses',

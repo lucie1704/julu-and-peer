@@ -1,13 +1,12 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Images', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       width: {
         type: Sequelize.INTEGER
@@ -36,7 +35,7 @@ module.exports = {
         type: Sequelize.DATE
       },
       productId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,  
         references: {
           model: 'Products',
           key: 'id'
@@ -44,7 +43,7 @@ module.exports = {
         allowNull: true
       },
       artistId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'ProductArtists',
           key: 'id'

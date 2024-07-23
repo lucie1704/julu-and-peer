@@ -1,16 +1,16 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('OrderBillings', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       link: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,
@@ -20,13 +20,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      paymentMethod: {
-        type: Sequelize.INTEGER,
+      paymentMethodId: {
+        type: Sequelize.UUID,
         references: {
           model: 'PaymentMethods',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'
       },
     });
   },

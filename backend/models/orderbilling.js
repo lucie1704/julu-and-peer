@@ -2,25 +2,33 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class OrderBilling extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      OrderBilling.belongsTo(models.PaymentMethod);
-      OrderBilling.hasOne(models.Order);
+      OrderBilling.belongsTo(models.PaymentMethod, { 
+        foreignKey: 'paymentMethodId' 
+      });
+      OrderBilling.hasOne(models.CustomerOrder, { 
+        foreignKey: 'orderBillingId' 
+      });
     }
   }
+
   OrderBilling.init({
-    link: DataTypes.STRING
+    link: DataTypes.STRING,
+    paymentMethodId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'PaymentMethods',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     modelName: 'OrderBilling',
-    timestamps: true,
+    timestamps: true
   });
+
   return OrderBilling;
 };

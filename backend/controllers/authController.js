@@ -5,6 +5,9 @@ const catchAsyncError = require('../utils/catchAsyncError');
 const Email = require('./../utils/email');
 const crypto = require('crypto');
 const { Sequelize } = require('sequelize');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -30,7 +33,9 @@ const createSendToken = (user, statusCode, req, res) => {
 exports.signup = catchAsyncError(async (req, res) => {
   const { firstname, lastname, email, password, passwordConfirmation } = req.body;
   
+
   const newUser = User.build({
+    id,
     firstname,
     lastname,
     email,

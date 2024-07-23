@@ -2,6 +2,7 @@ const ProductMongo = require("../../models/mongo/product");
 
 module.exports = async function denormalizeProduct(product, models) {
     const Product = models.Product;
+
     const productDenormalized = await Product.findByPk(product.id, {
         attributes: [
             "id",
@@ -9,7 +10,8 @@ module.exports = async function denormalizeProduct(product, models) {
             "description",
             "price",
             "quantity",
-            "reviewCount"
+            "reviewCount",
+            "discount"
         ],
         include: [
             { 
@@ -40,20 +42,21 @@ module.exports = async function denormalizeProduct(product, models) {
             },
             {
                 model: models.Stock,
-                attributes: ["type", "quantity"],
+                attributes: ["id", "type", "quantity"],
                 order: [["updatedAt", "DESC"]],
             },
             {
                 model: models.Image,
-                attributes: ["width", "height", "type", "description", "alt", "path"],
+                attributes: ["id", "width", "height", "type", "description", "alt", "path"],
                 order: [["updatedAt", "DESC"]],
             }
         ],
     });
 
+    const productJSON = productDenormalized.toJSON();
     const productMongo = await ProductMongo.findByIdAndUpdate(
         product.id,
-        productDenormalized.toJSON(),
+        productJSON,
         {
             upsert: true,
             new: true,

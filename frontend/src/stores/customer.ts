@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import customerAPI from '~/api/customer';
-import { CustomerI, CustomerUpdateI } from '~/dto/customer';
+import { Customer, CustomerUpdateI } from '~/dto/customer';
 import router from '~/router/router';
 
 const handleAsyncAction = async <T>(action: () => Promise<T>): Promise<T | null> => {
@@ -14,7 +14,7 @@ const handleAsyncAction = async <T>(action: () => Promise<T>): Promise<T | null>
 };
 
 export const useCustomer = defineStore('customer', () => {
-  const customer = ref<CustomerI | null>(null);
+  const customer = ref<Customer | null>(null);
   const customerId = ref<string | null>(null);
 
   const fetchById = async (customerId: string) => {
@@ -27,7 +27,7 @@ export const useCustomer = defineStore('customer', () => {
     const jwt_token = '';
     const response = await handleAsyncAction(() => customerAPI.getByUserId(userId, jwt_token));
     customer.value = response;
-    customerId.value = response?.id ? String(response.id) : null;
+    customerId.value = response?.id ? response.id : null;
   };
 
   const update = async (customerId: string, customerData: CustomerUpdateI) => {

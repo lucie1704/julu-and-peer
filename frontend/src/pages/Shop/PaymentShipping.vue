@@ -7,6 +7,7 @@ meta:
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { test_uid } from '~/constants';
 import { PlaceOrder, ShippingInfo, BillingInfo } from '~/dto';
 import router from '~/router/router.ts';
 import { useCart } from '~/stores/cart';
@@ -75,7 +76,7 @@ const billingErrors = ref<Record<keyof BillingInfo, boolean>>({
 const formError = ref('');
 
 onMounted(async() => {
-  await customerStore.fetchByUserId('3');
+  await customerStore.fetchByUserId(test_uid);
 
   await cartStore.fetchCartProducts(customerStore.customerId as string);
 });
@@ -161,13 +162,14 @@ const submitForm = async () => {
   const orderData: PlaceOrder = {
     shippingFee: 1.80,
     products: cartStore.cartProducts?.availableProducts.map((cartItem) => ({
-      id: Number(cartItem.Product?.id),
+      id: cartItem.Product?._id,
       name: cartItem.Product?.name,
       description: cartItem.Product?.description,
       price: cartItem.Product?.price,
       quantity: cartItem.quantity
     })) || [],
     shippingInfo: shippingInfo.value,
+    billingInfo: billingInfo.value,
     email: email.value,
     customerId: customerStore.customerId as string
   };
@@ -408,8 +410,8 @@ const submitForm = async () => {
                 class="flex-shrink-0 w-24 h-24 overflow-hidden border border-gray-200 rounded-md"
               >
                 <img
-                  :src="cartProduct.Product.imageSrc"
-                  :alt="cartProduct.Product.imageAlt"
+                  :src="cartProduct.Product.Images[0].path"
+                  :alt="cartProduct.Product.Images[0].alt"
                   class="object-cover object-center w-full h-full"
                 >
               </div>

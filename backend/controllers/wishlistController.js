@@ -2,6 +2,9 @@ const {responseReturn} = require('../utils/response');
 const { Wishlist } = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 exports.create = catchAsyncError (async (req, res, next) => {
   const { slug, productId } = req.body
@@ -10,7 +13,7 @@ exports.create = catchAsyncError (async (req, res, next) => {
 
   if (wishlist) return next(new AppError(409));
 
-  const createdWishlist = await Wishlist.create(req.body);
+  const createdWishlist = await Wishlist.create({id, ...req.body});
 
   return responseReturn(res, createdWishlist, 201);
 });
@@ -36,7 +39,7 @@ exports.getById = catchAsyncError(async (req, res, next) => {
 exports.update = catchAsyncError(async (req, res, next) => {
   const [nbUpdated, wishlists] = await Wishlist.update(req.body, {
       where: {
-          id: parseInt(req.params.id, 10),
+          id: req.params.id,
       },
       returning: true,
   });
@@ -50,7 +53,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError (async (req, res, next) => {
   const result = await Wishlist.destroy({
     where: {
-        id: parseInt(req.params.id, 10),
+        id: req.params.id,
     },
   });
 

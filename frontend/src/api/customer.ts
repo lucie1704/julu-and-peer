@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_URL } from '~/constants';
-import { CustomerI, CustomerUpdateI } from '~/dto/customer';
+import { Customer, CustomerUpdateI } from '~/dto/customer';
 
 const ROOT_URL = `${API_URL}/customers`;
 
@@ -9,19 +9,19 @@ interface CustomerAPI {
     id: string,
     jwt_token: string,
     cancel?: boolean
-  ) => Promise<CustomerI>;
+  ) => Promise<Customer>;
 
   getByUserId: (
     id: string,
     jwt_token: string,
     cancel?: boolean
-  ) => Promise<CustomerI>;
+  ) => Promise<Customer>;
 
   update: (
     id: string,
     customerData: CustomerUpdateI,
     jwt_token: string
-  ) => Promise<CustomerI>;
+  ) => Promise<Customer>;
 
   delete: (
     id: string,

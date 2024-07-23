@@ -18,11 +18,11 @@ meta:
 </script>
 
 <template>
-  <div class="max-w-2xl px-4 py-16 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-    <h1 class="text-2xl font-bold tracking-tight text-gray-900">
-      Produits
-    </h1>
-    <DataTable
+  <v-container>
+    <h4 class="font-bold tracking-tight text-gray-900 text-h4">
+      Vinyles
+    </h4>
+    <data-table
       :data="data"
       :loading="loading"
       :error="error"
@@ -36,7 +36,7 @@ meta:
       <!-- Start Edit Form Slot-->
       <template #form="{ item, submit }">
         <v-card class="text-center pa-5">
-          <v-card-title>{{ item.id ? 'Modifier un produit' : 'Créer un produit' }}</v-card-title>
+          <v-card-title>{{ item._id ? 'Modifier un produit' : 'Créer un produit' }}</v-card-title>
           <v-form @submit.prevent="submit">
             <v-row>
               <v-col>
@@ -94,7 +94,7 @@ meta:
                   type="submit"
                   color="blue"
                 >
-                  {{ item.id ? 'Modifier' : 'Créer' }}
+                  {{ item._id ? 'Modifier' : 'Créer' }}
                 </v-btn>
               </v-col>
             </v-row>
@@ -102,6 +102,6 @@ meta:
         </v-card>
       </template>
       <!-- End Edit Form Slot -->
-    </DataTable>
-  </div>
+    </data-table>
+  </v-container>
 </template>

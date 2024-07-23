@@ -1,22 +1,27 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import productAPI from '~/api/product';
-import { Product } from '~/dto';
+import { PaginatedProducts, Product } from '~/dto';
 
 export const useProduct = defineStore('product', () => {
+  const paginatedProducts = ref<PaginatedProducts>();
   const products = ref<Array<Product>>();
   const product = ref<Product>();
 
-  const fetchAllProducts = async() => {
-  const jwt_token = ''; // Replace with actual logic to get the JWT token
-  
-  const fetchedProducts = await productAPI.getAllProducts(jwt_token);
+  const fetchAllProducts = async(query?: string) => {
+    const jwt_token = ''; // Replace with actual logic to get the JWT token
 
-  if (fetchedProducts) {
-    products.value = fetchedProducts;
-  } else {
-    console.log('Error fail to fetch products');
-  }
+    try {
+      paginatedProducts.value = await productAPI.getAllProducts(jwt_token, query);
+    } catch {
+      console.log('Error fail to fetch product paginated');
+    }
+
+    if (paginatedProducts.value) {
+      products.value = paginatedProducts.value.data;
+    } else {
+      console.log('Error fail to fetch products');
+    }
   };
 
   const fetchProductById = async(id: string) => {
@@ -33,6 +38,7 @@ export const useProduct = defineStore('product', () => {
   };
 
   return {
+    paginatedProducts,
     products,
     product,
     fetchAllProducts,

@@ -1,63 +1,85 @@
+<script lang="ts" setup>
+const navItems = [
+  {
+    title: 'Dashboard',
+    path: ''
+  },
+  {
+    title: 'Commandes',
+    path: 'orders'
+  },
+  {
+    title: 'Utilisateurs',
+    path: 'users'
+  },
+  {
+    title: 'Vinyles',
+    path: 'products'
+  },
+  {
+    title: 'Artistes',
+    path: 'productartists'
+  },
+  {
+    title: 'Genres',
+    path: 'productgenres'
+  },
+  {
+    title: 'Formats',
+    path: 'productformats'
+  }
+];
+
+</script>
+
 <template>
   <v-app-bar
-    title="Julu & Peer Admin"
-    color="gray"
+    color="blue"
+    :height="90"
+    flat
+    scroll-behavior="hide"
   >
-    <div class="p-4 space-y-4">
-      <router-link
-        to="/admin/productartists"
-        class="bg-white rounded shadow"
-      >
-        Artistes
-      </router-link>
-      <router-link
-        to="/admin/orders"
-        class="bg-white rounded shadow"
-      >
-        Commandes
-      </router-link>
-      <router-link
-        to="/admin"
-        class="bg-white rounded shadow"
-      >
-        Dashboard
-      </router-link>
-      <router-link
-        to="/admin/productformats"
-        class="bg-white rounded shadow"
-      >
-        Formats
-      </router-link>
-      <router-link
-        to="/admin/productgenres"
-        class="bg-white rounded shadow"
-      >
-        Genres
-      </router-link>
-      <router-link
-        to="/admin/products"
-        class="bg-white rounded shadow"
-      >
-        Produits
-      </router-link>
-      <router-link
-        to="/admin/users"
-        class="bg-white rounded shadow"
-      >
-        Utilisateurs
-      </router-link>
-    </div>
+    <v-container class="text-gray-800">
+      <v-row>
+        <v-col class="flex align-center items-center">
+          <router-link to="/admin">
+            <img
+              class="h-16 w-auto"
+              src="../../public/logo-julu-and-peer.png"
+              alt="Logo Julu&Peer"
+            >
+          </router-link>
+
+          <h1 class="font-bold text-black text-h5 ml-6">
+            ADMIN
+          </h1>
+
+          <v-spacer />
+          <div
+            v-for="navItem in navItems"
+            :key="`navItem${navItem.path}`"
+            class="p-4 flex text-gray-800 space-y-10"
+          >
+            <router-link
+              :to="`/admin/${navItem.path}`"
+              active-class="underline underline-offset-8"
+              class="flex items-center font-bold hover:underline hover:underline-offset-8 active:text-black"
+            >
+              {{ navItem.title }}
+            </router-link>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-app-bar>
   <v-main>
     <router-view />
   </v-main>
-  <v-footer
-    app
-    color="blue"
-    class="d-flex flex-column"
+  <div
+    class="w-full mt-10 bg-blue d-flex flex-column pa-6"
   >
-    <div class="text-center w-100">
+    <div class="text-center text-white w-100 pa-3">
       {{ new Date().getFullYear() }} — <strong>ESGI</strong>
     </div>
-  </v-footer>
+  </div>
 </template>
