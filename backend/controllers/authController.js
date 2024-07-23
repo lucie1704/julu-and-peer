@@ -44,8 +44,13 @@ exports.signup = catchAsyncError(async (req, res) => {
   const emailConfirmToken = newUser.createEmailConfirmToken();
 
   // Construct confirmation email URL
-  const confirmEmailUrl = `http://localhost:8080/confirm-email/${emailConfirmToken}`;
+  let confirmEmailUrl;
 
+  if (process.env.NODE_ENV === 'production') {
+    confirmEmailUrl = `www.juluandpeer.store/confirm-email/${emailConfirmToken}`;
+  } else {
+    confirmEmailUrl = `http://localhost:8080/confirm-email/${emailConfirmToken}`;
+  }
   // Send email confirmation
   await new Email(newUser, confirmEmailUrl).sendWelcome();
 
@@ -91,6 +96,8 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
   const {id:userId, firstName, lastName}= user
   await Customer.create({id : uuidv7(), userId, firstName, lastName });
 
+  await new Email(user, "").sendLogin();
+
   createSendToken(user, 200, req, res);
 });
 
@@ -134,6 +141,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   user.maxFailedLoginAt = undefined;
   await user.save();
 
+  await new Email(user, "").sendLogin();
 
   createSendToken(user, 200, req, res);
 });

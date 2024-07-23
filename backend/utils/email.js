@@ -1,32 +1,30 @@
 const nodemailer = require('nodemailer');
 const pug = require('pug');
+const logger = require('./logger');
 const {convert} = require('html-to-text');
+
+const transporter = nodemailer.createTransport({
+  host: process.env.MAILTRAP_HOST,
+  port:  process.env.MAILTRAP_PORT,
+  auth: {
+    user: process.env.MAILTRAP_USER,
+    pass: process.env.MAILTRAP_PASS,
+  },
+});
 
 module.exports = class Email {
   constructor(user, url) {
     this.to = user.email;
-    this.firstName = user.name.split(' ')[0];
-    this.url = url || "";
+    this.firstName = user.firstName;
+    this.url = url;
     this.from = `${process.env.USERNAME} <${process.env.EMAIL_FROM}>`;
-  }
-
-  newTransport() {
-        return nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD
-        }
-      });
-      
   }
 
   async send(template, subject) {
     const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
       firstName: this.firstName,
       url: this.url,
-      subject
+      subject,
     });
 
     const mailOptions = {
@@ -34,82 +32,62 @@ module.exports = class Email {
       to: this.to,
       subject,
       html,
+      text: convert(html),
     };
 
-    // if (process.env.NODE_ENV === 'production') {
-      // await this.newTransport().sendMail(mailOptions);
-    // }
+    if(this.to == "julupeervinyle@gmail.com") {
+      try {
+        logger.info(`Envoi de l'email à ${this.to} ....`);
+        const info = await transporter.sendMail(mailOptions);
+        logger.info(`Email envoyé avec succès à ${this.to}, ID du message : ${info.messageId}`);
+      } catch (error) {
+        logger.error(`Échec de l'envoi de l'email à ${this.to} : ${error.message}`);
+      }
+    }
   }
 
-  async sendNewsLetter(template, subject, data) {
-    const html = pug.renderFile(`${__dirname}/../views/email/newsletter/${template}.pug`, 
-     data
-    );
+
+  async sendProductNotification(template, subject, data) {
+    const html = pug.renderFile(`${__dirname}/../views/email/product/${template}.pug`, data);
 
     const mailOptions = {
       from: this.from,
       to: this.to,
       subject,
       html,
+      text: convert(html),
     };
 
-
-    // if (process.env.NODE_ENV === 'production') {
-      // await this.newTransport().sendMail(mailOptions);
-    // }
+    try {
+      logger.info(`Envoi de la notification produit à ${this.to}`);
+      const info = await transporter.sendMail(mailOptions);
+      logger.info(`Notification produit envoyée avec succès à ${this.to}, ID du message : ${info.messageId}`);
+    } catch (error) {
+      logger.error(`Échec de l'envoi de la notification produit à ${this.to} : ${error.message}`);
+    }
   }
-  
+
   async sendPasswordUpdated() {
-    await this.send(
-      'passwordUpdated',
-      'Your password has been updated successfully'
-    );
+    await this.send('passwordUpdated', 'Votre mot de passe a été mis à jour avec succès');
   }
 
   async sendWelcome() {
-    await this.send(
-    'welcome',
-    'Welcome to the julu-and-peer!'
-    );
+    await this.send('welcome', 'Bienvenue chez julu-and-peer !');
+  }
+
+  async sendLogin() {
+    await this.send('login', 'Connexion à votre espace personnel chez julu-and-peer !');
   }
 
   async renewPassword() {
-    await this.send("Renew password");
+    await this.send('renewPassword', 'Renouvelez votre mot de passe');
   }
 
   async sendPasswordReset() {
-    await this.send(
-      'passwordReset',
-      'Your password reset token (valid for only 10 minutes)'
-    );
+    await this.send('passwordReset', 'Votre jeton de réinitialisation du mot de passe (valide pendant 10 minutes)');
   }
 
   async confirmPasswordReset() {
-    await this.send(
-      'confirmPasswordReset',
-      'Your password has been reset successfully'
-    );
+    await this.send('confirmPasswordReset', 'Votre mot de passe a été réinitialisé avec succès');
   }
-
-  async newsLetters() {
-    await this.sendNewsLetter(
-      'newsletter',
-      'Julu-and-peer newsletters',
-      {
-        newProducts: [
-          { name: 'Produit A', description: 'Description du produit A', image: 'https://via.placeholder.com/150' },
-          { name: 'Produit B', description: 'Description du produit B', image: 'https://via.placeholder.com/150' }
-        ],
-        discountedProducts: [
-          { name: 'Produit C', oldPrice: 30, newPrice: 20, image: 'https://via.placeholder.com/150' },
-          { name: 'Produit D', oldPrice: 50, newPrice: 40, image: 'https://via.placeholder.com/150' }
-        ],
-        restockedProducts: [
-          { name: 'Produit E', description: 'Description du produit E', image: 'https://via.placeholder.com/150' },
-          { name: 'Produit F', description: 'Description du produit F', image: 'https://via.placeholder.com/150' }
-        ],
-      }
-    );
-  }
-
 };

@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgres://root:password@db:5432/app
+      - JWT_SECRET=998c2614eb0acf4eea946414667e78598e286a6c6b3911602f8b23a76811196b
+      - MONGO_URL=mongodb://root:password@mongodb:27017/app?authSource=admin
+      - JWT_EXPIRES_IN=2592000
+      - USERNAME=julupeer
+      - MAILTRAP_HOST=sandbox.smtp.mailtrap.io
+      - MAILTRAP_PORT=587
+      - MAILTRAP_USER=0e9a522e2973ef
+      - MAILTRAP_PASS=5abeaf47e9f80d
+      - EMAIL_FROM=julupeervinyle@gmail.com
+
+    command: sh -c "npm install && npm run dev"
+
+  frontend:
+    environment:
+      - NODE_ENV=development
+    command: sh -c "npm install && npm run dev"
