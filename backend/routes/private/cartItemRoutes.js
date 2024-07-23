@@ -3,7 +3,7 @@ const cartItemController = require('../../controllers/cartItemController');
 const authMiddleware = require('../../middleware/authMiddleware');
 const router = express.Router();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 router
     .route('/')

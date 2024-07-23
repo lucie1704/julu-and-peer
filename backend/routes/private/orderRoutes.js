@@ -2,8 +2,9 @@ const express = require('express');
 const orderController = require('../../controllers/customerOrder');
 const authMiddleware = require('../../middleware/authMiddleware');
 const router = express.Router();
+const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 router
     .route('/')
@@ -20,9 +21,11 @@ router
 
 router.get('/confirm/:id', orderController.orderConfirm)
 
-// Need admin role to get access to these routes
-// router.use(autorizationMiddleware('admin'));
-// TODO : Use Another Route for Admin Crud
-// router.get('/', orderController.getAllOrders)
+router.use(autorizationMiddleware('admin'));
+
+router
+    .route('/')
+    .get(orderController.getAll);
+
 
 module.exports = router;

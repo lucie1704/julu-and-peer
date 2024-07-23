@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { API_URL } from '~/constants';
 import { PaginatedCategories } from '~/dto';
+import { headers } from '~/utils/headers';
 
 const ROOT_URL = `${API_URL}/productformats`;
 
@@ -14,16 +15,12 @@ const formatAPI: formatAPI = {
     try {
       if (cancel) controller.abort();
 
-      const res = await axios.get(`${ROOT_URL}`);
-
+      const res = await axios.get(`${ROOT_URL}`,
+       { headers: headers() }
+      );
       return res.data;
 
     } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log('Request canceled', error.message);
-      } else {
-        console.error('Error. Fails to get all formats:', error);
-      }
       return null;
     }
   },

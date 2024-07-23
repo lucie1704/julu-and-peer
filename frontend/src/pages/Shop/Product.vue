@@ -1,8 +1,8 @@
 <route lang="yaml">
-path: /product/:id
-name: product
-meta:
-  layout: AppLayout
+  path: /product/:id
+  name: product
+  meta:
+    layout: AppLayout
 </route>
 
 <script lang="ts" setup>
@@ -41,6 +41,7 @@ const getProductDetail = async () => {
     console.error('Error getting product details:', error);
   }
 };
+
 const getCustomerCart = async (customerId: string) => {
   // Get customer cart
   try {
