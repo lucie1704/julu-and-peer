@@ -19,7 +19,7 @@ meta:
 
 <template>
   <v-container>
-    <h4 class="text-h4 font-bold tracking-tight text-gray-900">
+    <h4 class="font-bold tracking-tight text-gray-900 text-h4">
       Vinyles
     </h4>
     <data-table
@@ -36,7 +36,7 @@ meta:
       <!-- Start Edit Form Slot-->
       <template #form="{ item, submit }">
         <v-card class="text-center pa-5">
-          <v-card-title>{{ item.id ? 'Modifier un produit' : 'Créer un produit' }}</v-card-title>
+          <v-card-title>{{ item._id ? 'Modifier un produit' : 'Créer un produit' }}</v-card-title>
           <v-form @submit.prevent="submit">
             <v-row>
               <v-col>
@@ -94,7 +94,7 @@ meta:
                   type="submit"
                   color="blue"
                 >
-                  {{ item.id ? 'Modifier' : 'Créer' }}
+                  {{ item._id ? 'Modifier' : 'Créer' }}
                 </v-btn>
               </v-col>
             </v-row>
