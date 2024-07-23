@@ -42,7 +42,11 @@ const deleteData = async () => {
     emit('itemDeleted', props.itemId);
     closeModal();
   } catch (err) {
-    error.value = 'Une erreur est survenue lors de la suppression.';
+    if (axios.isAxiosError(err) && err.response) {
+      error.value = err.response.data.message;
+    } else {
+      error.value = 'Une erreur innatendu est survenue.';
+    }
   } finally {
     isDeleting.value = false;
   }
