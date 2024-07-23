@@ -41,7 +41,7 @@ const ProductSchema = z.object({
   price: z.number(),
   quantity: z.number(),
   reviewCount: z.number().nullable(),
-  discount: z.number(),
+  discount: z.number().optional(),
   ProductGenre: CategorySchema,
   ProductFormat: CategorySchema,
   ProductArtist: CategorySchema,

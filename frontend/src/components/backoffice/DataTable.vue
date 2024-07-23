@@ -2,6 +2,7 @@
   import axios from 'axios';
   import { computed, ref } from 'vue';
   import { API_URL } from '~/constants';
+  import DeleteButton from '../DeleteButton.vue';
 
   const props = defineProps<{
     data: Array<Record<string, any>> | null;
@@ -18,7 +19,6 @@
   const base_url = `${API_URL}/${props.url}`;
 
   const showEditItemDialog = ref(false);
-  const showDeleteItemDialog = ref(false);
   const showErrorDialog = ref(false);
   const errorMessage = ref('');
 
@@ -26,12 +26,11 @@
   const itemToDelete = ref();
   const isEditing = ref(false);
 
-  const deleteItem = (item: Record<string, any>) => {
+  const updateDeleteItem = (item: Record<string, any>) => {
     itemToDelete.value = item;
-    showDeleteItemDialog.value = true;
   };
 
-  const editItem = (item: Record<string, any>) => {
+  const updateEditItem = (item: Record<string, any>) => {
     itemToEdit.value = { ...item };
     isEditing.value = true;
     showEditItemDialog.value = true;
@@ -65,27 +64,6 @@
       props.refresh();
     } catch (error) {
       showEditItemDialog.value = false;
-      showErrorDialog.value = true;
-      if (axios.isAxiosError(error) && error.response) {
-        errorMessage.value = error.response.data.message;
-      } else {
-        errorMessage.value = 'Une erreur innatendu est survenue.';
-      }
-    }
-  };
-
-  // Submit logic for delete
-  const submitDeleteItem = async(item: Record<string, any>) => {
-    try {
-      await axios.delete(`${base_url}/${item.id}`, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      showDeleteItemDialog.value = false;
-      props.refresh();
-    } catch (error) {
-      showDeleteItemDialog.value = false;
       showErrorDialog.value = true;
       if (axios.isAxiosError(error) && error.response) {
         errorMessage.value = error.response.data.message;
@@ -182,7 +160,7 @@
         <tbody class="bg-white divide-y divide-gray-200">
           <tr
             v-for="item in data"
-            :key="item.id"
+            :key="item.id ? item.id : item._id"
           >
             <td
               v-for="(value, key) in item"
@@ -192,18 +170,21 @@
               {{ cleanDisplayValue(value) }}
             </td>
             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-              <button
-                class="mr-2 text-indigo-600 hover:bg-gray-100 rounded-full"
-                @click="editItem(item)"
-              >
-                <i class="fa-regular fa-edit text-xl py-2 px-3" />
-              </button>
-              <button
-                class="text-red-600 hover:bg-gray-100 rounded-full"
-                @click="deleteItem(item)"
-              >
-                <i class="fa-regular fa-trash-can text-xl py-2 px-3" />
-              </button>
+              <div class="flex justify-end items-center">
+                <button
+                  class="mr-2 text-indigo-600 hover:bg-gray-100 rounded-full"
+                  @click="updateEditItem(item)"
+                >
+                  <i class="fa-regular fa-edit text-xl py-2 px-3" />
+                </button>
+                <delete-button
+                  :item-id="item.id ? item.id : item._id"
+                  text="ce produit"
+                  :delete-url="url"
+                  @click="updateDeleteItem(item)"
+                  @item-deleted="props.refresh();"
+                />
+              </div>
             </td>
           </tr>
         </tbody>
@@ -261,25 +242,6 @@
         :item="itemToEdit"
         :submit="submitEditItem"
       />
-    </v-dialog>
-    <!-- Delete modal -->
-    <v-dialog
-      v-model="showDeleteItemDialog"
-      width="500px"
-    >
-      <v-card class="text-center pa-5">
-        <v-card-title>Êtes-vous sûr de vouloir supprimer "{{ itemToDelete.name }}" ? </v-card-title>
-        <v-row>
-          <v-col>
-            <v-btn
-              color="blue"
-              @click="submitDeleteItem(itemToDelete)"
-            >
-              Supprimer
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-card>
     </v-dialog>
     <!-- Error modal -->
     <v-dialog
