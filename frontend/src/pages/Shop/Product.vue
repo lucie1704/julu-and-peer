@@ -92,10 +92,10 @@ const submitForm = async () => {
   >
     <!-- @TODO slider pour les images -->
     <v-img
-      v-if="productStore.product.Image[0]"
+      v-if="productStore.product.Images[0]"
       height="250"
-      :src="productStore.product.Image[0].path"
-      :alt="productStore.product.Image[0].alt"
+      :src="productStore.product.Images[0].path"
+      :alt="productStore.product.Images[0].alt"
       cover
     />
 

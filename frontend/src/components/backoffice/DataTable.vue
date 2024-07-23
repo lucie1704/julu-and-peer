@@ -46,10 +46,10 @@
   // Submit logic for create and edit
   const submitEditItem = async() => {
     // Deconstruct id in order to not have it in req.body
-    const { id, ...data } = itemToEdit.value;
+    const { _id, ...data } = itemToEdit.value;
     try {
       if (isEditing.value) {
-        await axios.patch(`${base_url}/${id}`, data, {
+        await axios.patch(`${base_url}/${_id}`, data, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -77,7 +77,7 @@
   // Submit logic for delete
   const submitDeleteItem = async(item: Record<string, any>) => {
     try {
-      await axios.delete(`${base_url}/${item.id}`, {
+      await axios.delete(`${base_url}/${item._id}`, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -193,16 +193,16 @@
             </td>
             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
               <button
-                class="mr-2 text-indigo-600 hover:bg-gray-100 rounded-full"
+                class="mr-2 text-indigo-600 rounded-full hover:bg-gray-100"
                 @click="editItem(item)"
               >
-                <i class="fa-regular fa-edit text-xl py-2 px-3" />
+                <i class="px-3 py-2 text-xl fa-regular fa-edit" />
               </button>
               <button
-                class="text-red-600 hover:bg-gray-100 rounded-full"
+                class="text-red-600 rounded-full hover:bg-gray-100"
                 @click="deleteItem(item)"
               >
-                <i class="fa-regular fa-trash-can text-xl py-2 px-3" />
+                <i class="px-3 py-2 text-xl fa-regular fa-trash-can" />
               </button>
             </td>
           </tr>

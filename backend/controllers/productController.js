@@ -144,6 +144,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
             id: req.params.id
         },
         returning: true,
+        individualHooks: true,
     });
 
     if (!nbUpdated === 1) return next(new AppError(404));

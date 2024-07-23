@@ -21,8 +21,8 @@ export interface Product {
   ProductFormat: Category;
   ProductArtist: Category;
   ProductCustomerEvaluation: Array<CustomerEvaluation>;
-  Stock: Array<Stock>;
-  Image: Array<Image>;
+  Stocks: Array<Stock>;
+  Images: Array<Image>;
 }
 
 export interface PaginatedCategories {
