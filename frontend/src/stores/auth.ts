@@ -52,17 +52,12 @@ export const useAuth = defineStore('auth', () => {
   };
 
   const signup = async (user: SignUp) => {
-    try {
       const response = await authAPI.signup(user);
       if (response) {
         msg.value = 'Nous vous avons envoyé un email pour valider votre compte.';
-        router.push('/confirmModal');
       } else {
-        throw new Error('Échec de l\'inscription');
+        msg.value = 'Échec de l\'inscription : Impossible de créer le compte. Vérifiez les valeurs saisies';
       }
-    } catch (error) {
-      msg.value = 'Échec de l\'inscription : Impossible de créer le compte. Vérifiez les valeurs saisies';
-    }
   };
 
   const confirmEmail = async (payload: { user: ConfirmEmail; emailToken: string; }) => {
@@ -82,8 +77,8 @@ export const useAuth = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      await authAPI.logout();
       window.localStorage.removeItem('jwt_token');
+      await authAPI.logout();
       window.localStorage.removeItem('roles');
       jwtToken.value = null;
       roles.value = null;

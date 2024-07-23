@@ -42,14 +42,14 @@ const authAPI: AuthAPI = {
 
   async signup(user: SignUp) {
     try {
-      const response = await axios.post(`${ROOT_URL}/signup`, user, {
+        await axios.post(`${ROOT_URL}/signup`, user, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      return response.data;
+      return true;
     } catch (error) {
-      return null;
+      return false;
     }
   },
 
