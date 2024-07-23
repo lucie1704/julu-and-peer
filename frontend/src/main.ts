@@ -1,6 +1,7 @@
 import './style.css';
 import 'vuetify/styles';
 import './assets/css/tailwind.css';
+import { GridItem, GridLayout } from 'grid-layout-plus';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createVuetify } from 'vuetify';
@@ -40,3 +41,7 @@ app.use(router);
 app.use(vuetify);
 
 app.mount('#app');
+
+app
+  .component('GridLayout', GridLayout)
+  .component('GridItem', GridItem);
