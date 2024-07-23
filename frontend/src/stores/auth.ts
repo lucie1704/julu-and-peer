@@ -50,14 +50,18 @@ export const useAuth = defineStore('auth', () => {
       msg.value = 'Échec de la connexion : Nom d\'utilisateur ou mot de passe invalide.';
     }
   };
-
+  
   const signup = async (user: SignUp) => {
+    try {
       const response = await authAPI.signup(user);
       if (response) {
         msg.value = 'Nous vous avons envoyé un email pour valider votre compte.';
       } else {
-        msg.value = 'Échec de l\'inscription : Impossible de créer le compte. Vérifiez les valeurs saisies';
+        throw new Error('Échec de l\'inscription');
       }
+    } catch (error) {
+      msg.value = 'Échec de l\'inscription : Impossible de créer le compte. Vérifiez les valeurs saisies';
+    }
   };
 
   const confirmEmail = async (payload: { user: ConfirmEmail; emailToken: string; }) => {
