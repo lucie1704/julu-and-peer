@@ -9,7 +9,7 @@ help:
 	@echo "Please use 'make <target>' where <target> is one of"
 	@echo "  up			: Start containers"
 	@echo "  down			: Stop and remove containers, networks, volumes"
-	@echo "  restart-frontend     	: Restart containers"
+	@echo "  restart     	: Restart containers"
 	@echo "  restart-frontend	: Restart frontend container"
 	@echo "  restart-backend	: Restart backend container"
 	@echo "  backend-shell		: Open a shell session in the backend container"
@@ -34,7 +34,7 @@ restart-frontend:
 	$(DOCKER_COMPOSE) restart frontend
 
 restart-backend:
-	$(DOCKER_COMPOSE) restart frontend
+	$(DOCKER_COMPOSE) restart backend
 
 backend-shell:
 	$(DOCKER_COMPOSE) exec -it backend bash
