@@ -25,7 +25,7 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
 
   const [nbUpdated, users] = await User.update(filteredBody, {
     where: {
-        id: req.user.id,
+        id: req.user.id
     },
         returning: true,
     });
@@ -42,13 +42,13 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
 exports.deleteMe = catchAsyncError(async (req, res, next) => {
   const result = await User.destroy({
     where: {
-        id: req.user.id,
+        id: req.user.id
     },
   });
 
   if (!result) return next(new AppError(404));
 
-  res.status(204);
+  res.status(204).send();
 });
 
 // Méthodes pour Admin role
@@ -105,7 +105,7 @@ exports.create = catchAsyncError(async ( req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({
     where: {
-      id: req.params.id,
+      id: req.params.id
     },
   });
 
@@ -128,7 +128,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 
   const [nbUpdated, users] = await User.update(filteredBody, {
     where: {
-        id: req.params.id,
+        id: req.params.id
     },
         returning: true,
     });

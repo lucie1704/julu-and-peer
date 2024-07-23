@@ -1,24 +1,24 @@
 <route lang="yaml">
-path: /customer/payment/shipping
-name: customer-payment-shipping
-meta:
-  layout: AppLayout
+  path: /customer/payment/shipping
+  name: customer-payment-shipping
+  meta:
+    layout: AppLayout
 </route>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { test_uid } from '~/constants';
 import { PlaceOrder } from '~/dto';
 import router from '~/router/router.ts';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
 import { useOrder } from '~/stores/order';
+import { getUserId } from '~/utils/authUtils';
 
 const cartStore = useCart();
 const orderStore = useOrder();
 const customerStore = useCustomer();
 
-//TODO: Put email in shippingInfo
+// TODO: Put email in shippingInfo
 
 const email = ref('');
 const shippingInfo = ref({
@@ -47,9 +47,8 @@ const billingInfo = ref({
   phone: '',
 });
 
-onMounted(async() => {
-  await customerStore.fetchByUserId(test_uid);
-
+onMounted(async () => {
+  await customerStore.fetchByUserId(getUserId());
   await cartStore.fetchCartProducts(customerStore.customerId as string);
 });
 
@@ -85,11 +84,12 @@ const calculateTotal = (
 };
 
 const submitForm = async () => {
-  // @TODO: Implémenter le paiement
-  if (!email.value || !shippingInfo.value || !cartStore.cartProducts)
+  // @TODO: Implement payment
+  if (!email.value || !shippingInfo.value || !cartStore.cartProducts) {
     return console.error('Form validation failed!');
+  }
 
-    const orderData: PlaceOrder = {
+  const orderData: PlaceOrder = {
     shippingFee: 20.0,
     products: cartStore.cartProducts.availableProducts.map((cartItem) => ({
       id: cartItem.Product?._id,
@@ -112,7 +112,7 @@ const submitForm = async () => {
     router.push('/');
     cartStore.cartProducts = undefined;
   } catch (error) {
-    console.error('Error to confirm order : ', error);
+    console.error('Error to confirm order:', error);
   }
 };
 </script>

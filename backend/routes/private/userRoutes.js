@@ -6,14 +6,14 @@ const autorizationMiddleware = require('../../middleware/autorizationMiddleware'
 const router = express.Router();
 
 
-// router.use(authMiddleware);
-// router.use(autorizationMiddleware('admin'));
+router.use(authMiddleware);
+
 router.get('/me', userController.getMe);
 router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
 
-// router.use(autorizationMiddleware('admin'));
+router.use(autorizationMiddleware('admin'));
 router
   .route('/')
   .post(userController.create)

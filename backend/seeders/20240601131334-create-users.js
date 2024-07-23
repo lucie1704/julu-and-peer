@@ -7,7 +7,6 @@ const { User } = require('../models');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const salt = await bcrypt.genSalt(12);
 
     // Base users with unique emails and names
     const baseUsers = [
@@ -41,7 +40,6 @@ module.exports = {
 
     // Create user records with hashed passwords
     const userRecords = await Promise.all(baseUsers.map(async (user) => {
-      const hashedPassword = await bcrypt.hash('Password123@', salt);
 
       return {
         id: uuidv7(),
@@ -50,9 +48,8 @@ module.exports = {
         email: user.email,
         role: user.role || commonAttributes.role,
         emailConfirmed: commonAttributes.emailConfirmed,
-        password: hashedPassword,
-        passwordConfirmation: hashedPassword,
-        passwordChangedAt: commonAttributes.passwordChangedAt,
+        password: "Password123@",
+        passwordConfirmation:  "Password123@",
         createdAt: commonAttributes.createdAt,
         updatedAt: commonAttributes.updatedAt
       };

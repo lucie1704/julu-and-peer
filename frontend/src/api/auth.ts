@@ -8,13 +8,14 @@ import {
   UserEmail,
   UserLogin
 } from '~/dto';
+import { headers } from '~/utils/headers';
 
 const ROOT_URL = `${API_URL}/auth`;
 const USER_ROOT_URL = `${API_URL}/users`;
 
 interface AuthAPI {
   login: (user: UserLogin) => Promise<string>;
-  logout: () => Promise<string>;
+  logout: () => Promise<void>;
   signup: (user: SignUp) => Promise<string>;
   confirmEmail: (user: ConfirmEmail, emailToken: string) => Promise<string>;
   forgotPassword: (email: UserEmail) => Promise<string>;
@@ -35,7 +36,6 @@ const authAPI: AuthAPI = {
       });
       return response.data;
     } catch (error) {
-      console.error('Error from backend API:', error);
       return null;
     }
   },
@@ -49,7 +49,6 @@ const authAPI: AuthAPI = {
       });
       return response.data;
     } catch (error) {
-      console.error('Error from backend API:', error);
       return null;
     }
   },
@@ -67,23 +66,17 @@ const authAPI: AuthAPI = {
       );
       return response.data;
     } catch (error) {
-      console.error('Error from backend API:', error);
       return null;
     }
   },
 
   async logout() {
-    try {
-      const res = await axios.get(`${ROOT_URL}/logout`, {
+    await axios.get(`${ROOT_URL}/logout`, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      return res.data;
-    } catch (error) {
-      console.error('Logout error :', error);
-      return null;
-    }
+  
   },
 
   async forgotPassword(email: UserEmail) {
@@ -95,7 +88,6 @@ const authAPI: AuthAPI = {
       });
       return res.data;
     } catch (error) {
-      console.error('Reset password error error :', error);
       return null;
     }
   },
@@ -113,22 +105,17 @@ const authAPI: AuthAPI = {
       );
       return response.data;
     } catch (error) {
-      console.error('Error from backend API:', error);
       return null;
     }
   },
 
-  async updateMyPassword(user: UpdatePassword, jwt_token) {
+  async updateMyPassword(user: UpdatePassword) {
     try {
       const res = await axios.patch(`${USER_ROOT_URL}/updateMyPassword`, user, {
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        }
+        headers: headers()
       });
       return res.data;
     } catch (error) {
-      console.error('Update password error :', error);
       return null;
     }
   }
