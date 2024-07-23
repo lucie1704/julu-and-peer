@@ -37,6 +37,18 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       User.addHook('afterUpdate', async (user) => {
+        const existingCustomer = await models.Customer.findOne({ where: { userId: user.id } });
+
+        if (existingCustomer) {
+          await existingCustomer.update({
+            userId: user.id,
+            firstName: user.firstname,
+            lastName: user.lastname,
+            updatedAt: new Date(),
+            active: user.active,
+            deletedAt: user.deletedAt
+          });
+        }
       });
     }
     
