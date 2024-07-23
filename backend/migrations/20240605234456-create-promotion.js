@@ -1,13 +1,12 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Promotions', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       startDate: {
         type: Sequelize.DATE
@@ -15,7 +14,7 @@ module.exports = {
       endDate: {
         type: Sequelize.DATE
       },
-      pourcentageOff: {
+      percentageOff: {
         type: Sequelize.INTEGER
       },
       code: {
@@ -30,12 +29,13 @@ module.exports = {
         type: Sequelize.DATE
       },
       customer: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,  
         references: {
           model: 'Customers',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'CASCADE'
       },
     });
   },

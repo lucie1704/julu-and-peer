@@ -18,11 +18,11 @@ meta:
 </script>
 
 <template>
-  <div class="max-w-2xl px-4 py-16 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-    <h1 class="text-2xl font-bold tracking-tight text-gray-900">
-      Produits
-    </h1>
-    <DataTable
+  <v-container>
+    <h4 class="text-h4 font-bold tracking-tight text-gray-900">
+      Vinyles
+    </h4>
+    <data-table
       :data="data"
       :loading="loading"
       :error="error"
@@ -102,6 +102,6 @@ meta:
         </v-card>
       </template>
       <!-- End Edit Form Slot -->
-    </DataTable>
-  </div>
+    </data-table>
+  </v-container>
 </template>

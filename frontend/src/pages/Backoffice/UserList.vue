@@ -15,11 +15,11 @@ meta:
 </script>
 
 <template>
-  <div class="max-w-2xl px-4 py-16 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-    <h1 class="text-2xl font-bold tracking-tight text-gray-900">
+  <v-container>
+    <h4 class="text-h4 font-bold tracking-tight text-gray-900">
       Utilisateurs
-    </h1>
-    <DataTable
+    </h4>
+    <data-table
       :data="data"
       :loading="loading"
       :error="error"
@@ -51,10 +51,6 @@ meta:
                   required
                   type="email"
                 />
-                <v-text-field
-                  v-model="item.photo"
-                  label="Photo"
-                />
                 <v-select
                   v-model="item.role"
                   :items="['user', 'admin']"
@@ -80,6 +76,6 @@ meta:
         </v-card>
       </template>
       <!-- End Edit Form Slot -->
-    </DataTable>
-  </div>
+    </data-table>
+  </v-container>
 </template>

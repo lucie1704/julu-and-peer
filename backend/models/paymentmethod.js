@@ -2,19 +2,21 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class PaymentMethod extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      PaymentMethod.belongsTo(models.CustomerAddress, { foreignKey: 'billingAddressId', onDelete: 'CASCADE' });
-      PaymentMethod.hasMany(models.OrderBilling);
+      PaymentMethod.belongsTo(models.CustomerAddress, { 
+        foreignKey: 'billingAddressId', 
+        onDelete: 'CASCADE' 
+      });
+      PaymentMethod.hasMany(models.OrderBilling, { 
+        foreignKey: 'paymentMethodId', 
+        onDelete: 'CASCADE' 
+      });
     }
   }
+
   PaymentMethod.init({
     type: {
       type: DataTypes.ENUM('credit_card', 'debit_card', 'paypal', 'stripe'),
@@ -29,25 +31,26 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     cardNumber: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false
     },
     cvv: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false
     },
     billingAddressId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      type: DataTypes.UUID,
       references: {
         model: 'CustomerAddresses',
         key: 'id'
-      }
+      },
+      allowNull: false
     }
   }, {
     sequelize,
     modelName: 'PaymentMethod',
-    timestamps: true,
+    timestamps: true
   });
+
   return PaymentMethod;
 };

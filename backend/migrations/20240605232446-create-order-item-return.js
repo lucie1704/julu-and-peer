@@ -1,19 +1,20 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('OrderItemReturns', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
       reason: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       date: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,
@@ -22,7 +23,23 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
+      orderId: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'CustomerOrders',
+          key: 'id'
+        },
+        allowNull: false
+      },
+      productId: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'Products',
+          key: 'id'
+        },
+        allowNull: false
+      },
     });
   },
   async down(queryInterface, Sequelize) {

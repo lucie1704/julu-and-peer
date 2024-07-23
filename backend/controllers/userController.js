@@ -3,7 +3,9 @@ const AppError = require('../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const filterObject = require('../utils/filterObject');
 const { responseReturn } = require('../utils/response');
+const { uuidv7 } = require('uuidv7');
 
+const id = uuidv7();
 
 // Méthodes pour User role
 
@@ -19,19 +21,19 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
     );
   }
 
-  const filteredBody = filterObject(req.body, 'firstname', 'lastname', 'photo');
+  const filteredBody = filterObject(req.body, 'firstname', 'lastname');
 
   const [nbUpdated, users] = await User.update(filteredBody, {
     where: {
-        id: parseInt(req.user.id, 10),
+        id: req.user.id,
     },
         returning: true,
     });
 
     if (!nbUpdated === 1) return next(new AppError(404));
 
-    const { id, firstname, lastname, email, photo } = users[0];
-    const user = { id, firstname, lastname, email, photo };
+    const { id, firstname, lastname, email } = users[0];
+    const user = { id, firstname, lastname, email };
 
     responseReturn(res, user);
 });
@@ -40,7 +42,7 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
 exports.deleteMe = catchAsyncError(async (req, res, next) => {
   const result = await User.destroy({
     where: {
-        id: parseInt(req.user.id, 10),
+        id: req.user.id,
     },
   });
 
@@ -87,6 +89,7 @@ exports.create = catchAsyncError(async ( req, res, next) => {
   const { firstname, lastname, email, password, passwordConfirmation } = req.body;
   
   const user = User.build({
+    id,
     firstname,
     lastname,
     email,
@@ -102,7 +105,7 @@ exports.create = catchAsyncError(async ( req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({
     where: {
-      id: parseInt(req.params.id, 10),
+      id: req.params.id,
     },
   });
 
@@ -121,18 +124,18 @@ exports.update = catchAsyncError(async (req, res, next) => {
     );
   }
 
-  const filteredBody = filterObject(req.body, 'firstname', 'lastname', 'email', 'photo');
+  const filteredBody = filterObject(req.body, 'firstname', 'lastname', 'email');
 
   const [nbUpdated, users] = await User.update(filteredBody, {
     where: {
-        id: parseInt(req.params.id, 10),
+        id: req.params.id,
     },
         returning: true,
     });
 
     if (!nbUpdated === 1) return next(new AppError(404));
 
-    const { id, firstname, lastname, email, photo } = users[0];
-    const user = { id, firstname, lastname, email, photo };
+    const { id, firstname, lastname, email } = users[0];
+    const user = { id, firstname, lastname, email };
     responseReturn(res, user);
 });

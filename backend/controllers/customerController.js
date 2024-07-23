@@ -2,6 +2,9 @@ const {User, Customer} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
 const AppError = require('./../utils/appError');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 exports.create = catchAsyncError(async (req, res, next) => {
     const { userId, firstName, lastName } = req.body;
@@ -9,7 +12,7 @@ exports.create = catchAsyncError(async (req, res, next) => {
     const user = await User.findByPk(userId);
     if (!user) return next(new AppError(404));
  
-    const customer = await Customer.create({ userId, firstName, lastName });
+    const customer = await Customer.create({ id, userId, firstName, lastName });
 
     responseReturn(res, customer, 201);
 });
@@ -33,7 +36,7 @@ exports.getById = catchAsyncError(async (req, res, next) => {
 
 exports.getByUserId = catchAsyncError(async (req, res, next) => {
     const customer = await Customer.findOne({
-        where: {userId: parseInt(req.params.id, 10) },
+        where: {userId: req.params.id },
         include: {
             model: User,
         },
@@ -48,7 +51,7 @@ exports.getByUserId = catchAsyncError(async (req, res, next) => {
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, customers] = await Customer.update(req.body, {
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id,
         },
         returning: true
     });
@@ -56,7 +59,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
     if (!nbUpdated === 1) return next(new AppError(404));
 
     const updatedCustomer = await Customer.findOne({
-        where: {id: parseInt(req.params.id, 10) },
+        where: {id: req.params.id},
         include: {
             model: User,
         },
@@ -68,7 +71,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await Customer.destroy({
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id,
         },
     });
 

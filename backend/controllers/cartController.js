@@ -2,6 +2,9 @@ const { Cart, CartItem, Product, ProductGenre, ProductFormat,ProductArtist} = re
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 exports.getProducts = catchAsyncError(async (req, res, next) => {
     const { id } = req.params;
@@ -29,13 +32,13 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
 
     const availableProducts = cart.CartItems.filter(cartItem => {
         const product = cartItem.Product;
-        if (product.availableStock >= cartItem.quantity) {
-          totalPrice += product.price * cartItem.quantity;
-          totalDiscount += product.discount * cartItem.quantity;
-          return true;
+        if (product.quantity >= cartItem.quantity) {
+            totalPrice += product.price * cartItem.quantity;
+            totalDiscount += product.discount * cartItem.quantity;
+            return true;
         } else {
-          outOfStockProductIds.push(product.id);
-          return false;
+            outOfStockProducts.push(product.id);
+            return false;
         }
     });
 
@@ -83,7 +86,7 @@ exports.create = catchAsyncError(async (req, res, next) => {
 
     if (existedCart) return next(new AppError(409));
 
-    const cart = await Cart.create({ customerId });
+    const cart = await Cart.create({ id, customerId });
 
     if (!cart) return next(new AppError(404));
 
@@ -93,7 +96,7 @@ exports.create = catchAsyncError(async (req, res, next) => {
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, carts] = await Cart.update(req.body, {
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id,
         },
         returning: true,
     });
@@ -106,7 +109,7 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async( req, res, next) => {
     const result = await Cart.destroy({
         where: {
-            id: parseInt(req.params.id, 10),
+            id: req.params.id,
         },
     });
 

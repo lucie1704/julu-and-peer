@@ -2,25 +2,43 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class OrderItemReturn extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      OrderItemReturn.hasMany(models.OrdersProducts);
+      OrderItemReturn.belongsTo(models.CustomerOrder, {
+        foreignKey: 'orderId' 
+      });
+      OrderItemReturn.belongsTo(models.Product, {
+        foreignKey: 'productId' 
+      });
     }
   }
+
   OrderItemReturn.init({
     reason: DataTypes.STRING,
-    date: DataTypes.DATE
+    date: DataTypes.DATE,
+    orderId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'CustomerOrders',
+        key: 'id'
+      },
+      allowNull: false
+    },
+    productId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Products',
+        key: 'id'
+      },
+      allowNull: false
+    },
   }, {
     sequelize,
     modelName: 'OrderItemReturn',
-    timestamps: true,
+    timestamps: true
   });
+
   return OrderItemReturn;
 };

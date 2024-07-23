@@ -1,32 +1,67 @@
+import { Customer } from '~/dto/customer';
+
+export interface PaginatedProducts {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+  data: Array<Product>;
+  facets: Record<string, Array<FacetItem>>;
+}
+
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   price: number;
-  discount: number;
+  quantity: number;
   reviewCount?: number;
-  availableStock: number;
-  imageSrc: string;
-  imageAlt: string;
-  ProductGenre: ProductGenre;
-  ProductFormat: ProductFormat;
-  ProductArtist: ProductArtist;
+  discount: number;
+  ProductGenre: Category;
+  ProductFormat: Category;
+  ProductArtist: Category;
+  ProductCustomerEvaluation: Array<CustomerEvaluation>;
+  Stock: Array<Stock>;
+  Image: Array<Image>;
 }
 
-interface ProductGenre {
+export interface PaginatedCategories {
+  page: number,
+  limit: number,
+  totalItems: number,
+  totalPages: number,
+  data: Array<Category>
+}
+
+export interface Category {
   id: string;
   name: string;
   description: string;
 }
 
-interface ProductFormat {
-  id: string;
-  name: string;
-  description: string;
-}
+type FacetItem = {
+  _id: string;
+  count: number;
+};
 
-interface ProductArtist {
-  id: string;
-  name: string;
-  description: string;
-}
+type Image = {
+  width: number,
+  height: number,
+  type: string,
+  description: string,
+  alt: string,
+  path: string
+};
+
+type Stock = {
+  type: string,
+  quantity: number
+};
+
+type CustomerEvaluation = {
+  _id: string,
+  rating: number,
+  comment: string,
+  Customer: Customer,
+  updatedAt: Date
+};

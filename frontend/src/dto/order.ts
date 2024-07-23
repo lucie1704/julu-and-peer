@@ -2,6 +2,7 @@ export interface PlaceOrder {
   shippingFee: number;
   products: Array<OrderProduct>;
   shippingInfo: ShippingInfo;
+  billingInfo: BillingInfo;
   customerId: string;
   email: string;
 }
@@ -9,7 +10,18 @@ export interface PlaceOrder {
 export interface ShippingInfo {
   firstName: string;
   lastName: string;
-  company: string;
+  address: string;
+  apartment: string;
+  city: string;
+  country: string;
+  state: string;
+  postalCode: string;
+  phone: string;
+}
+
+export interface BillingInfo {
+  firstName: string;
+  lastName: string;
   address: string;
   apartment: string;
   city: string;
@@ -20,14 +32,14 @@ export interface ShippingInfo {
 }
 
 export interface OrderSeller {
-  id: number;
+  id: string;
   products: Array<OrderProduct>;
   price: number;
   sellerId?: number;
 }
 
 export interface OrderProduct {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -39,14 +51,15 @@ export interface Orders {
 }
 
 export interface Order {
-  id: number;
-  customerId: number;
+  id: string;
+  customerId: string;
   products: Array<OrderProduct>;
   price: number;
   paymentStatus: string;
   shippingInfo: ShippingInfo;
+  billingInfo: BillingInfo;
   deliveryStatus: string;
   date: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 }

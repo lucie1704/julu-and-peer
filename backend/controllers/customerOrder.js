@@ -1,7 +1,10 @@
-const {responseReturn} = require('../utils/response');
-const { CustomerOrder, Cart, CartItem, Product, Customer} = require('../models');
+const { responseReturn } = require('../utils/response');
+const { CustomerOrder, Customer} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
+const { uuidv7 } = require('uuidv7');
+
+const id = uuidv7();
 
 exports.paymentCheck = catchAsyncError (async (id) => {
 
@@ -68,6 +71,7 @@ exports.create = catchAsyncError(async (req, res, next) => {
   // TODO: Update customerAddresse
   
   const order = await CustomerOrder.create({
+    id,
     customerId,
     shippingInfo,
     products: customerOrderProducts,

@@ -8,6 +8,7 @@ meta:
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { test_uid } from '~/constants';
 import { createCart } from '~/dto';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
@@ -27,7 +28,7 @@ const quantity = ref<number>(1);
 onMounted(async () => {
   await getProductDetail();
 
-  await customerStore.fetchByUserId('3');
+  await customerStore.fetchByUserId(test_uid);
 
   if (customerStore.customerId) return await getCustomerCart(customerStore.customerId);
 });
@@ -65,7 +66,7 @@ const submitForm = async () => {
     || !quantity.value)
     return console.error('Form validation failed!');
 
-  const productId = productStore.product.id;
+  const productId = productStore.product._id;
   const cartId = cartStore.cart.id as string;
 
   const data: createCart = {
@@ -88,10 +89,12 @@ const submitForm = async () => {
     class="mx-auto my-12"
     max-width="374"
   >
+    <!-- @TODO slider pour les images -->
     <v-img
+      v-if="productStore.product.Image[0]"
       height="250"
-      :src="productStore.product.imageSrc"
-      :alt="productStore.product.imageAlt"
+      :src="productStore.product.Image[0].path"
+      :alt="productStore.product.Image[0].alt"
       cover
     />
 
