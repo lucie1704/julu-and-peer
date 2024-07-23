@@ -23,8 +23,8 @@ const initialValues = {
 
 const myApiCall = ref<string>('http://localhost:3000/api/products');
 
-const onSubmit = async() => {
-  console.log('helloo');
+const onSubmit = async(data: any) => {
+  console.log(data);
 };
 
 const {

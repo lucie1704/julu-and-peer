@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { Reactive } from 'vue';
-import { computed, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import type { ZodIssue, ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
@@ -17,7 +17,7 @@ type SchemaType = z.ZodObject<Record<string, ZodTypeAny>>;
 export function useForm<T extends SchemaType>(
   schema: T,
   apiCall: ApiCall,
-  onSubmit: () => Promise<void>,
+  onSubmit: (data: any) => Promise<void>,
   initialValues?: Partial<z.infer<T>>,
 ) {
 
@@ -77,7 +77,7 @@ export function useForm<T extends SchemaType>(
         headers: createHeaders(apiCall.jwt)
       });
       const validatedData = schema.parse(fetchedData);
-      await onSubmit();
+      await onSubmit(validatedData);
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
