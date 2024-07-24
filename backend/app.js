@@ -68,24 +68,20 @@ app.use(express.urlencoded({ extended: true, limit:'1kb'}));
 app.use(cookieParser());
 
 // Enable CORS for all routes in developpment
-if (process.env.NODE_ENV === 'development') {
-  app.use(cors());
-}
+// if (process.env.NODE_ENV === 'development') {
+//   app.use(cors());
+// }
 
 const corsOptions = {
-  origin: [
-    'https://www.juluandpeer.store', 
-    'http://www.juluandpeer.store', 
-    'https://juluandpeer.store', 
-    'http://juluandpeer.store'
-  ],
+  origin: 'https:://juluandpeer.store',
+  allowedHeaders: '*',
   credentials: true,
   optionsSuccessStatus: 200
 };
 
-if (process.env.NODE_ENV !== 'development') {
-  app.use(cors(corsOptions));
-}
+
+  app.use(cors());
+
   // app.use(cors(corsOptions));
 
 //   app.use((req, res, next) => {
