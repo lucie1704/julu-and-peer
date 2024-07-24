@@ -11,11 +11,17 @@ module.exports = async function checkAuth(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    console.log('ETTETETETEEEETTTETTETETTETETETETE');
     const user = await User.findByPk(decoded.id, {
       attributes: ['id', 'email', 'role'],
     });
-    
+    console.log('USUSSUUSUUSUUSUSUSUUUSUUSUSUUSUSUSU');
+
+    console.log(user);
+
     if (!user) return res.sendStatus(401);
+    console.log('KJKKJKJKKJKJKJKJKJJJKJKJKJKJKJKJKJKJKJ');
+
     req.user = user;
 
     next();
