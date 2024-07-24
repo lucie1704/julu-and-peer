@@ -3,6 +3,8 @@ import { API_URL } from '~/constants';
 import { Options } from '~/dto/options';
 import { headers } from '~/utils/headers';
 
+const baseURL = API_URL + '/';
+
 export const getDataOptions = (url: string) => {
   const options = ref<Options>({});
   const loading = ref(true);

@@ -5,6 +5,8 @@ import { CategorySchema, ProductSchema } from '~/schema/productSchema';
 import { UserSchema } from '~/schema/userSchema';
 import { headers } from '~/utils/headers';
 
+const baseURL = API_URL + '/';
+
 // On défini des schémas Zod dynamique pour toutes les données
 const getSchema = (url: string): ZodSchema<any> => {
     switch (url) {
