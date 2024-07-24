@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { User } = require('../models');
-const AppError = require('../utils/AppError');
+const AppError = require('../utils/appError');
 const roles = ['admin'];
 
 module.exports = async function checkAdmin(req, res, next) {

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import cartAPI from '~/api/cart';
 import { Cart, CartItem, CartProduct, createCart } from '~/dto';
 import router from '~/router/router';
@@ -80,6 +80,8 @@ export const useCart = defineStore('cart', () => {
     }
   };
 
+  const isCartEmpty = computed(() => (cart.value && cart.value.CartItems.length > 0));
+
   return {
     cart,
     cartProducts,
@@ -92,6 +94,7 @@ export const useCart = defineStore('cart', () => {
     cartItemQuantityUpdate,
     deleteCartItem,
     deleteCart,
+    isCartEmpty,
     message
   };
 });
