@@ -1,4 +1,4 @@
-const { Cart, CartItem, Product, ProductGenre, ProductFormat,ProductArtist} = require('../models');
+const { Cart, CartItem, Product, ProductGenre, ProductFormat,ProductArtist, Image} = require('../models');
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
@@ -18,7 +18,8 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
                 include: [
                     { model: ProductGenre },
                     { model: ProductFormat },
-                    { model: ProductArtist }
+                    { model: ProductArtist },
+                    { model: Image }
                 ]
             }
         }

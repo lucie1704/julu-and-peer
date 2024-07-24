@@ -7,24 +7,16 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { PlaceOrder, ShippingInfo, BillingInfo } from '~/dto';
-import router from '~/router/router.ts';
+import { ShippingInfo, BillingInfo } from '~/dto';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
-import { useOrder } from '~/stores/order';
 import { getUserId } from '~/utils/authUtils';
 import { loadStripe } from '@stripe/stripe-js';
 import { API_URL, STRIPE_PUBLIC_KEY } from '~/constants';
-// import { getDataOptions } from '~/composables/backoffice/getDataOptions';
-
-// TODO: Rajouter une liste d'adresses de l'utilisateur pour préremplir les formulaires que l'on récupères des options.
-// const { options } = getDataOptions('customerorder');
 
 const cartStore = useCart();
-const orderStore = useOrder();
 const customerStore = useCustomer();
 
-const email = ref('');
 const shippingInfo = ref<ShippingInfo>({
   firstName: '',
   lastName: '',
@@ -133,17 +125,34 @@ const calculateTotal = (
   shippingFee: number
 ) => {
   return computed(() => {
-    return totalPrice + shippingFee - totalDiscount;
+    const total = totalPrice + shippingFee - totalDiscount;
+    return total.toFixed(2);
   });
 };
 
 const submitForm = async () => {
-  // @TODO: Implémenter le paiement
   if (!validateForm()) {
     formError.value = 'Veuillez remplir toutes les informations avant de procéder au paiement.';
     return;
-  } else {
-    // WARNING: This part is gonna move somewhere else when tables are cleaned
+  }
+
+  const orderDatas = {
+    shippingFee: 1.80,
+    products: cartStore.cartProducts?.availableProducts.map((cartItem) => ({
+      // @ts-ignore
+      id: cartItem.Product?.id,
+      name: cartItem.Product?.name,
+      description: cartItem.Product?.description,
+      price: cartItem.Product?.price,
+      quantity: cartItem.quantity
+    })) || [],
+    customerId: customerStore.customerId as string
+  };
+
+  try {
+    const ordered_products = cartStore.cartProducts?.availableProducts;
+    const cartId = cartStore.cartProducts?.cart.id;
+
     const stripe = await loadStripe(STRIPE_PUBLIC_KEY);
     const response = await fetch(`${API_URL}/stripe`, {
       method: 'POST',
@@ -151,36 +160,15 @@ const submitForm = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        items: cartStore.cartProducts?.availableProducts,
+        items: ordered_products,
+        order_datas: orderDatas,
+        shipping_info: shippingInfo.value,
+        billing_info: billingInfo.value,
+        cart_id: cartId
       }),
     });
     const session = await response.json();
     await stripe?.redirectToCheckout({ sessionId: session.id });
-  }
-
-  const orderData: PlaceOrder = {
-    shippingFee: 1.80,
-    products: cartStore.cartProducts?.availableProducts.map((cartItem) => ({
-      id: cartItem.Product?._id,
-      name: cartItem.Product?.name,
-      description: cartItem.Product?.description,
-      price: cartItem.Product?.price,
-      quantity: cartItem.quantity
-    })) || [],
-    shippingInfo: shippingInfo.value,
-    billingInfo: billingInfo.value,
-    email: email.value,
-    customerId: customerStore.customerId as string
-  };
-
-  try {
-    // TODO: Rework this part to include stripe. redirect.
-    await orderStore.placeOrder(orderData);
-    const cartId = cartStore.cartProducts?.cart.id;
-    if (cartId) await cartStore.deleteCart(cartId);
-
-    router.push('/');
-    cartStore.cartProducts = undefined;
   } catch (error) {
     console.error('Error to confirm order:', error);
   }

@@ -2,9 +2,13 @@ const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
 const stripe = require('../services/stripe');
+const dotenv = require('dotenv');
+
+dotenv.config({ path: './config.env' });
+const base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://juluandpeer.store';
 
 exports.create = catchAsyncError(async (req, res) => {
-    const { items } = req.body;
+    const { items, order_datas, shipping_info, billing_info, cart_id } = req.body;
 
     const session = await stripe.checkout.sessions.create({
         payment_method_types: [
@@ -37,8 +41,14 @@ exports.create = catchAsyncError(async (req, res) => {
             },
         ],
         mode: 'payment',
-        success_url: 'http://localhost:8080?paid=success',
-        cancel_url: 'http://localhost:8080?paid=cancel',
+        metadata: {
+            order_datas: JSON.stringify(order_datas),
+            shipping_info: JSON.stringify(shipping_info),
+            billing_info: JSON.stringify(billing_info),
+            cart_id: cart_id,
+        },
+        success_url: `${base_url}`,
+        cancel_url: `${base_url}`,
     });
 
     res.json({ id: session.id });
