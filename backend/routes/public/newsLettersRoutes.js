@@ -1,8 +1,8 @@
 const express = require('express');
-const newLetterController = require('../../controllers/newLetterController');
+const newsLetterController = require('../../controllers/newsLetterController');
 
 const router = express.Router();
 
-router.get('/', newLetterController.newsletter);
+router.get('/', newsLetterController.newsletter);
 
 module.exports = router;
