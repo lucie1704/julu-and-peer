@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { User} = require('../models');
+const dotenv = require('dotenv');
+dotenv.config({ path: './config.env' });
 
 module.exports = async function checkAuth(req, res, next) {
   const header = req.headers.Authorization ?? req.headers.authorization;
