@@ -73,12 +73,11 @@ app.use(cookieParser());
 // }
 
 const corsOptions = {
-  origin: 'https:://juluandpeer.store',
+  origin: 'https://juluandpeer.store',
   allowedHeaders: '*',
   credentials: true,
   optionsSuccessStatus: 200
 };
-
 
   app.use(cors());
 
