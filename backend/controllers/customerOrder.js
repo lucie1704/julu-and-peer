@@ -1,5 +1,5 @@
 const { responseReturn } = require('../utils/response');
-const { CustomerOrder, Customer} = require('../models');
+const { CustomerOrder, Customer, CustomerAddress} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 const { uuidv7 } = require('uuidv7');
@@ -173,3 +173,13 @@ exports.getAllOrders = catchAsyncError(async (req, res, next) => {
   // });
 });
 
+exports.options = catchAsyncError(async (req, res, next) => {
+
+  const customerAddresses = await CustomerAddress.findAll({
+    where: {
+      customerId: req.user.id
+    }
+  });
+
+  responseReturn(res, {adress:customerAddresses})
+});

@@ -20,12 +20,13 @@ export const useOrder = defineStore('order', () => {
 
   const placeOrder = async (orderData: PlaceOrder) => {
     try {
+      // TODO: maybe override this part for stripe.
       const response = await orderAPI.placeOrder(orderData);
       if (response) {
         orderId.value = response.orderId;
         message.value = response.message;
       } else {
-        message.value = "Erreur lors de la passation de la commande : Réponse nulle reçue";
+        message.value = 'Erreur lors de la passation de la commande : Réponse nulle reçue';
       }
     } catch (error) {
       message.value = `Erreur lors de la passation de la commande : ${error}`;

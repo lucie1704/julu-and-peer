@@ -70,7 +70,7 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                   <div class="flex-1 px-4 py-6 overflow-y-auto sm:px-6">
                     <div class="flex items-start justify-between">
                       <DialogTitle class="text-lg font-medium text-gray-900">
-                        Shopping cart
+                        Votre panier
                       </DialogTitle>
                       <div class="flex items-center ml-3 h-7">
                         <button
@@ -79,7 +79,7 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                           @click="open = false"
                         >
                           <span class="absolute -inset-0.5" />
-                          <span class="sr-only">Close panel</span>
+                          <span class="sr-only">Fermer</span>
                           <v-icon icon="fa-solid fa-xmark" />
                         </button>
                       </div>
@@ -150,7 +150,7 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                                     class="font-medium text-indigo-600 hover:text-indigo-500"
                                     @click="cartProduct.id && emitRemoveItem(cartProduct.id)"
                                   >
-                                    Remove
+                                    Supprimer
                                   </button>
                                 </div>
                               </div>
@@ -168,43 +168,43 @@ const emitRemoveItem = (cartItemId: string) => emit('remove-item', { cartItemId 
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
-                      <p>Subtotal</p>
+                      <p>Sous-total</p>
                       <p>{{ cartItems.totalPrice }}</p>
                     </div>
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
-                      <p>Total Discount</p>
+                      <p>Remise Totale</p>
                       <p>{{ cartItems.totalDiscount }}</p>
                     </div>
                     <div
                       class="flex justify-between text-base font-medium text-gray-900"
                     >
-                      <p>Total Products</p>
+                      <p>Total Produits</p>
                       <p>{{ cartItems.cartTotalProductCount }}</p>
                     </div>
                     <p class="mt-0.5 text-sm text-gray-500">
-                      Shipping and taxes calculated at checkout.
+                      Frais de port et taxes calculés avant le paiement.
                     </p>
                     <div class="mt-6">
                       <router-link
                         class="flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700"
                         to="/customer/payment/shipping"
                       >
-                        Checkout
+                        Passer la commande
                       </router-link>
                     </div>
                     <div
                       class="flex justify-center mt-6 text-sm text-center text-gray-500"
                     >
                       <p>
-                        or
+                        ou
                         <button
                           type="button"
                           class="font-medium text-indigo-600 hover:text-indigo-500"
                           @click="open = false"
                         >
-                          Continue Shopping
+                          Continuer vos achats
                           <span aria-hidden="true"> &rarr;</span>
                         </button>
                       </p>
