@@ -6,8 +6,6 @@ const Email = require('./../utils/email');
 const crypto = require('crypto');
 const { Sequelize } = require('sequelize');
 const { uuidv7 } = require('uuidv7');
-const dotenv = require('dotenv');
-dotenv.config({ path: './config.env' });
 
 
 const signToken = (id, role) => {

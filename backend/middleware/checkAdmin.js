@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken");
 const { User } = require('../models');
 const AppError = require('../utils/appError');
 const roles = ['admin'];
-const dotenv = require('dotenv');
-dotenv.config({ path: './config.env' });
 
 module.exports = async function checkAdmin(req, res, next) {
   const header = req.headers.Authorization ?? req.headers.authorization;
