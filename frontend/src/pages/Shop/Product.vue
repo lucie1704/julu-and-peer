@@ -67,7 +67,8 @@ const submitForm = async () => {
     || !quantity.value)
     return console.error('Form validation failed!');
 
-  const productId = productStore.product._id;
+  //@ts-expect-error id isssue
+  const productId = productStore.product.id;
   const cartId = cartStore.cart.id as string;
 
   const data: createCart = {

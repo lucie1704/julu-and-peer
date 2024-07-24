@@ -6,39 +6,65 @@ const { uuidv7 } = require('uuidv7');
 
 const id = uuidv7();
 
-exports.add = catchAsyncError (async (req, res, next) => {
-    const {productId, cartId, quantity } = req.body;
+exports.add = catchAsyncError(async (req, res, next) => {
+    const { productId, cartId, quantity } = req.body;
 
+    // Find the product
     const product = await Product.findOne({ where: { id: productId } });
+    if (!product) return next(new AppError('Product not found', 404));
 
-    if (!product) return next(new AppError(404));
-
-    const cartItem = await CartItem.create({
-        id,
-        productId,
-        cartId,
-        quantity,
+    // Check if the cart item already exists
+    const existingCartItem = await CartItem.findOne({
+        where: { productId, cartId }
     });
 
-    return responseReturn(res, cartItem, 201);
+    if (existingCartItem) {
+        // If it exists, update the quantity
+        existingCartItem.quantity = quantity;
+        await existingCartItem.save();
 
+        return responseReturn(res, existingCartItem, 200);
+    } else {
+        // If it doesn't exist, create a new cart item
+        const newCartItem = await CartItem.create({
+            productId,
+            cartId,
+            quantity,
+        });
+
+        return responseReturn(res, newCartItem, 201);
+    }
 });
 
 exports.update = catchAsyncError(async (req, res, next) => {
 
-    const { id } = req.params;
+    const { productId, cartId, quantity } = req.body;
 
-    const cartItem = await CartItem.findByPk(id);
+    // Find the product
+    const product = await Product.findOne({ where: { id: productId } });
+    if (!product) return next(new AppError('Product not found', 404));
 
-    if (!cartItem) return next(new AppError(404));
+    // Check if the cart item already exists
+    const existingCartItem = await CartItem.findOne({
+        where: { productId, cartId }
+    });
 
-    const updatedCartItem = await cartItem.update({ quantity: req.body.quantity });
+    if (existingCartItem) {
+        // If it exists, update the quantity
+        existingCartItem.quantity = quantity;
+        await existingCartItem.save();
 
-    if (!updatedCartItem) return next(new AppError(404));
+        return responseReturn(res, existingCartItem, 200);
+    } else {
+        // If it doesn't exist, create a new cart item
+        const newCartItem = await CartItem.create({
+            productId,
+            cartId,
+            quantity,
+        });
 
-    await updatedCartItem.save();
-
-    responseReturn(res, updatedCartItem.quantity );
+        return responseReturn(res, newCartItem, 201);
+    }
 });
 
 exports.delete = catchAsyncError(async (req, res, next) => {
