@@ -19,7 +19,7 @@ variables:
     EMAIL_FROM: "julupeervinyle@gmail.com"
     DOMAINE_URL: "www.juluandpeer.store"
     LOCAl_URL: "http://localhost:8080/resetPassword"
-    JWT_EXPIRES_IN: 6000
+    JWT_EXPIRES_IN: 400000
     JWT_SECRET: "998c2614eb0acf4eea946414667e78598e286a6c6b3911602f8b23a76811196b"
     STRIPE_SECRET: "sk_test_51LPNAtJ14Llo270Puu3F1bzWiTxuAhW535pVkMKIiJe07me0Q2sOawgQwN4H2OKBJInr1NhdqGbUIpSmaiBYlLaa00cud191SX"
     STRIPE_LOCAL_WH_TOKEN: "whsec_fb91ca888a8d3b410eb9019268979b4b86f84067fe9a7f2f91016ecac79d8617"
