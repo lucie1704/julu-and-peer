@@ -10,7 +10,7 @@ meta:
 import { ref } from 'vue';
 import DataTable from '~/components/backoffice/DataTable.vue';
 import { getDataTable } from '~/composables/backoffice/getDataTable';
-import type { ApiCall } from '~/composables/form';
+import type { ApiCall, RequestMethod } from '~/composables/form';
 import { useForm } from '~/composables/form';
 import { API_URL } from '~/constants';
 import { UserForm } from '~/schema/userSchema';
@@ -21,17 +21,10 @@ const { data, loading, error, currentPage, totalPages, setPage, refresh } = getD
 const showPassword = ref(false);
 const showPasswordConfirm = ref(false);
 
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value;
-};
-
-const togglePasswordConfirmVisibility = () => {
-  showPasswordConfirm.value = !showPasswordConfirm.value;
-};
-
 const apiCall = ref<ApiCall>({
   method: 'post',
-  endpoint: `${API_URL}/${url}`
+  endpoint: `${API_URL}/${url}`,
+  jwt: localStorage.getItem('jwt-token') || ''
 });
 const schema = UserForm;
 const isEditUser = ref<boolean>();
@@ -40,7 +33,7 @@ const initialValues = ref();
 const updateApiCall = (payload: Record<string, string>): void => {
   if (payload.id) {
     isEditUser.value = true;
-    apiCall.value.method = 'put';
+    apiCall.value.method = 'update' as RequestMethod;
     apiCall.value.endpoint = `${API_URL}/${url}/${payload.id}`;
   } else {
     isEditUser.value = false;
@@ -123,10 +116,7 @@ const {
                   @update:model-value="updateField('lastname', formData.lastname)"
                 />
               </v-col>
-              <v-col
-                cols="12"
-                md="6"
-              >
+              <v-col cols="12">
                 <v-text-field
                   v-model="formData.email"
                   name="email"
@@ -136,106 +126,33 @@ const {
                   @update:model-value="updateField('email', formData.email)"
                 />
               </v-col>
-              <v-col
+              <!-- <v-col
                 cols="12"
                 md="6"
               >
                 <v-text-field
-                  v-model="item.password"
+                  v-model="formData.password"
                   :type="showPassword ? 'text' : 'password'"
-                  required
-                  label="Password"
+                  label="Mot de passe"
                   class="relative"
-                >
-                  <template #append>
-                    <span
-                      class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
-                      @click="togglePasswordVisibility"
-                    >
-                      <svg
-                        v-if="showPassword"
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-blue-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15.172 15.172a4 4 0 00-5.657 0M17.657 8.343a4 4 0 010 5.657M3.343 3.343a4 4 0 015.657 0M12 12a4 4 0 100-8 4 4 0 000 8z"
-                        />
-                      </svg>
-                      <svg
-                        v-else
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-gray-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M3.75 3.75L20.25 20.25M4.5 12a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0zM12 12a4 4 0 100-8 4 4 0 000 8z"
-                        />
-                      </svg>
-                    </span>
-                  </template>
-                </v-text-field>
+                  :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                  @click:append="showPassword = !showPassword"
+                />
               </v-col>
               <v-col
                 cols="12"
                 md="6"
               >
                 <v-text-field
-                  v-model="item.passwordConfirm"
+                  v-model="formData.passwordConfirm"
                   :type="showPasswordConfirm ? 'text' : 'password'"
-                  required
-                  label="Confirm Password"
+                  :error-messages="errors.passwordConfirm"
+                  label="Confirmation du mot de passe"
                   class="relative"
-                >
-                  <template #append>
-                    <span
-                      class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
-                      @click="togglePasswordConfirmVisibility"
-                    >
-                      <svg
-                        v-if="showPasswordConfirm"
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-blue-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15.172 15.172a4 4 0 00-5.657 0M17.657 8.343a4 4 0 010 5.657M3.343 3.343a4 4 0 015.657 0M12 12a4 4 0 100-8 4 4 0 000 8z"
-                        />
-                      </svg>
-                      <svg
-                        v-else
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-gray-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M3.75 3.75L20.25 20.25M4.5 12a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0zM12 12a4 4 0 100-8 4 4 0 000 8z"
-                        />
-                      </svg>
-                    </span>
-                  </template>
-                </v-text-field>
-              </v-col>
+                  :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                  @click:append="showPassword = !showPassword"
+                />
+              </v-col> -->
             </v-row>
             <v-row>
               <v-col class="text-red">
