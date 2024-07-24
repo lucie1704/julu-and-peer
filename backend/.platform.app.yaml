@@ -15,9 +15,9 @@ variables:
     DATABASE_URL: "postgres://main:main@postgresql.internal:5432/main"
     MONGO_URL: "mongodb://main:main@mongodb.internal:27017/main"
 
-relationships:
-  mongodb: "mongodb:mongodb"
-  postgresql: "postgresql:postgresql"
+# relationships:
+#   mongodb: "mongodb:mongodb"
+#   postgresql: "postgresql:postgresql"
 
 hooks:
   build: |
