@@ -5,7 +5,6 @@ const { Product, ProductArtist, Image } = require('../models');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: './config.env' });
-// /public/product/
 const base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/public/product/' : 'https://juluandpeer.store/product';
 
 /** @type {import('sequelize-cli').Migration} */
