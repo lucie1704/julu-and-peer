@@ -69,7 +69,7 @@ app.use(cookieParser());
 
 // Enable CORS for all routes in developpment
 if (process.env.NODE_ENV === 'development') {
-    app.use(cors());
+  app.use(cors());
 }
 
 const corsOptions = {

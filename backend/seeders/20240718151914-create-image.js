@@ -5,7 +5,8 @@ const { Product, ProductArtist, Image } = require('../models');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: './config.env' });
-const base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://juluandpeer.store';
+// /public/product/
+const base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/public/product/' : 'https://juluandpeer.store/product';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -39,7 +40,7 @@ module.exports = {
             type: 'jpg',
             description: `Image for ${product.name} by ${artist.name}`,
             alt: `Alt text for image ${product.name}`,
-            path: `${base_url}/public/product/${randomImage}`,
+            path: `${base_url}/${randomImage}`,
             createdAt: new Date(),
             updatedAt: new Date(),
             productId: product.id,
