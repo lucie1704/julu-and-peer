@@ -40,8 +40,6 @@ exports.update = catchAsyncError(async (req, res, next) => {
 
     const { productId, cartId, quantity } = req.body;
 
-    console.log("data............", productId, cartId, quantity);
-
     // Find the product
     const product = await Product.findOne({ where: { id: productId } });
     if (!product) return next(new AppError('Product not found', 404));
