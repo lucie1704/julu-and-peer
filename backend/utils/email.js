@@ -4,18 +4,11 @@ const logger = require('./logger');
 const {convert} = require('html-to-text');
 
 
-// const transporter = nodemailer.createTransport({
-//   host: process.env.MAILTRAP_HOST,
-//   port:  process.env.MAILTRAP_PORT,
-//   auth: {
-//     user: process.env.MAILTRAP_USER,
-//     pass: process.env.MAILTRAP_PASS,
-//   },
-// });
-
-console.log("process.env.GMAIL_USER", process.env.GMAIL_USER)
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASS,
@@ -45,7 +38,7 @@ module.exports = class Email {
       text: convert(html),
     };
 
-    if(this.to == "julupeervinyle@gmail.com") {
+    if(process.env.GMAIL_USER){
       try {
         logger.info(`Envoi de l'email à ${this.to} ....`);
         const info = await transporter.sendMail(mailOptions);

@@ -37,9 +37,6 @@ const app = express();
 //Set env variable globally
 dotenv.config({ path: './config.env' });
 
-if (process.env.NODE_ENV == "production") {
-  dotenv.config({ path: './config.prod.env' });
-}
 // const csurf = require('csurf');
 
 // Serving static files

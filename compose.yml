@@ -15,20 +15,14 @@ services:
     image: node
     user: root
     environment:
-      - NODE_ENV=production
       - PORT=3000
       - DATABASE_URL=postgres://root:password@db:5432/app
       - JWT_SECRET=998c2614eb0acf4eea946414667e78598e286a6c6b3911602f8b23a76811196b
       - MONGO_URL=mongodb://root:password@mongodb:27017/app?authSource=admin
       - JWT_EXPIRES_IN=2592000
       - USERNAME=julupeer
-      - MAILTRAP_HOST=bulk.smtp.mailtrap.io
-      - MAILTRAP_PORT=587
-      - MAILTRAP_USER=api
-      - MAILTRAP_PASS=1430b9f76960c8409e7efba4b7ff3d43
-
       - GMAIL_USER=julupeervinyle@gmail.com
-      - GMAIL_PASS=Just1n@123456
+      - GMAIL_PASS=vjgtuxkztiqwuiqh
       - EMAIL_FROM=julupeervinyle@gmail.com
 
     ports:
@@ -65,11 +59,11 @@ services:
     image: node
     user: root
     working_dir: /home/node
-    command: sh -c "npm install && npm run build && npm run dev"
+    command: sh -c "npm install && npm run dev"
     ports:
       - 8080:8080
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=development 
     volumes:
       - ./frontend:/home/node
       - /node/node_modules
