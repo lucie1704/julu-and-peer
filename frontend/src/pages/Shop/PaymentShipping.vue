@@ -6,13 +6,13 @@
 </route>
 
 <script setup lang="ts">
+import { loadStripe } from '@stripe/stripe-js';
 import { computed, onMounted, ref } from 'vue';
-import { ShippingInfo, BillingInfo } from '~/dto';
+import { API_URL, VUE_APP_STRIPE_PUBLIC_KEY } from '~/constants';
+import { BillingInfo, ShippingInfo } from '~/dto';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
 import { getUserId } from '~/utils/authUtils';
-import { loadStripe } from '@stripe/stripe-js';
-import { API_URL, STRIPE_PUBLIC_KEY } from '~/constants';
 
 const cartStore = useCart();
 const customerStore = useCustomer();
@@ -134,12 +134,26 @@ const submitForm = async () => {
   if (!validateForm()) {
     formError.value = 'Veuillez remplir toutes les informations avant de procéder au paiement.';
     return;
+  } else {
+    // WARNING: This part is gonna move somewhere else when tables are cleaned
+    const stripe = await loadStripe(VUE_APP_STRIPE_PUBLIC_KEY);
+    const response = await fetch(`${API_URL}/stripe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        items: cartStore.cartProducts?.availableProducts,
+      }),
+    });
+    const session = await response.json();
+    await stripe?.redirectToCheckout({ sessionId: session.id });
   }
 
   const orderDatas = {
     shippingFee: 1.80,
     products: cartStore.cartProducts?.availableProducts.map((cartItem) => ({
-      // @ts-ignore
+      // @ts-expect-error id issue
       id: cartItem.Product?.id,
       name: cartItem.Product?.name,
       description: cartItem.Product?.description,

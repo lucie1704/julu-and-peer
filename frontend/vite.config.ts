@@ -36,6 +36,6 @@ export default defineConfig({
   },
   define: {
     __API_URL: JSON.stringify(process.env.VUE_APP_API_URL),
-    __STRIPE_KEY: JSON.stringify(process.env.STRIPE_PUBLIC_KEY),
+    __STRIPE_KEY: JSON.stringify(process.env.VUE_APP_STRIPE_PUBLIC_KEY),
   },
 });
