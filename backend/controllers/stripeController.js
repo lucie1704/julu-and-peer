@@ -5,7 +5,7 @@ const stripe = require('../services/stripe');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: './config.env' });
-const base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://juluandpeer.store';
+const base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://www.juluandpeer.store';
 
 exports.create = catchAsyncError(async (req, res) => {
     const { items, order_datas, shipping_info, billing_info, cart_id } = req.body;
