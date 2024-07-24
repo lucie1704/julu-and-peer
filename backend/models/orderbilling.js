@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   OrderBilling.init({
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false
+    },
     link: DataTypes.STRING,
     paymentMethodId: {
       type: DataTypes.UUID,

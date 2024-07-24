@@ -23,29 +23,30 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   CustomerOrder.init({
-    // products: DataTypes.ARRAY(DataTypes.STRING),
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false
+    },
     products: {
       type: DataTypes.ARRAY(DataTypes.JSON),
       allowNull: false,
       validate: {
         async isValidProductArray(value) {
-          // if (!Array.isArray(value)) {
-          //   throw new Error('Products must be an array.');
-          // }
-          for (const product of value) {
-            if (!product.id || !DataTypes.UUID.test(product.id)) {
-              throw new Error('Each product must have a valid UUID as "id".');
-            }
-            // Vérifiez que l'ID du produit existe dans la table Products
-            const productExists = await Product.findByPk(product.id);
-            if (!productExists) {
-              throw new Error(`Product with ID ${product.id} does not exist.`);
-            }
+          const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          if (!Array.isArray(value)) {
+            throw new Error('Products must be an array');
           }
+          value.forEach(product => {
+            if (!product.id || !uuidRegex.test(product.id)) {
+              throw new Error('Invalid product ID');
+            }
+          });
         }
       }
     },
-    price: DataTypes.INTEGER,
+    price: DataTypes.DECIMAL,
     paymentStatus: DataTypes.STRING,
     shippingInfo: DataTypes.JSON,
     billingInfo: DataTypes.JSON,

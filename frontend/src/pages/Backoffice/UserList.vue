@@ -8,8 +8,8 @@ meta:
 
 <script lang="ts" setup>
   import { ref } from 'vue';
-import DataTable from '~/components/backoffice/DataTable.vue';
-import { getDataTable } from '~/composables/backoffice/getDataTable';
+  import DataTable from '~/components/backoffice/DataTable.vue';
+  import { getDataTable } from '~/composables/backoffice/getDataTable';
 
   const url = 'users';
   const { data, loading, error, currentPage, totalPages, setPage, refresh } = getDataTable(url);
@@ -49,19 +49,28 @@ import { getDataTable } from '~/composables/backoffice/getDataTable';
           <v-card-title>{{ item.id ? 'Modifier un utilisateur' : 'Créer un utilisateur' }}</v-card-title>
           <v-form @submit.prevent="submit">
             <v-row>
-              <v-col cols="12" md="6">
+              <v-col
+                cols="12"
+                md="6"
+              >
                 <v-text-field
                   v-model="item.firstname"
                   label="Prénom"
                 />
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col
+                cols="12"
+                md="6"
+              >
                 <v-text-field
                   v-model="item.lastname"
                   label="Nom"
                 />
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col
+                cols="12"
+                md="6"
+              >
                 <v-text-field
                   v-model="item.email"
                   label="Email"
@@ -69,7 +78,10 @@ import { getDataTable } from '~/composables/backoffice/getDataTable';
                   type="email"
                 />
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col
+                cols="12"
+                md="6"
+              >
                 <v-text-field
                   v-model="item.password"
                   :type="showPassword ? 'text' : 'password'"
@@ -116,7 +128,10 @@ import { getDataTable } from '~/composables/backoffice/getDataTable';
                   </template>
                 </v-text-field>
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col
+                cols="12"
+                md="6"
+              >
                 <v-text-field
                   v-model="item.passwordConfirm"
                   :type="showPasswordConfirm ? 'text' : 'password'"

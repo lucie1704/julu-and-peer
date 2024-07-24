@@ -2,6 +2,7 @@ import { setupLayouts } from 'virtual:generated-layouts';
 import { createRouter, createWebHistory } from 'vue-router';
 import { UserRole } from '~/dto';
 import { useAuth } from '~/stores/auth';
+import { useCart } from '~/stores/cart';
 import generatedRoutes from '~pages';
 
 const router = createRouter({
@@ -11,13 +12,14 @@ const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   const authStore = useAuth();
+  const cartStore = useCart();
 
   if ( to.name !== 'Login' && to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login' });
   } else if ( to.meta.requiresAdmin && !(authStore.isAuthenticated && authStore.hasRole(UserRole.Admin))) {
-    // TODO: Make HasRole Admin Work.
-    // next({ name: 'login' });
-    next();
+    next({ name: 'login' });
+  } else if ( to.meta.requiresCartNotEmpty && !authStore.isAuthenticated && cartStore.isCartEmpty) {
+    next({ name: 'home' });
   } else {
     next();
   }

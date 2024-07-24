@@ -1,4 +1,4 @@
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import authAPI from '~/api/auth';
@@ -50,7 +50,7 @@ export const useAuth = defineStore('auth', () => {
       msg.value = 'Échec de la connexion : Nom d\'utilisateur ou mot de passe invalide.';
     }
   };
-  
+
   const signup = async (user: SignUp) => {
     try {
       const response = await authAPI.signup(user);
