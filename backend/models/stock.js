@@ -2,6 +2,7 @@
 
 const { Model } = require('sequelize');
 const denormalizeProduct = require('../dtos/denormalization/product');
+const Email = require('../utils/email');
 
 module.exports = (sequelize, DataTypes) => {
   class Stock extends Model {

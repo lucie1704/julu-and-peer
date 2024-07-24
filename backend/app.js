@@ -14,6 +14,7 @@ const cartRouter = require('./routes/private/cartRoutes');
 const cartItemRouter = require('./routes/private/cartItemRoutes');
 const wishlistRouter = require('./routes/private/wishlistRoutes');
 const orderRouter = require('./routes/private/orderRoutes');
+const newsLettersRoutes = require('./routes/public/newsLettersRoutes');
 const AppError = require('./utils/appError');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -35,6 +36,7 @@ const app = express();
 
 //Set env variable globally
 dotenv.config({ path: './config.env' });
+
 // const csurf = require('csurf');
 
 // Serving static files
@@ -115,6 +117,7 @@ app.use('/api/carts', cartRouter);
 app.use('/api/cartitem', cartItemRouter);
 app.use('/api/wishlist', wishlistRouter);
 app.use('/api/customerorder', orderRouter);
+app.use('/api/newsletter', newsLettersRoutes);
 
 // Handle requests for routes that are not defined in the application.
 app.all('*', (req, res, next) => {

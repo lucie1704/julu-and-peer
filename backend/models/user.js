@@ -212,6 +212,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 0
     },
     maxFailedLoginAt: DataTypes.DATE,
+    newsletterSubscribed: {
+      allowNull: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
   }, {
     sequelize,
     modelName: 'User',

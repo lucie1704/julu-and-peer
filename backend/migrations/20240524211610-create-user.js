@@ -72,6 +72,11 @@ module.exports = {
       deletedAt: {
         type: Sequelize.DATE
       },
+      newsletterSubscribed: {
+        allowNull: true,
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+      },
     });
   },
   async down(queryInterface, Sequelize) {
