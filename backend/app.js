@@ -73,7 +73,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const corsOptions = {
-  origin: ['https://www.juluandpeer.store', 'http://www.juluandpeer.store', 'https://juluandpeer.store', 'http://juluandpeer.store'],
+  origin: [
+    'https://www.juluandpeer.store', 
+    'http://www.juluandpeer.store', 
+    'https://juluandpeer.store', 
+    'http://juluandpeer.store'
+  ],
   credentials: true,
   optionsSuccessStatus: 200
 };
