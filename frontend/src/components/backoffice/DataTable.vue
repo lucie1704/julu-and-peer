@@ -1,132 +1,106 @@
 <script lang="ts" setup>
-  import axios from 'axios';
-  import { computed, ref } from 'vue';
-  import { DeleteButton } from '~/components';
-  import { API_URL } from '~/constants';
-  import { headers } from '~/utils/headers';
+import { computed, ref } from 'vue';
+import { DeleteButton } from '~/components';
 
-  const props = defineProps<{
-    data: Array<Record<string, any>> | null;
-    loading: boolean;
-    error: string | null;
-    url: string;
-    newItem?: object | undefined;
-    currentPage: number,
-    totalPages: number,
-    setPage: (page: number) => void
-    refresh: () => void
-  }>();
+const props = defineProps<{
+  data: Array<Record<string, any>> | null;
+  loading: boolean;
+  error: string | null;
+  url: string;
+  newItem: object | undefined;
+  currentPage: number,
+  totalPages: number,
+  setPage: (page: number) => void
+  refresh: () => void
+}>();
 
-  const base_url = `${API_URL}/${props.url}`;
+const emit = defineEmits<{
+  (e: 'update-item', payload: { item: any }): void,
+}>();
 
-  const showEditItemDialog = ref(false);
-  const showErrorDialog = ref(false);
-  const errorMessage = ref('');
+const showEditItemDialog = ref(false);
+const showErrorDialog = ref(false);
+const errorMessage = ref('');
 
-  const itemToEdit = ref();
-  const itemToDelete = ref();
-  const isEditing = ref(false);
+const itemToEdit = ref();
+const itemToDelete = ref();
+const isEditing = ref(false);
 
-  const updateDeleteItem = (item: Record<string, any>) => {
-    itemToDelete.value = item;
-  };
+const updateDeleteItem = (item: Record<string, any>) => {
+  itemToDelete.value = item;
+};
 
-  const updateEditItem = (item: Record<string, any>) => {
-    itemToEdit.value = { ...item };
-    isEditing.value = true;
-    showEditItemDialog.value = true;
-  };
+const updateEditItem = (item: Record<string, any>) => {
+  itemToEdit.value = { ...item };
+  isEditing.value = true;
+  showEditItemDialog.value = true;
+  emit('update-item', itemToEdit.value);
+};
 
-  const createNewItem = () => {
-    itemToEdit.value = { ...props.newItem };
-    isEditing.value = false;
-    showEditItemDialog.value = true;
-  };
+const createNewItem = () => {
+  itemToEdit.value = { ...props.newItem };
+  isEditing.value = false;
+  showEditItemDialog.value = true;
+  emit('update-item', itemToEdit.value);
 
-  // Submit logic for create and edit
-  const submitEditItem = async() => {
-    // Deconstruct id in order to not have it in req.body
-    const { id, _id, ...data } = itemToEdit.value;
-    try {
-      const goodId = id ? id : _id;
-      if (isEditing.value) {
-        await axios.patch(`${base_url}/${goodId}`, data, {
-          headers: headers(),
-        });
-      } else {
-        await axios.post(base_url, data, {
-          headers: headers(),
-        });
-      }
-      showEditItemDialog.value = false;
-      props.refresh();
-    } catch (error) {
-      showEditItemDialog.value = false;
-      showErrorDialog.value = true;
-      if (axios.isAxiosError(error) && error.response) {
-        errorMessage.value = error.response.data.message;
-      } else {
-        errorMessage.value = 'Une erreur innatendu est survenue.';
-      }
+};
+
+// This part is for cleaning value before show in DataTable
+const cleanDisplayValue = (value: any) => {
+  if (Array.isArray(value)) {
+    // Traitement spécifiques si on as des données dans un tableaux.
+    if (value.length > 0 && value[0].path) {
+      return value.map((img: any) => img.alt || 'No alt text').join(' ');
+    } else {
+      // Retourne une string vide si on as rien.
+      return '';
     }
-  };
-
-  // This part is for cleaning value before show in DataTable
-  const cleanDisplayValue = (value: any) => {
-    if (Array.isArray(value)) {
-      // Traitement spécifiques si on as des données dans un tableaux.
-      if (value.length > 0 && value[0].path) {
-        return value.map((img: any) => img.alt || 'No alt text').join(' ');
-      } else {
-        // Retourne une string vide si on as rien.
-        return '';
-      }
-    } else if (value && typeof value === 'object' && value.name) {
-      return value.name;
-    } else if (value && typeof value === 'object' && value.firstName && value.lastName) {
-      return `${value.firstName} ${value.lastName}`;
-    }
-    return value;
-  };
-
-  // This part is for pagination logic
-  const maxPagesToShow = 3;
-  const pagesToShow = computed(() => {
-    const pages = [];
-    let startPage = Math.max(1, props.currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = startPage + maxPagesToShow - 1;
-
-    if (endPage > props.totalPages) {
-      endPage = props.totalPages;
-      startPage = Math.max(1, endPage - maxPagesToShow + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  });
-
-  const deleteButtonText = computed(() => {
-  switch (props.url) {
-    case 'products':
-      return 'ce produit';
-    case 'categories':
-      return 'cette catégorie';
-    case 'orders':
-      return 'cette commande';
-    case 'users':
-      return 'cet utilisateur';
-    case 'productartists':
-      return 'cet artiste';
-    case 'productgenres':
-      return 'ce genre';
-    case 'productformats':
-      return 'ce format';
-    default:
-      return 'cet élément';
+  } else if (value && typeof value === 'object' && value.name) {
+    return value.name;
+  } else if (value && typeof value === 'object' && value.firstName && value.lastName) {
+    return `${value.firstName} ${value.lastName}`;
   }
+  return value;
+};
+
+// This part is for pagination logic
+const maxPagesToShow = 3;
+const pagesToShow = computed(() => {
+  const pages = [];
+  let startPage = Math.max(1, props.currentPage - Math.floor(maxPagesToShow / 2));
+  let endPage = startPage + maxPagesToShow - 1;
+
+  if (endPage > props.totalPages) {
+    endPage = props.totalPages;
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+});
+
+const deleteButtonText = computed(() => {
+switch (props.url) {
+  case 'products':
+    return 'ce produit';
+  case 'categories':
+    return 'cette catégorie';
+  case 'orders':
+    return 'cette commande';
+  case 'users':
+    return 'cet utilisateur';
+  case 'productartists':
+    return 'cet artiste';
+  case 'productgenres':
+    return 'ce genre';
+  case 'productformats':
+    return 'ce format';
+  default:
+    return 'cet élément';
+}
 });
 
 </script>
@@ -225,7 +199,7 @@
         class="px-3 py-1 mx-1 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-gray-300"
         @click="setPage(currentPage - 1)"
       >
-        <
+        {{ '<' }}
       </button>
       <button
         v-for="page in pagesToShow"
@@ -256,11 +230,7 @@
       v-model="showEditItemDialog"
       width="500px"
     >
-      <slot
-        name="form"
-        :item="itemToEdit"
-        :submit="submitEditItem"
-      />
+      <slot name="form" />
     </v-dialog>
     <!-- Error modal -->
     <v-dialog

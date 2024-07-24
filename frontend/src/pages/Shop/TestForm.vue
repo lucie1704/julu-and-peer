@@ -38,7 +38,7 @@ const {
   resetForm
 } = useForm(
   schema,
-  { type: 'get', endpoint: myApiCall.value, jwt: '' },
+  { method: 'get', endpoint: myApiCall.value, jwt: '' },
   onSubmit,
   initialValues
 );

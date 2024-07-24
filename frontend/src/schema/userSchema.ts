@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { CustomerSchema } from '~/schema/customerSchema';
 
-const UserSchema = z.object({
+const UserData = z.object({
   id: z.string(),
   firstname: z.string(),
   lastname: z.string(),
@@ -12,4 +12,10 @@ const UserSchema = z.object({
   Customer: CustomerSchema.optional(),
 });
 
-export { UserSchema };
+const UserForm = z.object({
+  firstname: z.string(),
+  lastname: z.string(),
+  email: z.string().email(),
+});
+
+export { UserData, UserForm };

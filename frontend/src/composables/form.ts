@@ -4,12 +4,12 @@ import { reactive, ref } from 'vue';
 import type { ZodIssue, ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
-type RequestMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
+export type RequestMethod = 'post' | 'put' | 'delete' | 'patch';
 
-interface ApiCall {
-    type: RequestMethod;
-    endpoint: string;
-    jwt: string;
+export interface ApiCall {
+  method: RequestMethod;
+  endpoint: string;
+  jwt?: string;
 }
 
 type SchemaType = z.ZodObject<Record<string, ZodTypeAny>>;
@@ -63,6 +63,7 @@ export function useForm<T extends SchemaType>(
   };
 
   const handleSubmit = async() => {
+    console.log('tete');
     serverError.value = undefined;
     isSubmitting.value = true;
 
@@ -72,12 +73,15 @@ export function useForm<T extends SchemaType>(
     }
 
     try {
-      const fetchedData = await axios[apiCall.type](apiCall.endpoint, {
-        signal: abortController.signal,
-        headers: createHeaders(apiCall.jwt)
-      });
-      const validatedData = schema.parse(fetchedData);
-      await onSubmit(validatedData);
+      console.log('apiCall.endpoint', apiCall.endpoint);
+      console.log('apiCall.method', apiCall.method);
+      console.log('formData', formData);
+
+      await axios[apiCall.method](apiCall.endpoint, formData, createRequestOptions(apiCall.jwt));
+      console.log('prout');
+
+      // const validatedData = schema.parse(fetchedData);
+      await onSubmit('hhh');
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
@@ -108,10 +112,24 @@ export function useForm<T extends SchemaType>(
     }
   };
 
-  const createHeaders = (jwt_token: string) => ({
-    Authorization: `Bearer ${jwt_token}`,
-    'Content-Type': 'application/json'
-  });
+  const createRequestOptions = (jwt_token?: string) => {
+    if (jwt_token) {
+      return  {
+        signal: abortController.signal,
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+    } else {
+      return  {
+        signal: abortController.signal,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+    }
+  };
 
   return {
     formData,

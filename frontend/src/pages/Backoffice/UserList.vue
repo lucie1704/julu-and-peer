@@ -7,23 +7,72 @@ meta:
 </route>
 
 <script lang="ts" setup>
-  import { ref } from 'vue';
-  import DataTable from '~/components/backoffice/DataTable.vue';
-  import { getDataTable } from '~/composables/backoffice/getDataTable';
+import { ref } from 'vue';
+import DataTable from '~/components/backoffice/DataTable.vue';
+import { getDataTable } from '~/composables/backoffice/getDataTable';
+import type { ApiCall } from '~/composables/form';
+import { useForm } from '~/composables/form';
+import { API_URL } from '~/constants';
+import { UserForm } from '~/schema/userSchema';
 
-  const url = 'users';
-  const { data, loading, error, currentPage, totalPages, setPage, refresh } = getDataTable(url);
+const url = 'users';
+const { data, loading, error, currentPage, totalPages, setPage, refresh } = getDataTable(url);
 
-  const showPassword = ref(false);
-  const showPasswordConfirm = ref(false);
+const showPassword = ref(false);
+const showPasswordConfirm = ref(false);
 
-  const togglePasswordVisibility = () => {
-    showPassword.value = !showPassword.value;
-  };
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
 
-  const togglePasswordConfirmVisibility = () => {
-    showPasswordConfirm.value = !showPasswordConfirm.value;
-  };
+const togglePasswordConfirmVisibility = () => {
+  showPasswordConfirm.value = !showPasswordConfirm.value;
+};
+
+const apiCall = ref<ApiCall>({
+  method: 'post',
+  endpoint: `${API_URL}/${url}`
+});
+const schema = UserForm;
+const isEditUser = ref<boolean>();
+const initialValues = ref();
+
+const updateApiCall = (payload: Record<string, string>): void => {
+  if (payload.id) {
+    isEditUser.value = true;
+    apiCall.value.method = 'put';
+    apiCall.value.endpoint = `${API_URL}/${url}/${payload.id}`;
+  } else {
+    isEditUser.value = false;
+    apiCall.value.method = 'post';
+    apiCall.value.endpoint = `${API_URL}/${url}`;
+  }
+  initialValues.value = { ...payload };
+  for (let key in formData) {
+    updateField(key as keyof typeof formData, initialValues.value[key]);
+  }
+};
+
+const onSubmitEditItem = async(data: any) => {
+  console.log('datatable form test hahahh');
+  console.log(data);
+};
+
+const {
+  formData,
+  errors,
+  serverError,
+  isSubmitting,
+  updateField,
+  cancelSubmit,
+  handleSubmit,
+  resetForm
+} = useForm(
+  schema,
+  apiCall.value,
+  onSubmitEditItem,
+  initialValues.value
+);
 
 </script>
 
@@ -42,20 +91,24 @@ meta:
       :total-pages="totalPages"
       :set-page="setPage"
       :refresh="refresh"
+      @update-item="updateApiCall"
     >
       <!-- Start Edit Form Slot-->
-      <template #form="{ item, submit }">
+      <template #form>
         <v-card class="text-center pa-5">
-          <v-card-title>{{ item.id ? 'Modifier un utilisateur' : 'Créer un utilisateur' }}</v-card-title>
-          <v-form @submit.prevent="submit">
+          <v-card-title>{{ formData.firstname ? 'Modifier un utilisateur' : 'Nouvel utilisateur' }}</v-card-title>
+          <v-form @submit.prevent="handleSubmit">
             <v-row>
               <v-col
                 cols="12"
                 md="6"
               >
                 <v-text-field
-                  v-model="item.firstname"
+                  v-model="formData.firstname"
+                  name="firstname"
                   label="Prénom"
+                  :error-messages="errors.firstname"
+                  @update:model-value="updateField('firstname', formData.firstname)"
                 />
               </v-col>
               <v-col
@@ -63,8 +116,11 @@ meta:
                 md="6"
               >
                 <v-text-field
-                  v-model="item.lastname"
+                  v-model="formData.lastname"
+                  name="lastname"
                   label="Nom"
+                  :error-messages="errors.lastname"
+                  @update:model-value="updateField('lastname', formData.lastname)"
                 />
               </v-col>
               <v-col
@@ -72,10 +128,12 @@ meta:
                 md="6"
               >
                 <v-text-field
-                  v-model="item.email"
+                  v-model="formData.email"
+                  name="email"
                   label="Email"
-                  required
                   type="email"
+                  :error-messages="errors.email"
+                  @update:model-value="updateField('email', formData.email)"
                 />
               </v-col>
               <v-col
@@ -180,12 +238,32 @@ meta:
               </v-col>
             </v-row>
             <v-row>
+              <v-col class="text-red">
+                {{ serverError }}
+              </v-col>
+            </v-row>
+            <v-row>
               <v-col>
                 <v-btn
                   type="submit"
                   color="blue"
+                  :loading="isSubmitting"
                 >
-                  {{ item.id ? 'Modifier' : 'Créer' }}
+                  Enregistrer
+                </v-btn>
+              </v-col>
+              <v-col>
+                <v-btn
+                  @click="resetForm"
+                >
+                  Ré initialiser le formulaire
+                </v-btn>
+              </v-col>
+              <v-col>
+                <v-btn
+                  @click="cancelSubmit"
+                >
+                  Annuler la requête
                 </v-btn>
               </v-col>
             </v-row>
