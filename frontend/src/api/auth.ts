@@ -16,7 +16,7 @@ const USER_ROOT_URL = `${API_URL}/users`;
 interface AuthAPI {
   login: (user: UserLogin) => Promise<string>;
   logout: () => Promise<void>;
-  signup: (user: SignUp) => Promise<string>;
+  signup: (user: SignUp) => Promise<boolean>;
   confirmEmail: (user: ConfirmEmail, emailToken: string) => Promise<string>;
   forgotPassword: (email: UserEmail) => Promise<string>;
   resetPassword: (user: ResetPassword, emailToken: string) => Promise<string>;
@@ -42,14 +42,14 @@ const authAPI: AuthAPI = {
 
   async signup(user: SignUp) {
     try {
-      const response = await axios.post(`${ROOT_URL}/signup`, user, {
+        await axios.post(`${ROOT_URL}/signup`, user, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      return response.data;
+      return true;
     } catch (error) {
-      return null;
+      return false;
     }
   },
 

@@ -50,13 +50,12 @@ export const useAuth = defineStore('auth', () => {
       msg.value = 'Échec de la connexion : Nom d\'utilisateur ou mot de passe invalide.';
     }
   };
-
+  
   const signup = async (user: SignUp) => {
     try {
       const response = await authAPI.signup(user);
       if (response) {
         msg.value = 'Nous vous avons envoyé un email pour valider votre compte.';
-        router.push('/confirmModal');
       } else {
         throw new Error('Échec de l\'inscription');
       }
@@ -82,8 +81,8 @@ export const useAuth = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      await authAPI.logout();
       window.localStorage.removeItem('jwt_token');
+      await authAPI.logout();
       window.localStorage.removeItem('roles');
       jwtToken.value = null;
       roles.value = null;

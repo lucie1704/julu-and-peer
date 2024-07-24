@@ -1,12 +1,10 @@
 const express = require('express');
 const productController = require('../../controllers/productController');
 const authMiddleware = require('../../middleware/authMiddleware');
-const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
+const checkAdmin = require('../../middleware/checkAdmin');
 
-
-router.use(authMiddleware);
-
+// Public
 router
     .route('/')
     .get(productController.getAll);
@@ -19,7 +17,9 @@ router
     .route('/:id')
     .get(productController.getById)
 
-router.use(autorizationMiddleware('admin'));
+
+// Only authentified admin user
+router.use(checkAdmin);
 
 router
     .route('/')
@@ -28,6 +28,7 @@ router
 router
     .route('/:id')
     .patch(productController.update)
-    .patch(productController.update)
+    .delete(productController.delete)
+
 
 module.exports = router;
