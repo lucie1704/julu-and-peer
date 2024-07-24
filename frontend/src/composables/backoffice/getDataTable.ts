@@ -3,6 +3,7 @@ import { z, ZodSchema } from 'zod';
 import { API_URL } from '~/constants';
 import { CategorySchema, ProductSchema } from '~/schema/productSchema';
 import { UserSchema } from '~/schema/userSchema';
+import { headers } from '~/utils/headers';
 
 const baseURL = API_URL + '/';
 
@@ -41,7 +42,10 @@ export const getDataTable = (url: string) => {
         error.value = null;
 
         try {
-            const response = await fetch(`${baseURL}${url}?page=${page}`);
+            const response = await fetch(`${baseURL}${url}?page=${page}`, {
+                headers: headers()
+            });
+
             if (!response.ok) {
                 throw new Error('Une erreur est survenue lors de la récupération des données.');
             }
@@ -59,7 +63,7 @@ export const getDataTable = (url: string) => {
           if (err instanceof Error) {
             error.value = err.message;
           } else {
-            error.value = 'Une erreur innatendu est survenue.';
+            error.value = 'Une erreur inattendue est survenue.';
           }
         } finally {
             loading.value = false;

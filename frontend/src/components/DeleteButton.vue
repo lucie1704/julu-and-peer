@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { API_URL } from '~/constants';
+import { headers } from '~/utils/headers';
 
 interface Props {
   itemId: string;
@@ -37,8 +38,9 @@ const deleteData = async () => {
   try {
     //NOTE:Ligne du dessous pour prouver le chargement lors de la requête pendant la pres si besoin
     // await new Promise(resolve => setTimeout(resolve, 3000));
-
-    await axios.delete(`${base_url}/${props.itemId}`);
+    await axios.delete(`${base_url}/${props.itemId}`, {
+      headers: headers(),
+    });
     emit('itemDeleted', props.itemId);
     closeModal();
   } catch (err) {

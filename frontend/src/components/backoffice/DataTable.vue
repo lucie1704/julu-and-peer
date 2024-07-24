@@ -3,6 +3,7 @@
   import { computed, ref } from 'vue';
   import { DeleteButton } from '~/components';
   import { API_URL } from '~/constants';
+  import { headers } from '~/utils/headers';
 
   const props = defineProps<{
     data: Array<Record<string, any>> | null;
@@ -45,19 +46,16 @@
   // Submit logic for create and edit
   const submitEditItem = async() => {
     // Deconstruct id in order to not have it in req.body
-    const { id, ...data } = itemToEdit.value;
+    const { id, _id, ...data } = itemToEdit.value;
     try {
+      const goodId = id ? id : _id;
       if (isEditing.value) {
-        await axios.patch(`${base_url}/${id}`, data, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        await axios.patch(`${base_url}/${goodId}`, data, {
+          headers: headers(),
         });
       } else {
         await axios.post(base_url, data, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: headers(),
         });
       }
       showEditItemDialog.value = false;

@@ -4,6 +4,7 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const router = express.Router();
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 
+// Private
 router.use(authMiddleware);
 
 router
@@ -16,8 +17,6 @@ router
     .get(orderController.getById)
 
 router.get('/confirm/:id', orderController.orderConfirm)
-
-router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')
