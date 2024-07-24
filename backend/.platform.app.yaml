@@ -25,9 +25,9 @@ variables:
     STRIPE_LOCAL_WH_TOKEN: "whsec_fb91ca888a8d3b410eb9019268979b4b86f84067fe9a7f2f91016ecac79d8617"
     STRIPE_PROD_WH_TOKEN: "whsec_SgM6k1L43sUxHx7zRCekVdh0E6CKdLvY"
 
-# relationships:
-#   mongodb: "mongodb:mongodb"
-#   postgresql: "postgresql:postgresql"
+relationships:
+  mongodb: "mongodb:mongodb"
+  postgresql: "postgresql:postgresql"
 
 hooks:
   build: |
