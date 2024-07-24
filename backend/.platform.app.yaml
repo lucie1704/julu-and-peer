@@ -32,13 +32,7 @@ relationships:
 hooks:
   build: |
     npm install -g sequelize sequelize-cli
-  deploy: |
-    echo "Running migrations..."
-    sequelize-cli db:migrate --env production
-    echo "Undoing all seeds..."
-    sequelize-cli db:seed:undo:all --env production
-    echo "Seeding the database..."
-    sequelize-cli db:seed:all --env production
+
 web:
   commands:
     start: "node server.js"
