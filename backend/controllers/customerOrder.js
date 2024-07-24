@@ -93,8 +93,8 @@ exports.create = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getAll = catchAsyncError(async (req, res, next) => {
-  const { customerId, status } = req.params;
-
+  const { id: customerId, status } = req.params;
+  
   let orders;
 
   if (status !== 'all') {

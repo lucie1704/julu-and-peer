@@ -10,7 +10,7 @@
     loading: boolean;
     error: string | null;
     url: string;
-    newItem: object | undefined;
+    newItem?: object | undefined;
     currentPage: number,
     totalPages: number,
     setPage: (page: number) => void
