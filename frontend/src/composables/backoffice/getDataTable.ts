@@ -3,7 +3,7 @@ import { z, ZodSchema } from 'zod';
 import { API_URL } from '~/constants';
 import { CustomerOrderSchema } from '~/schema/customerOrderSchema';
 import { CategorySchema, ProductSchema } from '~/schema/productSchema';
-import { UserSchema } from '~/schema/userSchema';
+import { UserData } from '~/schema/userSchema';
 import { headers } from '~/utils/headers';
 
 const baseURL = API_URL + '/';
@@ -12,7 +12,7 @@ const baseURL = API_URL + '/';
 const getSchema = (url: string): ZodSchema<any> => {
     switch (url) {
         case 'users':
-          return z.array(UserSchema);
+          return z.array(UserData);
         case 'products':
           return z.array(ProductSchema);
         case 'productartists':
