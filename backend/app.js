@@ -68,28 +68,18 @@ app.use(express.urlencoded({ extended: true, limit:'1kb'}));
 app.use(cookieParser());
 
 // Enable CORS for all routes in developpment
-// if (process.env.NODE_ENV === 'development') {
-//   app.use(cors());
-// }
+if (process.env.NODE_ENV === 'development') {
+  app.use(cors());
+}
 
-const corsOptions = {
-  origin: 'https://juluandpeer.store',
-  allowedHeaders: '*',
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
-
-  // app.use(cors(corsOptions));
-
-//   app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', 'https://www.juluandpeer.store');
-//     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//     next();
-//   });
-
+if (process.env.NODE_ENV !== 'development') {
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://www.juluandpeer.store');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+}
 // Apply CSRF protection middleware
 // const csrfProtection = csurf({ cookie: true });
 // app.use(csrfProtection);
