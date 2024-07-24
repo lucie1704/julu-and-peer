@@ -20,10 +20,6 @@ services:
       - JWT_SECRET=998c2614eb0acf4eea946414667e78598e286a6c6b3911602f8b23a76811196b
       - MONGO_URL=mongodb://root:password@mongodb:27017/app?authSource=admin
       - JWT_EXPIRES_IN=2592000
-      - USERNAME=julupeer
-      - GMAIL_USER=julupeervinyle@gmail.com
-      - GMAIL_PASS=vjgtuxkztiqwuiqh
-      - EMAIL_FROM=julupeervinyle@gmail.com
 
     ports:
       - 3000:3000
