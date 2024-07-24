@@ -134,20 +134,6 @@ const submitForm = async () => {
   if (!validateForm()) {
     formError.value = 'Veuillez remplir toutes les informations avant de procéder au paiement.';
     return;
-  } else {
-    // WARNING: This part is gonna move somewhere else when tables are cleaned
-    const stripe = await loadStripe(VUE_APP_STRIPE_PUBLIC_KEY);
-    const response = await fetch(`${API_URL}/stripe`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        items: cartStore.cartProducts?.availableProducts,
-      }),
-    });
-    const session = await response.json();
-    await stripe?.redirectToCheckout({ sessionId: session.id });
   }
 
   const orderDatas = {

@@ -13,5 +13,19 @@ import { Navbar } from '~/components';
     <div class="text-center text-white w-100 pa-3">
       {{ new Date().getFullYear() }} — <strong>ESGI</strong>
     </div>
+    <div class="justify-between text-center text-white w-100 pa-3">
+      <router-link
+        class="text-white underline underlin"
+        to="/cgu"
+      >
+        Conditions Générales d'Utilisation (CGU)
+      </router-link>
+      <router-link
+        class="text-white underline underlin"
+        to="/cgv"
+      >
+        Conditions Générales de Vente (CGV)
+      </router-link>
+    </div>
   </div>
 </template>
