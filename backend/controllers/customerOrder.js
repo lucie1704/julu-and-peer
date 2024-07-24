@@ -89,12 +89,12 @@ exports.create = catchAsyncError(async (req, res, next) => {
     exports.paymentCheck(order.id, next);
   }, 15000);
 
-  res.status(200).send()
+  res.status(200).send
 });
 
 exports.getAll = catchAsyncError(async (req, res, next) => {
-  const { customerId, status } = req.params;
-
+  const { id: customerId, status } = req.params;
+  
   let orders;
 
   if (status !== 'all') {

@@ -10,17 +10,17 @@ router.use(authMiddleware);
 router
     .route('/')
     .post(orderController.create)
-    .get(orderController.getAll);
+    .get(orderController.getAllOrders);
 
 router
-    .route('/:id')
+    .route('/:id/')
     .get(orderController.getById)
 
-router.get('/confirm/:id', orderController.orderConfirm)
-
 router
-    .route('/')
+    .route('/:id/:status/')
     .get(orderController.getAll);
+
+router.get('/confirm/:id', orderController.orderConfirm)
 
 
 module.exports = router;

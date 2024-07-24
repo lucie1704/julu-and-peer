@@ -1,6 +1,7 @@
 import { onMounted, ref } from 'vue';
 import { z, ZodSchema } from 'zod';
 import { API_URL } from '~/constants';
+import { CustomerOrderSchema } from '~/schema/customerOrderSchema';
 import { CategorySchema, ProductSchema } from '~/schema/productSchema';
 import { UserSchema } from '~/schema/userSchema';
 import { headers } from '~/utils/headers';
@@ -20,9 +21,9 @@ const getSchema = (url: string): ZodSchema<any> => {
           return z.array(CategorySchema);
         case 'productgenres':
           return z.array(CategorySchema);
-        case 'orders':
+        case 'customerorder':
+          return z.array(CustomerOrderSchema);
           // TODO: Orders after.
-          return z.array(z.object({}));
         default:
           // Si on trouve pas, on renvoie un schema par défaut.
           return z.array(z.object({}));
