@@ -3,12 +3,22 @@ const pug = require('pug');
 const logger = require('./logger');
 const {convert} = require('html-to-text');
 
+
+// const transporter = nodemailer.createTransport({
+//   host: process.env.MAILTRAP_HOST,
+//   port:  process.env.MAILTRAP_PORT,
+//   auth: {
+//     user: process.env.MAILTRAP_USER,
+//     pass: process.env.MAILTRAP_PASS,
+//   },
+// });
+
+console.log("process.env.GMAIL_USER", process.env.GMAIL_USER)
 const transporter = nodemailer.createTransport({
-  host: process.env.MAILTRAP_HOST,
-  port:  process.env.MAILTRAP_PORT,
+  service: 'gmail',
   auth: {
-    user: process.env.MAILTRAP_USER,
-    pass: process.env.MAILTRAP_PASS,
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
   },
 });
 

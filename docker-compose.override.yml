@@ -14,6 +14,9 @@ services:
       - MAILTRAP_PORT=587
       - MAILTRAP_USER=0e9a522e2973ef
       - MAILTRAP_PASS=5abeaf47e9f80d
+
+      - GMAIL_USER=julupeervinyle@gmail.com
+      - GMAIL_PASS=Just1n@123456
       - EMAIL_FROM=julupeervinyle@gmail.com
 
     command: sh -c "npm install && npm run dev"

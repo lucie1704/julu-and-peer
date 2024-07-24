@@ -201,6 +201,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     maxFailedLoginAt: DataTypes.DATE,
     newsletterSubscribed: {
+      allowNull: true,
       type: DataTypes.BOOLEAN,
       defaultValue: true
     },

@@ -73,6 +73,7 @@ module.exports = {
         type: Sequelize.DATE
       },
       newsletterSubscribed: {
+        allowNull: true,
         type: Sequelize.BOOLEAN,
         defaultValue: true
       },

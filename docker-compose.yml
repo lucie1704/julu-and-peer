@@ -26,7 +26,10 @@ services:
       - MAILTRAP_PORT=587
       - MAILTRAP_USER=api
       - MAILTRAP_PASS=1430b9f76960c8409e7efba4b7ff3d43
-      - EMAIL_FROM=hi@demomailtrap.com
+
+      - GMAIL_USER=julupeervinyle@gmail.com
+      - GMAIL_PASS=Just1n@123456
+      - EMAIL_FROM=julupeervinyle@gmail.com
 
     ports:
       - 3000:3000
