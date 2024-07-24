@@ -3,9 +3,8 @@ const wishlistController = require('../../controllers/wishlistController');
 const authMiddleware = require('../../middleware/authMiddleware');
 const router = express.Router();
 
-
-// Protect all routes after this middleware
-// router.use(authMiddleware);
+// Private
+router.use(authMiddleware);
 
 router
     .route('/')

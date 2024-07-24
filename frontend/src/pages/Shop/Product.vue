@@ -1,18 +1,18 @@
 <route lang="yaml">
-path: /product/:id
-name: product
-meta:
-  layout: AppLayout
+  path: /product/:id
+  name: product
+  meta:
+    layout: AppLayout
 </route>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { test_uid } from '~/constants';
 import { createCart } from '~/dto';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
 import { useProduct } from '~/stores/product';
+import { getUserId } from '~/utils/authUtils';
 
 const productStore = useProduct();
 const cartStore = useCart();
@@ -28,7 +28,7 @@ const quantity = ref<number>(1);
 onMounted(async () => {
   await getProductDetail();
 
-  await customerStore.fetchByUserId(test_uid);
+  await customerStore.fetchByUserId(getUserId());
 
   if (customerStore.customerId) return await getCustomerCart(customerStore.customerId);
 });
@@ -41,6 +41,7 @@ const getProductDetail = async () => {
     console.error('Error getting product details:', error);
   }
 };
+
 const getCustomerCart = async (customerId: string) => {
   // Get customer cart
   try {
@@ -91,10 +92,10 @@ const submitForm = async () => {
   >
     <!-- @TODO slider pour les images -->
     <v-img
-      v-if="productStore.product.Image[0]"
+      v-if="productStore.product?.Images?.[0]"
       height="250"
-      :src="productStore.product.Image[0].path"
-      :alt="productStore.product.Image[0].alt"
+      :src="productStore.product.Images[0]?.path ?? ''"
+      :alt="productStore.product.Images[0]?.alt ?? 'Image du produit'"
       cover
     />
 

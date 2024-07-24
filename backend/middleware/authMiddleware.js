@@ -9,7 +9,10 @@ module.exports = async function checkAuth(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findByPk(decoded.id);
+    const user = await User.findByPk(decoded.id, {
+      attributes: ['id', 'email', 'role'],
+    });
+    
     if (!user) return res.sendStatus(401);
     req.user = user;
 

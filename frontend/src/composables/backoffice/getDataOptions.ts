@@ -1,6 +1,7 @@
 import { onMounted, ref } from 'vue';
 import { API_URL } from '~/constants';
 import { Options } from '~/dto/options';
+import { headers } from '~/utils/headers';
 
 const baseURL = API_URL + '/';
 
@@ -14,7 +15,9 @@ export const getDataOptions = (url: string) => {
     error.value = null;
 
     try {
-      const response = await fetch(`${baseURL}${url}/options`);
+      const response = await fetch(`${baseURL}${url}/options`, {
+        headers: headers()
+    });
 
       const jsonData = await response.json();
 

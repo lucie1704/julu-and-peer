@@ -3,3 +3,4 @@ export { default as DataTable } from './backoffice/DataTable.vue';
 export { default as ShoppingCart } from './cart/ShoppingCart.vue';
 export { default as ProductItem } from './product/ProductItem.vue';
 export { default as ProductFilter } from './product/ProductFilter.vue';
+export { default as DeleteButton } from './DeleteButton.vue';

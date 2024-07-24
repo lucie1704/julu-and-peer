@@ -19,6 +19,8 @@ services:
       - DATABASE_URL=postgres://root:password@db:5432/app
       - JWT_SECRET=998c2614eb0acf4eea946414667e78598e286a6c6b3911602f8b23a76811196b
       - MONGO_URL=mongodb://root:password@mongodb:27017/app?authSource=admin
+      - JWT_EXPIRES_IN=2592000
+
     ports:
       - 3000:3000
     working_dir: /home/app

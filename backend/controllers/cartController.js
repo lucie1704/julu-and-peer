@@ -1,4 +1,4 @@
-const { Cart, CartItem, Product, ProductGenre, ProductFormat,ProductArtist} = require('../models');
+const { Cart, CartItem, Product, ProductGenre, ProductFormat,ProductArtist, Image} = require('../models');
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
@@ -18,7 +18,8 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
                 include: [
                     { model: ProductGenre },
                     { model: ProductFormat },
-                    { model: ProductArtist }
+                    { model: ProductArtist },
+                    { model: Image }
                 ]
             }
         }
@@ -41,6 +42,8 @@ exports.getProducts = catchAsyncError(async (req, res, next) => {
             return false;
         }
     });
+
+    totalPrice = parseFloat(totalPrice.toFixed(2));
 
     const cartTotalProductCount = cart.CartItems.length;
     const shippingFee = 50;
@@ -96,7 +99,7 @@ exports.create = catchAsyncError(async (req, res, next) => {
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, carts] = await Cart.update(req.body, {
         where: {
-            id: req.params.id,
+            id: req.params.id
         },
         returning: true,
     });
@@ -109,11 +112,11 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async( req, res, next) => {
     const result = await Cart.destroy({
         where: {
-            id: req.params.id,
+            id: req.params.id
         },
     });
 
     if (!result) return next(new AppError(404));
 
-    res.status(204)
+    res.status(204).send()
 });

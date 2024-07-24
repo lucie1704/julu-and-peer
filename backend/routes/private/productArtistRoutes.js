@@ -1,16 +1,12 @@
 const express = require('express');
 const productArtistController = require('../../controllers/productArtistController');
 const authMiddleware = require('../../middleware/authMiddleware');
-const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
+const checkAdmin = require('../../middleware/checkAdmin');
 
-
-// router.use(authMiddleware);
-// router.use(autorizationMiddleware('admin'));
-
+// Public
 router
     .route('/')
-    .post(productArtistController.create)
     .get(productArtistController.getAll);
 
 router
@@ -20,6 +16,16 @@ router
 router
     .route('/:id')
     .get(productArtistController.getById)
+
+// Only authentified admin user
+router.use(checkAdmin);
+
+router
+    .route('/')
+    .post(productArtistController.create)
+
+router
+    .route('/:id')
     .patch(productArtistController.update)
     .delete(productArtistController.delete);
 

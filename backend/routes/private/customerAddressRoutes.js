@@ -4,7 +4,8 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const autorizationMiddleware = require('../../middleware/autorizationMiddleware');
 const router = express.Router();
 
-// router.use(authMiddleware);
+// Private
+router.use(authMiddleware);
 
 router
     .route('/')
@@ -16,8 +17,8 @@ router
     .patch(customerAddressController.update)
     .delete(customerAddressController.delete);
     
-
-// router.use(autorizationMiddleware('admin'));
+// Adminer
+router.use(autorizationMiddleware('admin'));
 
 router
     .route('/')

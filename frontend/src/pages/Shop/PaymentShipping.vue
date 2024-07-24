@@ -1,30 +1,25 @@
 <route lang="yaml">
-path: /customer/payment/shipping
-name: customer-payment-shipping
-meta:
-  layout: AppLayout
+  path: /customer/payment/shipping
+  name: customer-payment-shipping
+  meta:
+    layout: AppLayout
 </route>
 
 <script setup lang="ts">
+import { loadStripe } from '@stripe/stripe-js';
 import { computed, onMounted, ref } from 'vue';
-import { test_uid } from '~/constants';
-import { PlaceOrder } from '~/dto';
-import router from '~/router/router.ts';
+import { API_URL, VUE_APP_STRIPE_PUBLIC_KEY } from '~/constants';
+import { BillingInfo, ShippingInfo } from '~/dto';
 import { useCart } from '~/stores/cart';
 import { useCustomer } from '~/stores/customer';
-import { useOrder } from '~/stores/order';
+import { getUserId } from '~/utils/authUtils';
 
 const cartStore = useCart();
-const orderStore = useOrder();
 const customerStore = useCustomer();
 
-//TODO: Put email in shippingInfo
-
-const email = ref('');
-const shippingInfo = ref({
+const shippingInfo = ref<ShippingInfo>({
   firstName: '',
   lastName: '',
-  company: '',
   address: '',
   apartment: '',
   city: '',
@@ -34,24 +29,74 @@ const shippingInfo = ref({
   phone: '',
 });
 
-const billingInfo = ref({
+const billingInfo = ref<BillingInfo>({
   firstName: '',
   lastName: '',
-  company: '',
   address: '',
   apartment: '',
   city: '',
   country: 'France',
   state: '',
   postalCode: '',
-  phone: '',
+  phone: ''
 });
 
-onMounted(async() => {
-  await customerStore.fetchByUserId(test_uid);
+const shippingErrors = ref<Record<keyof ShippingInfo, boolean>>({
+  firstName: false,
+  lastName: false,
+  address: false,
+  apartment: false,
+  city: false,
+  country: false,
+  state: false,
+  postalCode: false,
+  phone: false,
+});
 
+const billingErrors = ref<Record<keyof BillingInfo, boolean>>({
+  firstName: false,
+  lastName: false,
+  address: false,
+  apartment: false,
+  city: false,
+  country: false,
+  state: false,
+  postalCode: false,
+  phone: false,
+});
+
+const formError = ref('');
+
+onMounted(async () => {
+  await customerStore.fetchByUserId(getUserId());
   await cartStore.fetchCartProducts(customerStore.customerId as string);
 });
+
+const validateForm = (): boolean => {
+  let isValid = true;
+
+  Object.keys(shippingErrors.value).forEach(key => {
+    const typedKey = key as keyof ShippingInfo;
+    if (shippingInfo.value[typedKey].trim() === '') {
+      shippingErrors.value[typedKey] = true;
+      isValid = false;
+    } else {
+      shippingErrors.value[typedKey] = false;
+    }
+  });
+
+  Object.keys(billingErrors.value).forEach(key => {
+    const typedKey = key as keyof BillingInfo;
+    if (billingInfo.value[typedKey].trim() === '') {
+      billingErrors.value[typedKey] = true;
+      isValid = false;
+    } else {
+      billingErrors.value[typedKey] = false;
+    }
+  });
+
+  return isValid;
+};
 
 const removeItem = async (cartItemId: string) => {
   try {
@@ -80,211 +125,278 @@ const calculateTotal = (
   shippingFee: number
 ) => {
   return computed(() => {
-    return totalPrice + shippingFee - totalDiscount;
+    const total = totalPrice + shippingFee - totalDiscount;
+    return total.toFixed(2);
   });
 };
 
 const submitForm = async () => {
-  // @TODO: Implémenter le paiement
-  if (!email.value || !shippingInfo.value || !cartStore.cartProducts)
-    return console.error('Form validation failed!');
+  if (!validateForm()) {
+    formError.value = 'Veuillez remplir toutes les informations avant de procéder au paiement.';
+    return;
+  } else {
+    // WARNING: This part is gonna move somewhere else when tables are cleaned
+    const stripe = await loadStripe(VUE_APP_STRIPE_PUBLIC_KEY);
+    const response = await fetch(`${API_URL}/stripe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        items: cartStore.cartProducts?.availableProducts,
+      }),
+    });
+    const session = await response.json();
+    await stripe?.redirectToCheckout({ sessionId: session.id });
+  }
 
-    const orderData: PlaceOrder = {
-    shippingFee: 20.0,
-    products: cartStore.cartProducts.availableProducts.map((cartItem) => ({
-      id: cartItem.Product?._id,
+  const orderDatas = {
+    shippingFee: 1.80,
+    products: cartStore.cartProducts?.availableProducts.map((cartItem) => ({
+      // @ts-expect-error id issue
+      id: cartItem.Product?.id,
       name: cartItem.Product?.name,
       description: cartItem.Product?.description,
       price: cartItem.Product?.price,
       quantity: cartItem.quantity
-    })),
-    shippingInfo: shippingInfo.value,
-    billingInfo: billingInfo.value,
-    email: email.value,
+    })) || [],
     customerId: customerStore.customerId as string
   };
 
   try {
-    await orderStore.placeOrder(orderData);
-    const cartId = cartStore.cartProducts.cart.id;
-    if (cartId) await cartStore.deleteCart(cartId);
+    const ordered_products = cartStore.cartProducts?.availableProducts;
+    const cartId = cartStore.cartProducts?.cart.id;
 
-    router.push('/');
-    cartStore.cartProducts = undefined;
+    const stripe = await loadStripe(VUE_APP_STRIPE_PUBLIC_KEY);
+    const response = await fetch(`${API_URL}/stripe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        items: ordered_products,
+        order_datas: orderDatas,
+        shipping_info: shippingInfo.value,
+        billing_info: billingInfo.value,
+        cart_id: cartId
+      }),
+    });
+    const session = await response.json();
+    await stripe?.redirectToCheckout({ sessionId: session.id });
   } catch (error) {
-    console.error('Error to confirm order : ', error);
+    console.error('Error to confirm order:', error);
   }
 };
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 py-12">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen py-12 bg-gray-100">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <form
-        class="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full"
+        class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2"
         @submit.prevent="submitForm"
       >
-        <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
-          <div class="space-y-6">
-            <h2 class="text-xl font-bold">
-              Contact Information
-            </h2>
-            <div>
-              <label
-                for="email"
-                class="block text-sm font-medium text-gray-700"
-              >Email address</label>
-              <input
-                id="email"
-                v-model="email"
-                type="email"
-                name="email"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              >
-            </div>
-          </div>
-
+        <div class="p-6 space-y-6 bg-white rounded-lg shadow-md">
           <h2 class="text-xl font-bold">
-            Shipping Information
+            Informations de livraison
           </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <label
                 for="first-name"
                 class="block text-sm font-medium text-gray-700"
-              >First name</label>
+              >Prénom</label>
               <input
                 id="first-name"
                 v-model="shippingInfo.firstName"
                 type="text"
                 name="first-name"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.firstName
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.firstName ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
             </div>
             <div>
               <label
                 for="last-name"
                 class="block text-sm font-medium text-gray-700"
-              >Last name</label>
+              >Nom</label>
               <input
                 id="last-name"
                 v-model="shippingInfo.lastName"
                 type="text"
                 name="last-name"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              >
-            </div>
-            <div class="sm:col-span-2">
-              <label
-                for="company"
-                class="block text-sm font-medium text-gray-700"
-              >Company</label>
-              <input
-                id="company"
-                v-model="shippingInfo.company"
-                type="text"
-                name="company"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.lastName
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.lastName ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
             </div>
             <div class="sm:col-span-2">
               <label
                 for="address"
                 class="block text-sm font-medium text-gray-700"
-              >Address</label>
+              >Adresse</label>
               <input
                 id="address"
                 v-model="shippingInfo.address"
                 type="text"
                 name="address"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.address
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.address ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
             </div>
             <div class="sm:col-span-2">
               <label
                 for="apartment"
                 class="block text-sm font-medium text-gray-700"
-              >Apartment, suite, etc.</label>
+              >Appartement, suite, etc.</label>
               <input
                 id="apartment"
                 v-model="shippingInfo.apartment"
                 type="text"
                 name="apartment"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.apartment
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.apartment ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
             </div>
             <div>
               <label
                 for="city"
                 class="block text-sm font-medium text-gray-700"
-              >City</label>
+              >Ville</label>
               <input
                 id="city"
                 v-model="shippingInfo.city"
                 type="text"
                 name="city"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.city
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.city ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
             </div>
             <div>
               <label
                 for="country"
                 class="block text-sm font-medium text-gray-700"
-              >Country</label>
+              >Pays</label>
               <select
                 id="country"
                 v-model="shippingInfo.country"
                 name="country"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.country
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.country ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
-                <option>United States</option>
+                <option>France</option>
               </select>
             </div>
             <div>
               <label
                 for="state"
                 class="block text-sm font-medium text-gray-700"
-              >State / Province</label>
+              >Commune</label>
               <input
                 id="state"
                 v-model="shippingInfo.state"
                 type="text"
                 name="state"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.state
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.state ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
             </div>
             <div>
               <label
                 for="postal-code"
                 class="block text-sm font-medium text-gray-700"
-              >Postal code</label>
+              >Code Postale</label>
               <input
                 id="postal-code"
                 v-model="shippingInfo.postalCode"
                 type="text"
                 name="postal-code"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.postalCode
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.postalCode ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
             </div>
             <div class="sm:col-span-2">
               <label
                 for="phone"
                 class="block text-sm font-medium text-gray-700"
-              >Phone</label>
+              >Téléphone</label>
               <input
                 id="phone"
                 v-model="shippingInfo.phone"
                 type="text"
                 name="phone"
-                class="m-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm bg-white text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                :class="shippingErrors.phone
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: shippingErrors.phone ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
               >
             </div>
           </div>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-md space-y-6 flex flex-col">
+        <div class="flex flex-col p-6 space-y-6 bg-white rounded-lg shadow-md">
           <h2 class="text-xl font-bold">
-            Order summary
+            Récapitulatif de commande
           </h2>
           <ul
             role="list"
@@ -296,16 +408,16 @@ const submitForm = async () => {
               class="flex py-6"
             >
               <div
-                class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
+                class="flex-shrink-0 w-24 h-24 overflow-hidden border border-gray-200 rounded-md"
               >
                 <img
-                  :src="cartProduct.Product.Image[0].path"
-                  :alt="cartProduct.Product.Image[0].alt"
-                  class="h-full w-full object-cover object-center"
+                  :src="cartProduct.Product.Images?.[0].path"
+                  :alt="cartProduct.Product.Images?.[0].alt"
+                  class="object-cover object-center w-full h-full"
                 >
               </div>
 
-              <div class="ml-4 flex flex-1 flex-col">
+              <div class="flex flex-col flex-1 ml-4">
                 <div>
                   <div
                     class="flex justify-between text-base font-medium text-gray-900"
@@ -314,7 +426,7 @@ const submitForm = async () => {
                       <a>{{ cartProduct.Product.name }}</a>
                     </h3>
                     <p class="ml-4">
-                      {{ cartProduct.Product.price }}$
+                      {{ cartProduct.Product.price }} €
                     </p>
                   </div>
                   <p class="mt-1 text-sm text-gray-500">
@@ -322,10 +434,10 @@ const submitForm = async () => {
                   </p>
                 </div>
 
-                <div class="flex flex-1 items-end justify-between text-sm">
+                <div class="flex items-end justify-between flex-1 text-sm">
                   <select
                     v-model="cartProduct.quantity"
-                    class="m-1 p-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    class="block p-1 m-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     @change="cartProduct.id && updateQuantity(cartProduct.id, cartProduct.quantity)"
                   >
                     <option
@@ -342,7 +454,7 @@ const submitForm = async () => {
                       class="font-medium text-indigo-600 hover:text-indigo-500"
                       @click="cartProduct.id && removeItem(cartProduct.id)"
                     >
-                      Remove
+                      Supprimer
                     </button>
                   </div>
                 </div>
@@ -352,35 +464,35 @@ const submitForm = async () => {
 
           <div
             v-if="cartStore.cartProducts"
-            class="mt-6 border-t border-gray-200 pt-4"
+            class="pt-4 mt-6 border-t border-gray-200"
           >
             <div
               class="flex justify-between text-base font-medium text-gray-900"
             >
-              <p>Subtotal</p>
-              <p>{{ cartStore.cartProducts.totalPrice }}</p>
+              <p>Sous-total</p>
+              <p>{{ cartStore.cartProducts.totalPrice }} €</p>
             </div>
             <div
               class="flex justify-between text-base font-medium text-gray-900"
             >
-              <p>Total Discount</p>
+              <p>Remise Totale</p>
               <p>{{ cartStore.cartProducts.totalDiscount }}</p>
             </div>
             <div
               class="flex justify-between text-base font-medium text-gray-900"
             >
-              <p>Total Products</p>
+              <p>Total Produits</p>
               <p>{{ cartStore.cartProducts.cartTotalProductCount }}</p>
             </div>
             <div
-              class="flex justify-between text-sm font-medium text-gray-900 mt-4"
+              class="flex justify-between mt-4 text-sm font-medium text-gray-900"
             >
-              <p>Shipping</p>
-              <p>$5.00</p>
+              <p>Frais de livraison</p>
+              <p>1.80 €</p>
             </div>
-            <div class="border-t border-gray-200 mt-4" />
+            <div class="mt-4 border-t border-gray-200" />
             <div
-              class="flex justify-between text-sm font-medium text-gray-900 mt-4"
+              class="flex justify-between mt-4 text-sm font-medium text-gray-900"
             >
               <p>Total</p>
               <p>
@@ -388,17 +500,239 @@ const submitForm = async () => {
                   calculateTotal(
                     cartStore.cartProducts.totalPrice,
                     cartStore.cartProducts.totalDiscount,
-                    10
+                    1.80
                   )
-                }}
+                }} €
               </p>
             </div>
           </div>
-          <button
-            class="w-full bg-indigo-600 text-white rounded-md py-2 mt-4 hover:bg-indigo-700"
+          <div
+            v-if="formError"
+            class="p-4 text-red-700 bg-red-100 border border-red-300 rounded-md"
           >
-            Confirm order
+            {{ formError }}
+          </div>
+          <button
+            class="w-full py-2 mt-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+          >
+            Payer
           </button>
+        </div>
+
+        <div class="p-6 space-y-6 bg-white rounded-lg shadow-md">
+          <h2 class="text-xl font-bold">
+            Informations de facturation
+          </h2>
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label
+                for="billing-first-name"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Prénom
+              </label>
+              <input
+                id="billing-first-name"
+                v-model="billingInfo.firstName"
+                type="text"
+                name="billing-first-name"
+                :class="billingErrors.firstName
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.firstName ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+            </div>
+            <div>
+              <label
+                for="billing-last-name"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Nom
+              </label>
+              <input
+                id="billing-last-name"
+                v-model="billingInfo.lastName"
+                type="text"
+                name="billing-last-name"
+                :class="billingErrors.lastName
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.lastName ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+            </div>
+            <div class="sm:col-span-2">
+              <label
+                for="billing-address"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Adresse
+              </label>
+              <input
+                id="billing-address"
+                v-model="billingInfo.address"
+                type="text"
+                name="billing-address"
+                :class="billingErrors.address
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.address ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+            </div>
+            <div class="sm:col-span-2">
+              <label
+                for="billing-apartment"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Appartement, suite, etc.
+              </label>
+              <input
+                id="billing-apartment"
+                v-model="billingInfo.apartment"
+                type="text"
+                name="billing-apartment"
+                :class="billingErrors.apartment
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.apartment ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+            </div>
+            <div>
+              <label
+                for="billing-city"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Ville
+              </label>
+              <input
+                id="billing-city"
+                v-model="billingInfo.city"
+                type="text"
+                name="billing-city"
+                :class="billingErrors.city
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.city ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+            </div>
+            <div>
+              <label
+                for="billing-country"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Pays
+              </label>
+              <select
+                id="billing-country"
+                v-model="billingInfo.country"
+                name="billing-country"
+                :class="billingErrors.country
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.country ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+                <option>France</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="billing-state"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Commune
+              </label>
+              <input
+                id="billing-state"
+                v-model="billingInfo.state"
+                type="text"
+                name="billing-state"
+                :class="billingErrors.state
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.state ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+            </div>
+            <div>
+              <label
+                for="billing-postal-code"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Code Postale
+              </label>
+              <input
+                id="billing-postal-code"
+                v-model="billingInfo.postalCode"
+                type="text"
+                name="billing-postal-code"
+                :class="billingErrors.postalCode
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.postalCode ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+            </div>
+            <div class="sm:col-span-2">
+              <label
+                for="billing-phone"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Téléphone
+              </label>
+              <input
+                id="billing-phone"
+                v-model="billingInfo.phone"
+                type="text"
+                name="billing-phone"
+                :class="billingErrors.phone
+                  ? 'block w-full p-2 m-1 text-gray-900 bg-white rounded-md shadow-sm sm:text-sm'
+                  : 'block w-full p-2 m-1 text-gray-900 bg-white border rounded-md shadow-sm sm:text-sm'
+                "
+                :style="{
+                  borderColor: billingErrors.phone ? 'red' : 'gray',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }"
+              >
+            </div>
+          </div>
         </div>
       </form>
     </div>

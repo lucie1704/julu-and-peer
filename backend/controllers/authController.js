@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { User} = require('../models');
+const { User, Customer} = require('../models');
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const Email = require('./../utils/email');
@@ -7,17 +7,15 @@ const crypto = require('crypto');
 const { Sequelize } = require('sequelize');
 const { uuidv7 } = require('uuidv7');
 
-const id = uuidv7();
 
-const signToken = id => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
+const signToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
   });
-
 };
 
 const createSendToken = (user, statusCode, req, res) => {
-  const token = signToken(user.id);
+  const token = signToken(user.id, user.role);
 
   const expires = new Date(Date.now() + 36000 * 1000);
 
@@ -33,9 +31,8 @@ const createSendToken = (user, statusCode, req, res) => {
 exports.signup = catchAsyncError(async (req, res) => {
   const { firstname, lastname, email, password, passwordConfirmation } = req.body;
   
-
   const newUser = User.build({
-    id,
+    id : uuidv7(),
     firstname,
     lastname,
     email,
@@ -47,8 +44,13 @@ exports.signup = catchAsyncError(async (req, res) => {
   const emailConfirmToken = newUser.createEmailConfirmToken();
 
   // Construct confirmation email URL
-  const confirmEmailUrl = `http://localhost:8080/confirm-email/${emailConfirmToken}`;
+  let confirmEmailUrl;
 
+  if (process.env.NODE_ENV === 'production') {
+    confirmEmailUrl = `${process.env.DOMAINE_URL}/confirm-email/${emailConfirmToken}`;
+  } else {
+    confirmEmailUrl = `${process.env.LOCAl_URL}/confirm-email/${emailConfirmToken}`;
+  }
   // Send email confirmation
   await new Email(newUser, confirmEmailUrl).sendWelcome();
 
@@ -56,7 +58,7 @@ exports.signup = catchAsyncError(async (req, res) => {
   await newUser.save();
 
   // Respond with success
-  res.status(202);
+  res.status(202).send();
 });
 
 exports.emailConfirm = catchAsyncError(async (req, res, next) => {
@@ -72,7 +74,10 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
         emailConfirmExpires: {
           [Sequelize.Op.gt]: Sequelize.fn('NOW')
         }
-      } 
+      },
+      attributes: {
+        include: ['role']
+      }
     });
 
   if (!user) {
@@ -88,8 +93,10 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
   user.emailConfirmed = true
   await user.save();
 
-  // Automatically login the user in after email confirmation
-  req.body.email = user.email;
+  const {id:userId, firstName, lastName}= user
+  await Customer.create({id : uuidv7(), userId, firstName, lastName });
+
+  await new Email(user, "").sendLogin();
 
   createSendToken(user, 200, req, res);
 });
@@ -102,7 +109,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({
     where: { email },
     attributes: {
-      include: ['emailConfirmed', 'password']
+      include: ['emailConfirmed', 'password', 'role']
     }
   });
   
@@ -134,6 +141,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   user.maxFailedLoginAt = undefined;
   await user.save();
 
+  await new Email(user, "").sendLogin();
 
   createSendToken(user, 200, req, res);
 });
@@ -143,7 +151,7 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true
   });
-  res.status(204);
+  res.status(204).send();
 };
 
 exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
@@ -157,11 +165,17 @@ exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
   const resetToken = await user.createPasswordResetToken();
 
   try {
-    const resetPasswordtURL = `http://localhost:8080/resetPassword/${resetToken}`
+    let resetPasswordtURL;
+
+    if (process.env.NODE_ENV === 'production') {
+      resetPasswordtURL = `${process.env.DOMAINE_URL}/resetPassword/${resetToken}`
+    } else {
+      resetPasswordtURL = `${process.env.LOCAl_URL}/${resetToken}`
+    }
 
     await new Email(user, resetPasswordtURL).sendPasswordReset();
 
-    res.status(202);
+    res.status(202).send();
     
   } catch (err) {
     user.passwordResetToken = undefined;
@@ -194,7 +208,13 @@ exports.resetMyPassword = catchAsyncError(async (req, res, next) => {
   }
 
   // Construct login email URL
-  const loginUrl = `http://localhost:8080/login`;
+  let loginUrl;
+
+  if (process.env.NODE_ENV === 'production') {
+    loginUrl = `${process.env.DOMAINE_URL}/login`;
+  } else {
+    loginUrl = `${process.env.LOCAl_URL}/login`;
+  }
 
   // Send email confirmation
   await new Email(user, loginUrl).confirmPasswordReset();

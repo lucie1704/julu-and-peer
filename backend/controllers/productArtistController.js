@@ -45,9 +45,10 @@ exports.create = catchAsyncError(async (req, res) => {
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, artists] = await ProductArtist.update(req.body, {
         where: {
-            id: req.params.id,
+            id: req.params.id
         },
         returning: true,
+        individualHooks: true,
     });
 
     if (!nbUpdated === 1) return next(new AppError(404));

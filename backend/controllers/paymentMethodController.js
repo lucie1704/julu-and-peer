@@ -30,7 +30,7 @@ exports.create = catchAsyncError(async (req, res) => {
 exports.update = catchAsyncError(async (req, res, next) => {
     const [nbUpdated, paymentMethods] = await PaymentMethod.update(req.body, {
         where: {
-            id: req.params.id,
+            id: req.params.id
         },
         returning: true,
     });
@@ -43,11 +43,11 @@ exports.update = catchAsyncError(async (req, res, next) => {
 exports.delete = catchAsyncError(async (req, res, next) => {
     const result = await PaymentMethod.destroy({
         where: {
-            id: req.params.id,
+            id: req.params.id
         },
     });
 
     if (!result) return next(new AppError(404));
 
-    res.status(204);
+    res.status(204).send();
 });

@@ -2,6 +2,7 @@
 
 const { Model } = require('sequelize');
 const denormalizeProduct = require('../dtos/denormalization/product');
+const Email = require('../utils/email');
 
 module.exports = (sequelize, DataTypes) => {
   class Stock extends Model {
@@ -45,6 +46,12 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Stock.init({
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false
+    },
     type: {
       type: DataTypes.STRING,
       allowNull: false,

@@ -7,7 +7,7 @@ const { User, Customer } = require('../models');
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     // Fetch 15 user IDs
-    const users = await User.findAll({ attributes: ['id'], limit: 15 });
+    const users = await User.findAll({ attributes: ['id']});
 
     // Ensure that there are enough users
     if (users.length < 15) {

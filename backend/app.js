@@ -10,10 +10,12 @@ const productFormatRouter = require('./routes/private/productFormatRoutes');
 const productGenreRouter = require('./routes/private/productGenreRoutes');
 const productCustomerEvaluationRouter = require('./routes/private/productCustomerEvaluationRoutes');
 const paymentMethodRouter = require('./routes/private/paymentMethodRoutes');
+const stripeRouter = require('./routes/private/stripeRoutes');
 const cartRouter = require('./routes/private/cartRoutes');
 const cartItemRouter = require('./routes/private/cartItemRoutes');
 const wishlistRouter = require('./routes/private/wishlistRoutes');
 const orderRouter = require('./routes/private/orderRoutes');
+const newsLettersRoutes = require('./routes/public/newsLettersRoutes');
 const AppError = require('./utils/appError');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -27,14 +29,25 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const logger = require('./utils/logger');
+const initDeliveryCronJob = require("./cron/delivery");
+const webhookStripeHandler = require("./webhook/stripe");
+const bodyParser = require('body-parser');
 
 require("./models/mongo/db");
 
 // Start express app
 const app = express();
 
+// Webhook for Stripe
+app.post(
+  "/webhook/stripe",
+  bodyParser.raw({ type: "application/json" }),
+  webhookStripeHandler
+);
+
 //Set env variable globally
 dotenv.config({ path: './config.env' });
+
 // const csurf = require('csurf');
 
 // Serving static files
@@ -111,10 +124,12 @@ app.use('/api/productformats', productFormatRouter);
 app.use('/api/productgenres', productGenreRouter);
 app.use('/api/productcustomerevaluations', productCustomerEvaluationRouter);
 app.use('/api/paymentmethods', paymentMethodRouter);
+app.use('/api/stripe', stripeRouter);
 app.use('/api/carts', cartRouter);
 app.use('/api/cartitem', cartItemRouter);
 app.use('/api/wishlist', wishlistRouter);
 app.use('/api/customerorder', orderRouter);
+app.use('/api/newsletter', newsLettersRoutes);
 
 // Handle requests for routes that are not defined in the application.
 app.all('*', (req, res, next) => {
@@ -133,5 +148,8 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+
+// Init the cron job for delivery
+initDeliveryCronJob();
 
 module.exports = app;
