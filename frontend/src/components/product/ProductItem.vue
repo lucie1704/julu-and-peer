@@ -75,8 +75,8 @@ const submitAddItemToCart = async () => {
     <div class="overflow-hidden">
       <v-img
         :aspect-ratio="1"
-        :src="product.Images[0] ? product.Images[0].path : '#'"
-        :alt="product.Images[0] ? product.Images[0].alt : ''"
+        :src="product.Images?.[0]?.path ?? '#'"
+        :alt="product.Images?.[0]?.alt ?? ''"
         class="object-center w-full h-full rounded-md bg-pink"
       />
     </div>

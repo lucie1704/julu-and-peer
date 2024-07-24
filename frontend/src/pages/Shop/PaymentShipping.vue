@@ -397,8 +397,8 @@ const submitForm = async () => {
                 class="flex-shrink-0 w-24 h-24 overflow-hidden border border-gray-200 rounded-md"
               >
                 <img
-                  :src="cartProduct.Product.Images[0].path"
-                  :alt="cartProduct.Product.Images[0].alt"
+                  :src="cartProduct.Product.Images?.[0].path"
+                  :alt="cartProduct.Product.Images?.[0].alt"
                   class="object-cover object-center w-full h-full"
                 >
               </div>

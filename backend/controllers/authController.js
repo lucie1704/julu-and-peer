@@ -44,8 +44,13 @@ exports.signup = catchAsyncError(async (req, res) => {
   const emailConfirmToken = newUser.createEmailConfirmToken();
 
   // Construct confirmation email URL
-  const confirmEmailUrl = `http://localhost:8080/confirm-email/${emailConfirmToken}`;
+  let confirmEmailUrl;
 
+  if (process.env.NODE_ENV === 'production') {
+    confirmEmailUrl = `${process.env.DOMAINE_URL}/confirm-email/${emailConfirmToken}`;
+  } else {
+    confirmEmailUrl = `${process.env.LOCAl_URL}/confirm-email/${emailConfirmToken}`;
+  }
   // Send email confirmation
   await new Email(newUser, confirmEmailUrl).sendWelcome();
 
@@ -91,6 +96,8 @@ exports.emailConfirm = catchAsyncError(async (req, res, next) => {
   const {id:userId, firstName, lastName}= user
   await Customer.create({id : uuidv7(), userId, firstName, lastName });
 
+  await new Email(user, "").sendLogin();
+
   createSendToken(user, 200, req, res);
 });
 
@@ -134,6 +141,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
   user.maxFailedLoginAt = undefined;
   await user.save();
 
+  await new Email(user, "").sendLogin();
 
   createSendToken(user, 200, req, res);
 });
@@ -157,7 +165,13 @@ exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
   const resetToken = await user.createPasswordResetToken();
 
   try {
-    const resetPasswordtURL = `http://localhost:8080/resetPassword/${resetToken}`
+    let resetPasswordtURL;
+
+    if (process.env.NODE_ENV === 'production') {
+      resetPasswordtURL = `${process.env.DOMAINE_URL}/resetPassword/${resetToken}`
+    } else {
+      resetPasswordtURL = `${process.env.LOCAl_URL}/${resetToken}`
+    }
 
     await new Email(user, resetPasswordtURL).sendPasswordReset();
 
@@ -194,7 +208,13 @@ exports.resetMyPassword = catchAsyncError(async (req, res, next) => {
   }
 
   // Construct login email URL
-  const loginUrl = `http://localhost:8080/login`;
+  let loginUrl;
+
+  if (process.env.NODE_ENV === 'production') {
+    loginUrl = `${process.env.DOMAINE_URL}/login`;
+  } else {
+    loginUrl = `${process.env.LOCAl_URL}/login`;
+  }
 
   // Send email confirmation
   await new Email(user, loginUrl).confirmPasswordReset();

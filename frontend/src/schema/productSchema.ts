@@ -41,13 +41,13 @@ const ProductSchema = z.object({
   price: z.number(),
   quantity: z.number(),
   reviewCount: z.number().nullable(),
-  discount: z.number(),
+  discount: z.number().optional(),
   ProductGenre: CategorySchema,
   ProductFormat: CategorySchema,
   ProductArtist: CategorySchema,
   ProductCustomerEvaluation: z.array(CustomerEvaluationSchema),
-  Stock: z.array(StockSchema),
-  Image: z.array(ImageSchema)
+  Stock: z.array(StockSchema).optional(),
+  Image: z.array(ImageSchema).optional(),
 });
 
 const PaginatedProductsSchema = z.object({

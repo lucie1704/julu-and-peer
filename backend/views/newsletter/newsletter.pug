@@ -1,0 +1,33 @@
+doctype html
+html
+  head
+    meta(name='viewport', content='width=device-width')
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    title Newsletter
+    include _style
+
+  body
+    .container
+      .header
+        img(src="https://via.placeholder.com/100" alt="E-commerce Logo")
+        h1 Newsletter
+        form(action="#" method="post")
+          .header-input-container
+            input#email-address.header-input(type="email" name="email" autocomplete="email" required placeholder="Enter your email")
+            button.header-button(type="submit") Subscribe
+
+      if newProducts && newProducts.length > 0
+        .section
+          h2 Nouveaux Produits
+          include newProducts.pug
+
+      if discountedProducts && discountedProducts.length > 0
+        .section
+          h2 Réductions de Prix
+          include discountedProducts.pug
+
+      .footer
+        p Si vous ne souhaitez plus recevoir nos newsletters, vous pouvez vous désinscrire à tout moment en cliquant sur le lien suivant :
+        a(href=`https:/www.juluandpeer.store/unsubscribe?email=${encodeURIComponent(this.to)}`) Se désinscrire
+        p Merci de faire partie de notre communauté.
+        p - E-commerce Team

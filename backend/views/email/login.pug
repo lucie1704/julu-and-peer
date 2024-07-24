@@ -1,0 +1,18 @@
+extends baseEmail
+
+block content
+  p Bonjour #{firstName},
+  p Vous vous êtes connecté(e) à votre compte julu-and-peer avec succès 🎉🙏
+  p Si ce n'était pas vous, veuillez nous en informer immédiatement.
+  p Si vous avez besoin d'aide ou avez des questions, n'hésitez pas à nous contacter.
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`, target='_blank') Accéder à votre compte
+  p Merci de faire partie de la communauté julu-and-peer.
+  p - julu-and-peer Shopping Paris-France
