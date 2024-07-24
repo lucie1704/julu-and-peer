@@ -27,6 +27,7 @@ exports.add = catchAsyncError(async (req, res, next) => {
     } else {
         // If it doesn't exist, create a new cart item
         const newCartItem = await CartItem.create({
+            id
             productId,
             cartId,
             quantity,
