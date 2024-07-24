@@ -20,12 +20,15 @@ module.exports = async function checkAuth(req, res, next) {
     console.log(user);
 
     if (!user) return res.sendStatus(401);
-    console.log('KJKKJKJKKJKJKJKJKJJJKJKJKJKJKJKJKJKJKJ');
 
     req.user = user;
 
     next();
   } catch (e) {
+    console.log('KJKKJKJKKJKJKJKJKJJJKJKJKJKJKJKJKJKJKJ');
+    console.log(e);
+    console.log('KJKKJKJKKJKJKJKJKJJJKJKJKJKJKJKJKJKJKJ');
+
     res.sendStatus(401);
   }
 };
