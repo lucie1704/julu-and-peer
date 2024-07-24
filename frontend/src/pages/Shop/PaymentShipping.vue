@@ -167,7 +167,7 @@ const submitForm = async () => {
     const ordered_products = cartStore.cartProducts?.availableProducts;
     const cartId = cartStore.cartProducts?.cart.id;
 
-    const stripe = await loadStripe(STRIPE_PUBLIC_KEY);
+    const stripe = await loadStripe(VUE_APP_STRIPE_PUBLIC_KEY);
     const response = await fetch(`${API_URL}/stripe`, {
       method: 'POST',
       headers: {
