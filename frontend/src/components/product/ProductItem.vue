@@ -50,6 +50,7 @@ const submitAddItemToCart = async () => {
     || !quantity.value)
     return console.error('Form validation failed!');
 
+  //@ts-expect-error id isssue
   const productId = productStore.product.id;
   const cartId = cartStore.cart.id as string;
 
