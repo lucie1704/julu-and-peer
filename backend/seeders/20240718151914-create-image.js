@@ -21,9 +21,16 @@ module.exports = {
 
     // Create an array to store image records
     const images = [];
+    const existingImages = ['default_product.jpg', 'old-vinyl.jpg', 'vinyl-colors.png', 'vinyl-jazz-collection.png', 'vinyl-pochette.png', 'vinyl-red.png', 'vinyle-classic-rock.png', 'vinyle-img.png']
+
+    const getRandomImage = () => {
+      const randomIndex = Math.floor(Math.random() * existingImages.length);
+      return existingImages[randomIndex];
+    };
 
     // Loop through each product
     for (const product of products) {
+      const randomImage = getRandomImage();
       // Loop through each product
           images.push({
             id: uuidv7(),
@@ -32,7 +39,7 @@ module.exports = {
             type: 'jpg',
             description: `Image for ${product.name} by ${artist.name}`,
             alt: `Alt text for image ${product.name}`,
-            path: `${base_url}/public/product/${product.name.replace(/\s+/g, '-').toLowerCase()}-image${artist.name}.jpg`,
+            path: `${base_url}/public/product/${randomImage}`,
             createdAt: new Date(),
             updatedAt: new Date(),
             productId: product.id,
