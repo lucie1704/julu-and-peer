@@ -16,7 +16,8 @@ const UserForm = z.object({
   firstname: z.string(),
   lastname: z.string(),
   email: z.string().email(),
-
+  password: z.string().optional(),
+  passwordConfirm: z.string().optional(),
 });
 
 export { UserData, UserForm };

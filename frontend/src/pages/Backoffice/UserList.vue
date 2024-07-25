@@ -10,7 +10,7 @@ meta:
 import { ref } from 'vue';
 import DataTable from '~/components/backoffice/DataTable.vue';
 import { getDataTable } from '~/composables/backoffice/getDataTable';
-import type { ApiCall, RequestMethod } from '~/composables/form';
+import type { ApiCall } from '~/composables/form';
 import { useForm } from '~/composables/form';
 import { API_URL } from '~/constants';
 import { UserForm } from '~/schema/userSchema';
@@ -29,11 +29,14 @@ const apiCall = ref<ApiCall>({
 const schema = UserForm;
 const isEditUser = ref<boolean>();
 const initialValues = ref();
+const isNewUser = ref<boolean>(false);
 
 const updateApiCall = (payload: Record<string, string>): void => {
+  isNewUser.value = !payload.id;
+
   if (payload.id) {
     isEditUser.value = true;
-    apiCall.value.method = 'update' as RequestMethod;
+    apiCall.value.method = 'patch';
     apiCall.value.endpoint = `${API_URL}/${url}/${payload.id}`;
   } else {
     isEditUser.value = false;
@@ -89,7 +92,7 @@ const {
       <!-- Start Edit Form Slot-->
       <template #form>
         <v-card class="text-center pa-5">
-          <v-card-title>{{ formData.firstname ? 'Modifier un utilisateur' : 'Nouvel utilisateur' }}</v-card-title>
+          <v-card-title>{{ isNewUser ? 'Nouvel utilisateur' : 'Modifier un utilisateur' }}</v-card-title>
           <v-form @submit.prevent="handleSubmit">
             <v-row>
               <v-col
@@ -149,12 +152,12 @@ const {
                   :error-messages="errors.passwordConfirm"
                   label="Confirmation du mot de passe"
                   class="relative"
-                  :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
-                  @click:append="showPassword = !showPassword"
+                  :append-icon="showPasswordConfirm ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                  @click:append="showPasswordConfirm = !showPasswordConfirm"
                 />
               </v-col>
             </v-row>
-            <v-row>
+            <v-row v-if="serverError">
               <v-col class="text-red">
                 {{ serverError }}
               </v-col>
@@ -165,19 +168,27 @@ const {
                   type="submit"
                   color="blue"
                   :loading="isSubmitting"
+                  block
                 >
-                  Enregistrer
+                  {{ isNewUser ? 'Créer' : 'Modifier' }}
                 </v-btn>
               </v-col>
+            </v-row>
+            <v-row>
               <v-col>
                 <v-btn
+                  variant="outlined"
+                  block
                   @click="resetForm"
                 >
-                  Ré initialiser le formulaire
+                  Ré initialiser
                 </v-btn>
               </v-col>
               <v-col>
                 <v-btn
+                  variant="outlined"
+                  color="error"
+                  block
                   @click="cancelSubmit"
                 >
                   Annuler la requête

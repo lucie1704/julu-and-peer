@@ -26,6 +26,8 @@ module.exports = async function checkAdmin(req, res, next) {
 
     next();
   } catch (e) {
+    console.log('azyayzyayzayz');
+
     res.sendStatus(401);
   }
 };
