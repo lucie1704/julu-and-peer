@@ -11,7 +11,7 @@ import { ref } from 'vue';
 import DataTable from '~/components/backoffice/DataTable.vue';
 import { getDataOptions } from '~/composables/backoffice/getDataOptions';
 import { getDataTable } from '~/composables/backoffice/getDataTable';
-import type { ApiCall, RequestMethod } from '~/composables/form';
+import type { ApiCall } from '~/composables/form';
 import { useForm } from '~/composables/form';
 import { API_URL } from '~/constants';
 import { ProductForm } from '~/schema/productSchema';
@@ -28,11 +28,13 @@ const apiCall = ref<ApiCall>({
 const schema = ProductForm;
 const isEditProduct = ref<boolean>();
 const initialValues = ref();
+const isNewProduct = ref<boolean>(false);
 
 const updateApiCall = (payload: Record<string, string>): void => {
+  isNewProduct.value = !payload._id;
   if (payload._id) {
     isEditProduct.value = true;
-    apiCall.value.method = 'patch' as RequestMethod;
+    apiCall.value.method = 'patch';
     apiCall.value.endpoint = `${API_URL}/${url}/${payload._id}`;
   } else {
     isEditProduct.value = false;
@@ -88,7 +90,7 @@ const {
       <!-- Start Edit Form Slot-->
       <template #form>
         <v-card class="text-center pa-5">
-          <v-card-title>Modifier un produit</v-card-title>
+          <v-card-title>{{ isNewProduct ? 'Nouveau produit' : 'Modifier un produit' }}</v-card-title>
           <v-form @submit.prevent="handleSubmit">
             <v-row>
               <v-col>
@@ -122,35 +124,38 @@ const {
                   @update:model-value="updateField('discount', formData.discount)"
                 />
                 <v-select
-                  v-model="formData.genreId"
+                  v-model="formData.ProductGenre"
                   :items="options.genres"
                   item-title="name"
                   item-value="id"
+                  return-object
                   label="Genre"
-                  :error-messages="errors.genreId"
-                  @update:model-value="updateField('genreId', formData.genreId)"
+                  :error-messages="errors.ProductGenre"
+                  @update:model-value="updateField('ProductGenre', formData.ProductGenre)"
                 />
                 <v-select
-                  v-model="formData.formatId"
+                  v-model="formData.ProductFormat"
                   :items="options.formats"
                   item-title="name"
                   item-value="id"
+                  return-object
                   label="Format"
-                  :error-messages="errors.formatId"
-                  @update:model-value="updateField('formatId', formData.formatId)"
+                  :error-messages="errors.ProductFormat"
+                  @update:model-value="updateField('ProductFormat', formData.ProductFormat)"
                 />
                 <v-select
-                  v-model="formData.artistId"
+                  v-model="formData.ProductArtist"
                   :items="options.artists"
                   item-title="name"
                   item-value="id"
+                  return-object
                   label="Artiste"
-                  :error-messages="errors.artistId"
-                  @update:model-value="updateField('artistId', formData.artistId)"
+                  :error-messages="errors.ProductArtist"
+                  @update:model-value="updateField('ProductArtist', formData.ProductArtist)"
                 />
               </v-col>
             </v-row>
-            <v-row>
+            <v-row v-if="serverError">
               <v-col class="text-red">
                 {{ serverError }}
               </v-col>
@@ -161,19 +166,27 @@ const {
                   type="submit"
                   color="blue"
                   :loading="isSubmitting"
+                  block
                 >
-                  Enregistrer
+                  {{ isNewProduct ? 'Créer' : 'Modifier' }}
                 </v-btn>
               </v-col>
+            </v-row>
+            <v-row>
               <v-col>
                 <v-btn
+                  variant="outlined"
+                  block
                   @click="resetForm"
                 >
-                  Ré initialiser le formulaire
+                  Ré initialiser
                 </v-btn>
               </v-col>
               <v-col>
                 <v-btn
+                  variant="outlined"
+                  color="error"
+                  block
                   @click="cancelSubmit"
                 >
                   Annuler la requête

@@ -50,6 +50,23 @@ export function useForm<T extends SchemaType>(
     } else {
       delete errors[field];
     }
+
+    // Recursive validation for nested objects
+    if (typeof formData[field] === 'object' && formData[field] !== null) {
+      const nestedShape = fieldSchema._def.shape;
+      const nestedData = formData[field] as Record<string, any>;
+
+      Object.keys(nestedShape).forEach((nestedKey) => {
+        const nestedFieldSchema = nestedShape[nestedKey];
+        const nestedResult = nestedFieldSchema.safeParse(nestedData[nestedKey]);
+
+        if (!nestedResult.success) {
+          errors[field] = nestedResult.error.errors.map((error: ZodIssue) => error.message);
+        } else {
+          delete errors[field];
+        }
+      });
+    }
   };
 
   const validateForm = (): boolean => {
@@ -74,14 +91,11 @@ export function useForm<T extends SchemaType>(
     }
 
     try {
-      const { ...data } = formData as FormData;
-      await axios[apiCall.method](apiCall.endpoint, data, {
+      const dataToSend = formatData(formData);
+      const fetchedData = await axios[apiCall.method](apiCall.endpoint, dataToSend, {
         headers: headers(),
       });
-      console.log('prout');
-
-      // const validatedData = schema.parse(fetchedData);
-      await onSubmit('hhh');
+      await onSubmit(fetchedData.data);
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
@@ -98,6 +112,20 @@ export function useForm<T extends SchemaType>(
     }
   };
 
+  const formatData = (data: FormData): FormData => {
+    const { ...extractedData } = data;
+    const formattedData: Record<string, any> = {};
+
+    Object.keys(extractedData).forEach(key => {
+      if (typeof data[key] === 'object' && extractedData[key] !== null) {
+        formattedData[key] = { ...extractedData[key] };
+      } else {
+        formattedData[key] = extractedData[key];
+      }
+    });
+    return formattedData;
+  };
+
   const resetForm = () => {
     const resetValues = Object.fromEntries(Object.keys(schema.shape).map(key => [key, undefined]));
     Object.assign(formData, resetValues);
@@ -109,25 +137,6 @@ export function useForm<T extends SchemaType>(
     if (isSubmitting.value) {
       isCancelled.value = true;
       abortController.abort();
-    }
-  };
-
-  const createRequestOptions = (jwt_token?: string) => {
-    if (jwt_token) {
-      return {
-        signal: abortController.signal,
-        headers: {
-          Authorization: `Bearer ${jwt_token}`,
-          'Content-Type': 'application/json'
-        }
-      };
-    } else {
-      return {
-        signal: abortController.signal,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
     }
   };
 

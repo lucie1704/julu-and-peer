@@ -66,9 +66,9 @@ const ProductForm = z.object({
   price: z.number(),
   discount: z.number(),
   reviewCount: z.number().nullable(),
-  genreId: z.string().optional(),
-  formatId: z.string().optional(),
-  artistId: z.string().optional(),
+  ProductGenre: CategorySchema,
+  ProductFormat: CategorySchema,
+  ProductArtist: CategorySchema,
 });
 
 export {

@@ -183,7 +183,6 @@ exports.forgotMyPassword = catchAsyncError(async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();
-
     return next(new AppError(500));
   }
 
