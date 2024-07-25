@@ -19,6 +19,9 @@ const vuetify = createVuetify({
       density: 'comfortable',
       variant: 'outlined'
     },
+    VTextarea: {
+      variant: 'outlined'
+    },
     VSelect: {
       density: 'compact',
       variant: 'outlined'

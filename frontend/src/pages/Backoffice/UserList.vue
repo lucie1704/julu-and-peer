@@ -126,7 +126,7 @@ const {
                   @update:model-value="updateField('email', formData.email)"
                 />
               </v-col>
-              <!-- <v-col
+              <v-col
                 cols="12"
                 md="6"
               >
@@ -152,7 +152,7 @@ const {
                   :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
                   @click:append="showPassword = !showPassword"
                 />
-              </v-col> -->
+              </v-col>
             </v-row>
             <v-row>
               <v-col class="text-red">

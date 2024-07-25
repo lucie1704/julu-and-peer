@@ -1,8 +1,9 @@
 import axios from 'axios';
 import type { Reactive } from 'vue';
-import { reactive, ref } from 'vue';
+import { isReactive, reactive, ref, toRaw } from 'vue';
 import type { ZodIssue, ZodTypeAny } from 'zod';
 import { z } from 'zod';
+import { headers } from '~/utils/headers';
 
 export type RequestMethod = 'post' | 'put' | 'delete' | 'patch';
 
@@ -21,26 +22,26 @@ export function useForm<T extends SchemaType>(
   initialValues?: Partial<z.infer<T>>,
 ) {
 
-  type FormData = z.infer<T>;
+  type FormData = Partial<z.infer<T>>;
 
   const initializedValues = Object.fromEntries(
     Object.keys(schema.shape).map(key =>
       [key, ((initialValues && initialValues[key]) ? initialValues[key] : undefined)])
-  );
+  ) as FormData;
 
-  const formData        = reactive<FormData>({ ...initializedValues });
-  const errors          = reactive<Partial<Record<keyof FormData, string[]>>>({});
-  const serverError     = ref<string>();
-  const isSubmitting    = ref(false);
-  const isCancelled     = ref(false);
+  const formData = reactive<FormData>({ ...initializedValues });
+  const errors = reactive<Partial<Record<keyof FormData, string[]>>>({});
+  const serverError = ref<string>();
+  const isSubmitting = ref(false);
+  const isCancelled = ref(false);
   const abortController = new AbortController();
 
-  const updateField = <K extends keyof FormData>(field: K, value: Reactive<FormData[K]>) => {
+  const updateField = <K extends keyof FormData>(field: K, value: Reactive<FormData>[K]) => {
     formData[field] = value;
     validateField(field);
   };
 
-  const validateField = <K extends keyof FormData>(field: K) =>  {
+  const validateField = <K extends keyof FormData>(field: K) => {
     const fieldSchema = schema.shape[field as string];
     const result = fieldSchema.safeParse(formData[field]);
     if (!result.success) {
@@ -62,7 +63,7 @@ export function useForm<T extends SchemaType>(
     return isValid;
   };
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     console.log('tete');
     serverError.value = undefined;
     isSubmitting.value = true;
@@ -73,11 +74,10 @@ export function useForm<T extends SchemaType>(
     }
 
     try {
-      console.log('apiCall.endpoint', apiCall.endpoint);
-      console.log('apiCall.method', apiCall.method);
-      console.log('formData', formData);
-
-      await axios[apiCall.method](apiCall.endpoint, formData, createRequestOptions(apiCall.jwt));
+      const { ...data } = formData as FormData;
+      await axios[apiCall.method](apiCall.endpoint, data, {
+        headers: headers(),
+      });
       console.log('prout');
 
       // const validatedData = schema.parse(fetchedData);
@@ -114,7 +114,7 @@ export function useForm<T extends SchemaType>(
 
   const createRequestOptions = (jwt_token?: string) => {
     if (jwt_token) {
-      return  {
+      return {
         signal: abortController.signal,
         headers: {
           Authorization: `Bearer ${jwt_token}`,
@@ -122,7 +122,7 @@ export function useForm<T extends SchemaType>(
         }
       };
     } else {
-      return  {
+      return {
         signal: abortController.signal,
         headers: {
           'Content-Type': 'application/json'
