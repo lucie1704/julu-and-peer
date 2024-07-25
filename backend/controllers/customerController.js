@@ -2,16 +2,16 @@ const {User, Customer} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
 const AppError = require('./../utils/appError');
-const { uuidv7 } = require('uuidv7');
+const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv7();
+const id = uuidv4();
 
 exports.create = catchAsyncError(async (req, res, next) => {
     const { userId, firstName, lastName } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) return next(new AppError(404));
- 
+
     const customer = await Customer.create({ id, userId, firstName, lastName });
 
     responseReturn(res, customer, 201);

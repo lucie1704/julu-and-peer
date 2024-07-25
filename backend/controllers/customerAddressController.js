@@ -2,9 +2,9 @@ const {CustomerAddress, Customer} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('../utils/appError');
 const { responseReturn } = require('../utils/response');
-const { uuidv7 } = require('uuidv7');
+const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv7();
+const id = uuidv4();
 
 exports.create = catchAsyncError (async (req, res, next) => {
     const customer = await Customer.findByPk(req.body.customerId);

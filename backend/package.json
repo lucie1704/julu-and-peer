@@ -7,7 +7,7 @@
     "start": "node server.js",
     "dev": "NODE_ENV=development nodemon server.js",
     "start:prod": "NODE_ENV=production node server.js",
-    "test": "jest --watchAll --detectOpenHandles",
+    "test": "MONGO_URL=mongodb://localhost:27017/testdb jest --watchAll --detectOpenHandles",
     "reset:mongo": "node /home/app/scripts/resetMongoDatabase.js"
   },
   "author": "Julu&Peer",

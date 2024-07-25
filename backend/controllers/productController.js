@@ -2,10 +2,10 @@ const { Product, ProductGenre, ProductFormat, ProductArtist, ProductCustomerEval
 const AppError = require('./../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
-const { uuidv7 } = require('uuidv7');
 const ProductMongo = require("../models/mongo/product");
+const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv7();
+const id = uuidv4();
 
 exports.create = catchAsyncError(async (req, res) => {
     // Deconstruct body in order to get ID from objects.

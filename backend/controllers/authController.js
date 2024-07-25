@@ -5,7 +5,7 @@ const catchAsyncError = require('../utils/catchAsyncError');
 const Email = require('./../utils/email');
 const crypto = require('crypto');
 const { Sequelize } = require('sequelize');
-const { uuidv7 } = require('uuidv7');
+const { v4: uuidv4 } = require('uuid');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 

@@ -2,9 +2,9 @@ const {responseReturn} = require('../utils/response');
 const { Product, CartItem} = require('../models');
 const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
-const { uuidv7 } = require('uuidv7');
+const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv7();
+const id = uuidv4();
 
 exports.add = catchAsyncError(async (req, res, next) => {
     const { productId, cartId, quantity } = req.body;

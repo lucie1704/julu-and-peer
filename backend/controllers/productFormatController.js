@@ -2,9 +2,9 @@ const { Product, ProductFormat } = require('../models');
 const AppError = require('../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
-const { uuidv7 } = require('uuidv7');
+const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv7();
+const id = uuidv4();
 
 exports.getAll = catchAsyncError(async (req, res) => {
     const page = parseInt(req.query.page) || 1;

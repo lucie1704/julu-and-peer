@@ -3,9 +3,9 @@ const AppError = require('../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const filterObject = require('../utils/filterObject');
 const { responseReturn } = require('../utils/response');
-const { uuidv7 } = require('uuidv7');
+const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv7();
+const id = uuidv4();
 
 // Méthodes pour User role
 
