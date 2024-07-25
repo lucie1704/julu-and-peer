@@ -2,8 +2,6 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const AppError = require('../utils/appError');
-const { uuidv7 } = require('uuidv7');
-const { createMongoUser, updateMongoUser } = require("../dtos/denormalization/userMongo");
 
 const {
   Model
