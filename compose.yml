@@ -15,6 +15,7 @@ services:
     image: node
     user: root
     environment:
+      - NODE_ENV=development
       - PORT=3000
       - DATABASE_URL=postgres://root:password@db:5432/app
       - JWT_SECRET=998c2614eb0acf4eea946414667e78598e286a6c6b3911602f8b23a76811196b
