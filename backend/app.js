@@ -67,9 +67,12 @@ app.use(express.urlencoded({ extended: true, limit:'1kb'}));
 // Parses cookies attached to incoming requests. Required for CSRF protection it allows the CSRF token to be stored and accessed in cookies.
 app.use(cookieParser());
 
+const corsOptions = {
+  origin: 'http://localhost:8080'
+}
 // Enable CORS for all routes in developpment
 if (process.env.NODE_ENV === 'development') {
-    app.use(cors());
+  app.use(cors(corsOptions));
 }
 
 if (process.env.NODE_ENV !== 'development') {

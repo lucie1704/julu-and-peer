@@ -59,6 +59,18 @@ const PaginatedProductsSchema = z.object({
   facets: z.record(z.array(FacetItemSchema))
 });
 
+const ProductForm = z.object({
+  name: z.string(),
+  description: z.string(),
+  quantity: z.number(),
+  price: z.number(),
+  discount: z.number(),
+  reviewCount: z.number().nullable(),
+  genreId: z.string().optional(),
+  formatId: z.string().optional(),
+  artistId: z.string().optional(),
+});
+
 export {
   PaginatedProductsSchema,
   ProductSchema,
@@ -66,5 +78,6 @@ export {
   FacetItemSchema,
   ImageSchema,
   StockSchema,
-  CustomerEvaluationSchema
+  CustomerEvaluationSchema,
+  ProductForm
 };
