@@ -1,6 +1,6 @@
 <route lang="yaml">
-  path: /test
-  name: test
+  path: /admin/test
+  name: admin-test
   meta:
     layout: AppLayout
 </route>
@@ -38,7 +38,7 @@ const {
   resetForm
 } = useForm(
   schema,
-  { method: 'get', endpoint: myApiCall.value, jwt: '' },
+  { method: 'post', endpoint: myApiCall.value },
   onSubmit,
   initialValues
 );
