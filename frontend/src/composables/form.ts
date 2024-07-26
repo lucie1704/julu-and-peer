@@ -74,8 +74,8 @@ export function useForm<T extends SchemaType>(
     }
 
     try {
-      console.log('trying to send request');
       const dataToSend = formatData(formData);
+      console.log('sending request with', dataToSend);
       const fetchedData = await axios[apiCall.method](apiCall.endpoint, dataToSend, {
         headers: headers(),
       });

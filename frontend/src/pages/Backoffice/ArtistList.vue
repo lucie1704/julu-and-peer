@@ -33,6 +33,7 @@ const updateApiCall = (payload: Record<string, string>): void => {
   if (payload.id) {
     apiCall.value.method = 'patch';
     apiCall.value.endpoint = `${API_URL}/${url}/${payload.id}`;
+    resetForm();
   } else {
     apiCall.value.method = 'post';
     apiCall.value.endpoint = `${API_URL}/${url}`;
@@ -44,6 +45,7 @@ const updateApiCall = (payload: Record<string, string>): void => {
 };
 
 const onSubmitEditItem = async(data: any) => {
+  refresh();
   console.log('successfully added/edited an artist !');
   console.log(data);
 };

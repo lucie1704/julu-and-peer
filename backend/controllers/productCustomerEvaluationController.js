@@ -4,8 +4,6 @@ const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
-
 exports.getAll = catchAsyncError(async (req, res) => {
     const evaluations = await ProductCustomerEvaluation.findAll();
     responseReturn(res, evaluations);
@@ -18,7 +16,17 @@ exports.getById = catchAsyncError(async (req, res, next) => {
 });
 
 exports.create = catchAsyncError(async (req, res) => {
-    const evaluation = await ProductCustomerEvaluation.create({ id, ...req.body });
+    const id = uuidv4();
+    const evaluation = await ProductCustomerEvaluation.create({id, ...req.body});
+    responseReturn(res, evaluation);
+});
+
+exports.update = catchAsyncError(async (req, res, next) => {
+    const evaluation = await ProductCustomerEvaluation.update(req.params.id, req.body);
+    
+    if (!evaluation) return next(new AppError(404));
+    await evaluation.update(req.body);
+
     responseReturn(res, evaluation, 201);
 });
 

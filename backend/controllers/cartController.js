@@ -4,8 +4,6 @@ const catchAsyncError = require('../utils/catchAsyncError');
 const {responseReturn} = require('../utils/response');
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
-
 exports.getProducts = catchAsyncError(async (req, res, next) => {
     const { id } = req.params;
 
@@ -83,6 +81,7 @@ exports.getByCustomerId = catchAsyncError(async (req, res, next) => {
 });
 
 exports.create = catchAsyncError(async (req, res, next) => {
+    const id = uuidv4();
     const { customerId } = req.body;
 
     const existedCart = await Cart.findOne({ where: { customerId } });

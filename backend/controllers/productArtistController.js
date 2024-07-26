@@ -4,8 +4,6 @@ const catchAsyncError = require('../utils/catchAsyncError');
 const { responseReturn } = require('../utils/response');
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
-
 exports.getAll = catchAsyncError(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
@@ -36,7 +34,7 @@ exports.getById = catchAsyncError(async (req, res, next) => {
 });
 
 exports.create = catchAsyncError(async (req, res) => {
-
+    const id = uuidv4();
     const artist = await ProductArtist.create({id, ...req.body});
     
     responseReturn(res, artist, 201);

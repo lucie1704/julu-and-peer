@@ -4,8 +4,6 @@ const { responseReturn } = require('../utils/response');
 const AppError = require('./../utils/appError');
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
-
 exports.getAll = catchAsyncError(async (req, res) => {
 
     const paymentMethods = await PaymentMethod.findAll();
@@ -22,6 +20,7 @@ exports.getById = catchAsyncError(async (req, res, next) => {
 });
 
 exports.create = catchAsyncError(async (req, res) => {
+    const id = uuidv4();
     const paymentMethod = await PaymentMethod.create({id, ...req.body});
     
     responseReturn(res, paymentMethod, 201);

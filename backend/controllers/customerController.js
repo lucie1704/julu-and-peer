@@ -4,9 +4,8 @@ const { responseReturn } = require('../utils/response');
 const AppError = require('./../utils/appError');
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
-
 exports.create = catchAsyncError(async (req, res, next) => {
+    const id = uuidv4();
     const { userId, firstName, lastName } = req.body;
 
     const user = await User.findByPk(userId);

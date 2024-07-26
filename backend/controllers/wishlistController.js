@@ -4,11 +4,10 @@ const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
-
-exports.create = catchAsyncError(async (req, res, next) => {
-  const { slug, productId } = req.body;
-
+exports.create = catchAsyncError (async (req, res, next) => {
+  const id = uuidv4();
+  const { slug, productId } = req.body
+  
   const wishlist = await Wishlist.findOne({ where: { slug, productId } });
 
   if (wishlist) return next(new AppError(409));

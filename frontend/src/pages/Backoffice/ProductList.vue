@@ -44,6 +44,7 @@ const updateApiCall = (payload: Record<string, string>): void => {
 };
 
 const onSubmitEditItem = async(data: any) => {
+  refresh();
   console.log('successfully added/edited a poduct !');
   console.log(data);
 };

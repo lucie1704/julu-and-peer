@@ -5,8 +5,6 @@ const filterObject = require('../utils/filterObject');
 const { responseReturn } = require('../utils/response');
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
-
 // Méthodes pour User role
 
 exports.getMe = (req, res,) => {
@@ -87,6 +85,8 @@ exports.get = catchAsyncError(async ( req, res, next) => {
 });
 
 exports.create = catchAsyncError(async ( req, res, next) => {
+  const id = uuidv4();
+
   const { firstname, lastname, email, password, passwordConfirmation } = req.body;
   const user = await User.create({
     id,
