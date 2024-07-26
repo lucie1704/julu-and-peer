@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { Reactive } from 'vue';
-import { isReactive, reactive, ref, toRaw } from 'vue';
+import { reactive, ref } from 'vue';
 import type { ZodIssue, ZodTypeAny } from 'zod';
 import { z } from 'zod';
 import { headers } from '~/utils/headers';
@@ -10,7 +10,6 @@ export type RequestMethod = 'post' | 'put' | 'delete' | 'patch';
 export interface ApiCall {
   method: RequestMethod;
   endpoint: string;
-  jwt?: string;
 }
 
 type SchemaType = z.ZodObject<Record<string, ZodTypeAny>>;
@@ -50,23 +49,6 @@ export function useForm<T extends SchemaType>(
     } else {
       delete errors[field];
     }
-
-    // Recursive validation for nested objects
-    if (typeof formData[field] === 'object' && formData[field] !== null) {
-      const nestedShape = fieldSchema._def.shape;
-      const nestedData = formData[field] as Record<string, any>;
-
-      Object.keys(nestedShape).forEach((nestedKey) => {
-        const nestedFieldSchema = nestedShape[nestedKey];
-        const nestedResult = nestedFieldSchema.safeParse(nestedData[nestedKey]);
-
-        if (!nestedResult.success) {
-          errors[field] = nestedResult.error.errors.map((error: ZodIssue) => error.message);
-        } else {
-          delete errors[field];
-        }
-      });
-    }
   };
 
   const validateForm = (): boolean => {
@@ -81,16 +63,18 @@ export function useForm<T extends SchemaType>(
   };
 
   const handleSubmit = async () => {
-    console.log('tete');
+    console.log('handleSubmit was called');
     serverError.value = undefined;
     isSubmitting.value = true;
 
     if (!validateForm()) {
+      console.log('Invalid form');
       isSubmitting.value = false;
       return;
     }
 
     try {
+      console.log('trying to send request');
       const dataToSend = formatData(formData);
       const fetchedData = await axios[apiCall.method](apiCall.endpoint, dataToSend, {
         headers: headers(),

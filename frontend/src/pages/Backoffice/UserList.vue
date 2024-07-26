@@ -24,10 +24,8 @@ const showPasswordConfirm = ref(false);
 const apiCall = ref<ApiCall>({
   method: 'post',
   endpoint: `${API_URL}/${url}`,
-  jwt: localStorage.getItem('jwt-token') || ''
 });
 const schema = UserForm;
-const isEditUser = ref<boolean>();
 const initialValues = ref();
 const isNewUser = ref<boolean>(false);
 
@@ -35,11 +33,9 @@ const updateApiCall = (payload: Record<string, string>): void => {
   isNewUser.value = !payload.id;
 
   if (payload.id) {
-    isEditUser.value = true;
     apiCall.value.method = 'patch';
     apiCall.value.endpoint = `${API_URL}/${url}/${payload.id}`;
   } else {
-    isEditUser.value = false;
     apiCall.value.method = 'post';
     apiCall.value.endpoint = `${API_URL}/${url}`;
   }
@@ -50,7 +46,7 @@ const updateApiCall = (payload: Record<string, string>): void => {
 };
 
 const onSubmitEditItem = async(data: any) => {
-  console.log('datatable form test hahahh');
+  console.log('successfully added/edited a user');
   console.log(data);
 };
 

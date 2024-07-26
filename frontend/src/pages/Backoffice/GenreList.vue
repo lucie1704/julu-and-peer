@@ -7,13 +7,62 @@
 </route>
 
 <script lang="ts" setup>
-  import DataTable from '~/components/backoffice/DataTable.vue';
-  import { getDataOptions } from '~/composables/backoffice/getDataOptions';
-  import { getDataTable } from '~/composables/backoffice/getDataTable';
+import { ref } from 'vue';
+import DataTable from '~/components/backoffice/DataTable.vue';
+import { getDataOptions } from '~/composables/backoffice/getDataOptions';
+import { getDataTable } from '~/composables/backoffice/getDataTable';
+import type { ApiCall } from '~/composables/form';
+import { useForm } from '~/composables/form';
+import { API_URL } from '~/constants';
+import { CategoryForm } from '~/schema/productSchema';
 
-  const url = 'productgenres';
-  const { data, loading, error, currentPage, totalPages, setPage, refresh } = getDataTable(url);
-  const { options } = getDataOptions(url);
+const url = 'productgenres';
+const { data, loading, error, currentPage, totalPages, setPage, refresh } = getDataTable(url);
+const { options } = getDataOptions(url);
+
+const apiCall = ref<ApiCall>({
+  method: 'post',
+  endpoint: `${API_URL}/${url}`,
+});
+const schema = CategoryForm;
+const initialValues = ref();
+const isNewGenre = ref<boolean>(false);
+
+const updateApiCall = (payload: Record<string, string>): void => {
+  isNewGenre.value = !payload.id;
+  if (payload.id) {
+    apiCall.value.method = 'patch';
+    apiCall.value.endpoint = `${API_URL}/${url}/${payload.id}`;
+  } else {
+    apiCall.value.method = 'post';
+    apiCall.value.endpoint = `${API_URL}/${url}`;
+  }
+  initialValues.value = { ...payload };
+  for (let key in formData) {
+    updateField(key as keyof typeof formData, initialValues.value[key]);
+  }
+};
+
+const onSubmitEditItem = async(data: any) => {
+  console.log('successfully added/edited a genre !');
+  console.log(data);
+};
+
+const {
+  formData,
+  errors,
+  serverError,
+  isSubmitting,
+  updateField,
+  cancelSubmit,
+  handleSubmit,
+  resetForm
+} = useForm(
+  schema,
+  apiCall.value,
+  onSubmitEditItem,
+  initialValues.value
+);
 
 </script>
 
@@ -32,22 +81,32 @@
       :total-pages="totalPages"
       :set-page="setPage"
       :refresh="refresh"
+      @update-item="updateApiCall"
     >
       <!-- Start Edit Form Slot-->
-      <template #form="{ item, submit }">
+      <template #form>
         <v-card class="text-center pa-5">
-          <v-card-title>{{ item.id ? 'Modifier un genre' : 'Créer un genre' }}</v-card-title>
-          <v-form @submit.prevent="submit">
+          <v-card-title>{{ isNewGenre ? 'Nouveau genre' : 'Modifier un genre' }}</v-card-title>
+          <v-form @submit.prevent="handleSubmit">
             <v-row>
               <v-col>
                 <v-text-field
-                  v-model="item.name"
+                  v-model="formData.name"
                   label="Nom du genre"
+                  :error-messages="errors.name"
+                  @update:model-value="updateField('name', formData.name)"
                 />
                 <v-text-field
-                  v-model="item.description"
+                  v-model="formData.description"
                   label="Description"
+                  :error-messages="errors.description"
+                  @update:model-value="updateField('description', formData.description)"
                 />
+              </v-col>
+            </v-row>
+            <v-row v-if="serverError">
+              <v-col class="text-red">
+                {{ serverError }}
               </v-col>
             </v-row>
             <v-row>
@@ -55,8 +114,31 @@
                 <v-btn
                   type="submit"
                   color="blue"
+                  :loading="isSubmitting"
+                  block
                 >
-                  {{ item.id ? 'Modifier' : 'Créer' }}
+                  {{ isNewGenre ? 'Créer' : 'Modifier' }}
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-btn
+                  variant="outlined"
+                  block
+                  @click="resetForm"
+                >
+                  Ré initialiser
+                </v-btn>
+              </v-col>
+              <v-col>
+                <v-btn
+                  variant="outlined"
+                  color="error"
+                  block
+                  @click="cancelSubmit"
+                >
+                  Annuler la requête
                 </v-btn>
               </v-col>
             </v-row>

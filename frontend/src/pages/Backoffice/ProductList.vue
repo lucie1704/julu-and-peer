@@ -23,21 +23,17 @@ const { options } = getDataOptions(url);
 const apiCall = ref<ApiCall>({
   method: 'post',
   endpoint: `${API_URL}/${url}`,
-  jwt: localStorage.getItem('jwt-token') || ''
 });
 const schema = ProductForm;
-const isEditProduct = ref<boolean>();
 const initialValues = ref();
 const isNewProduct = ref<boolean>(false);
 
 const updateApiCall = (payload: Record<string, string>): void => {
   isNewProduct.value = !payload._id;
   if (payload._id) {
-    isEditProduct.value = true;
     apiCall.value.method = 'patch';
     apiCall.value.endpoint = `${API_URL}/${url}/${payload._id}`;
   } else {
-    isEditProduct.value = false;
     apiCall.value.method = 'post';
     apiCall.value.endpoint = `${API_URL}/${url}`;
   }
@@ -48,7 +44,7 @@ const updateApiCall = (payload: Record<string, string>): void => {
 };
 
 const onSubmitEditItem = async(data: any) => {
-  console.log('datatable form test hahahh');
+  console.log('successfully added/edited a poduct !');
   console.log(data);
 };
 
