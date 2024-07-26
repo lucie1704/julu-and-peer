@@ -24,74 +24,17 @@
       :loading="loading"
       :error="error"
       :url="url"
+      :new-item="undefined"
       :current-page="currentPage"
       :total-pages="totalPages"
       :set-page="setPage"
       :refresh="refresh"
+      @update-item="console.log('update-item')"
     >
       <!-- Start Edit Form Slot-->
-      <template #form="{ item, submit }">
+      <template #form>
         <v-card class="text-center pa-5">
-          <v-card-title>{{ item.id ? 'Modifier une commande' : 'Créer une commande' }}</v-card-title>
-          <v-form @submit.prevent="submit">
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="item.price"
-                  label="Prix"
-                  type="number"
-                  step="0.01"
-                  required
-                />
-                <v-text-field
-                  v-model="item.paymentStatus"
-                  label="Statut de paiement"
-                  required
-                />
-                <v-text-field
-                  v-model="item.deliveryStatus"
-                  label="Statut de livraison"
-                  required
-                />
-                <v-text-field
-                  v-model="item.date"
-                  label="Date"
-                  type="date"
-                  required
-                />
-                <v-text-field
-                  v-model="item.customerId"
-                  label="ID Client"
-                  required
-                />
-                <v-text-field
-                  v-model="item.customerAddressId"
-                  label="ID Adresse Client"
-                  required
-                />
-                <v-text-field
-                  v-model="item.orderBillingId"
-                  label="ID Facturation"
-                  required
-                />
-                <v-text-field
-                  v-model="item.shippingId"
-                  label="ID Expédition"
-                  required
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn
-                  type="submit"
-                  color="blue"
-                >
-                  {{ item.id ? 'Modifier' : 'Créer' }}
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-form>
+          edit form for order list incoming
         </v-card>
       </template>
       <!-- End Edit Form Slot -->
