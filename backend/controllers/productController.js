@@ -5,9 +5,10 @@ const {responseReturn} = require('../utils/response');
 const ProductMongo = require("../models/mongo/product");
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
 
 exports.create = catchAsyncError(async (req, res) => {
+    const id = uuidv4();
+
     // Deconstruct body in order to get ID from objects.
     const { ProductArtist, ProductGenre, ProductFormat, ...data } = req.body;
     

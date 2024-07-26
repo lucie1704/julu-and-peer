@@ -4,8 +4,6 @@ const catchAsyncError = require('../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 const { v4: uuidv4 } = require('uuid');
 
-const id = uuidv4();
-
 exports.paymentCheck = catchAsyncError (async (id) => {
 
   const customerOrder = await CustomerOrder.findByPk(id)
@@ -36,6 +34,7 @@ exports.orderConfirm = catchAsyncError(async (req, res, next) => {
 });
 
 exports.create = catchAsyncError(async (req, res, next) => {
+  const id = uuidv4();
   const { shippingFee, products, shippingInfo, customerId } = req.body;
 
   if (!products || products.length === 0) {
